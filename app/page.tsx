@@ -109,5 +109,6 @@ const FOOD_DATABASE = [
 
   // 🥗 VEGETABLES & SALADS
   { id: 90, name: "Lettuce - خس", state: "Raw", type: "خضار", carbs: 3, protein: 1.4, fat: 0.2, calories: 15 },
-  { id: 91, name: "Arugula - جرجير", state: "Raw", type: "خضار", carbs: 3.7, protein: 2.6, fat: 0.7, calories: 25 },
-  { id: 92, name: "Spinach - سبانخ نية", state: "Raw", type: "خضار", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23
+  { { id: 112, name: "جرجير", carbs: 2.6, protein: 2.6, fat: 0.7, calories: 25 },
+  { id: 113, name: "سبانخ نيئة", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23 } //
+]; //
