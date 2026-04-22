@@ -1,9 +1,10 @@
 cd my-nutrition-app
+cd meal-calculator
 git add .
 git commit -m "log in password"
 git push origin main
 
 
 Moh1012002 password  بدائل الاكل
-
+2025
 admin123 nutirtion app
