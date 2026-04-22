@@ -88,21 +88,6 @@ const FOOD_DATABASE = [
   { id: 229, name: "Raw Lentils - عدس ني", category: "Protein/Legume", state: "Raw", carbs: 60, protein: 25, fat: 1.3, calories: 353 },
   { id: 230, name: "Cooked Lentils - عدس مطبوخ", category: "Protein/Legume", state: "Cooked", carbs: 20, protein: 9, fat: 0.4, calories: 116 },
   { id: 231, name: "Cooked Chickpeas - حمص مطبوخ", category: "Protein/Legume", state: "Cooked", carbs: 27, protein: 9, fat: 3, calories: 164 },
-  // --- BEEF & MINCED MEAT (اللحوم والمفروم) ---
-  { id: 203, name: "Lean Minced Beef (No Fat) - لحمة مفرومة بدون دهن", category: "Protein", state: "Raw", carbs: 0, protein: 24, fat: 2, calories: 120 },
-  { id: 204, name: "Minced Beef (5% Fat) - لحمة مفرومة 5% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 21.5, fat: 5, calories: 137 },
-  { id: 205, name: "Minced Beef (10% Fat) - لحمة مفرومة 10% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 20, fat: 10, calories: 176 },
-  { id: 206, name: "Beef Burger (10% Fat) - برجر بقري 10% دهون", category: "Protein", state: "Raw", carbs: 1, protein: 19, fat: 10, calories: 180 },
-
-  { id: 207, name: "Grilled Lean Minced - مفروم بدون دهن مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 30, fat: 3, calories: 160 },
-  { id: 208, name: "Grilled Minced (5% Fat) - مفروم 5% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 28, fat: 7, calories: 185 },
-  { id: 209, name: "Grilled Minced (10% Fat) - مفروم 10% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 26, fat: 13, calories: 230 },
-  { id: 210, name: "Grilled Beef Burger (10% Fat) - برجر مشوي 10% دهون", category: "Protein", state: "Grilled", carbs: 1.5, protein: 24, fat: 12, calories: 225 },
-
-
-
-
-
 
   // --- FAT SOURCES (مصادر الدهون) ---
   { id: 301, name: "Olive Oil - زيت زيتون", category: "Fat", state: "Raw", carbs: 0, protein: 0, fat: 100, calories: 884 },
@@ -210,6 +195,17 @@ const FOOD_DATABASE = [
   { id: 1002, name: "Hawawshi - حواوشي", category: "Meal", state: "Baked", carbs: 30, protein: 15, fat: 20, calories: 350 },
   { id: 1003, name: "Falafel - طعمية", category: "Meal", state: "Fried", carbs: 20, protein: 8, fat: 15, calories: 250 },
   { id: 1004, name: "Stuffed Vine Leaves - ورق عنب", category: "Meal", state: "Cooked", carbs: 25, protein: 3, fat: 8, calories: 180 },
+// --- BEEF & MINCED MEAT (اللحوم والمفروم) ---
+  { id: 203, name: "Lean Minced Beef (No Fat) - لحمة مفرومة بدون دهن", category: "Protein", state: "Raw", carbs: 0, protein: 24, fat: 2, calories: 120 },
+  { id: 204, name: "Minced Beef (5% Fat) - لحمة مفرومة 5% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 21.5, fat: 5, calories: 137 },
+  { id: 205, name: "Minced Beef (10% Fat) - لحمة مفرومة 10% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 20, fat: 10, calories: 176 },
+  { id: 206, name: "Beef Burger (10% Fat) - برجر بقري 10% دهون", category: "Protein", state: "Raw", carbs: 1, protein: 19, fat: 10, calories: 180 },
+
+  // --- COOKED VERSIONS (الأصناف بعد الطهي) ---
+  { id: 207, name: "Grilled Lean Minced - مفروم بدون دهن مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 30, fat: 3, calories: 160 },
+  { id: 208, name: "Grilled Minced (5% Fat) - مفروم 5% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 28, fat: 7, calories: 185 },
+  { id: 209, name: "Grilled Minced (10% Fat) - مفروم 10% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 26, fat: 13, calories: 230 },
+  { id: 210, name: "Grilled Beef Burger (10% Fat) - برجر مشوي 10% دهون", category: "Protein", state: "Grilled", carbs: 1.5, protein: 24, fat: 12, calories: 225 },
 ];
 
 // --- Types ---
@@ -909,82 +905,3 @@ function InfoBox({ label, value }: any) {
     </div>
   );
 }
-
-"use client"; // تأكد إن السطر ده موجود فوق خالص لو بتستخدم Next.js App Router
-
-import { useState } from "react";
-
-export default function Home() {
-  // 1. التعريفات (States) - لازم تكون جوه الفانكشن وقبل الـ return
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const CORRECT_PASSWORD = "123"; // الباسورد بتاعك هنا
-
-  const handleLogin = () => {
-    if (passwordInput === CORRECT_PASSWORD) {
-      setIsAuthenticated(true);
-    } else {
-      alert("كلمة المرور خطأ!");
-    }
-  };
-
-  // 2. الـ return الأساسي - هو ده اللي بيتحكم في عرض الصفحة
-  return (
-    <div className="app-container">
-      {!isAuthenticated ? (
-        // --- واجهة طلب الباسورد ---
-        <div style={{ 
-          display: 'flex', 
-          flexDirection: 'column', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          height: '100vh',
-          direction: 'rtl' 
-        }}>
-          <h2 style={{ marginBottom: '20px' }}>🔐 نظام إدارة السعرات - v11</h2>
-          <input 
-            type="password" 
-            placeholder="أدخل كلمة المرور" 
-            value={passwordInput}
-            onChange={(e) => setPasswordInput(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleLogin()} // يفتح بالضغط على Enter
-            style={{ 
-              padding: '12px', 
-              borderRadius: '8px', 
-              border: '1px solid #ccc',
-              width: '250px',
-              textAlign: 'center'
-            }}
-          />
-          <button 
-            onClick={handleLogin} 
-            style={{ 
-              padding: '10px 30px', 
-              marginTop: '15px', 
-              backgroundColor: '#0070f3', 
-              color: 'white', 
-              border: 'none', 
-              borderRadius: '8px', 
-              cursor: 'pointer' 
-            }}
-          >
-            دخول
-          </button>
-        </div>
-      ) : (
-        // --- المحتوى الأصلي بتاعك (الجداول والبيانات) ---
-        <main>
-          <header style={{ padding: '20px', textAlign: 'center', background: '#f0f0f0' }}>
-            <h2>مرحباً بك.. يمكنك الآن إدارة الأصناف ✅</h2>
-            <button onClick={() => setIsAuthenticated(false)} style={{ color: 'red', cursor: 'pointer' }}>تسجيل خروج</button>
-          </header>
-
-          {/* هنا تحط الجداول وباقي كود التطبيق بتاعك */}
-          <div className="content">
-            {/* ... الكود القديم بتاعك ... */}
-          </div>
-        </main>
-      )}
-    </div>
-  );
-} // نهاية الفانكشن Home
