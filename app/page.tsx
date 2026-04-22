@@ -910,3 +910,43 @@ function InfoBox({ label, value }: any) {
   );
 }
 
+return (
+  <div className="app-container">
+    {!isAuthenticated ? (
+      // واجهة طلب الباسورد
+      <div style={{ textAlign: 'center', marginTop: '50px' }}>
+        <h2>🔐 نظام إدارة السعرات - v11</h2>
+        <input 
+          type="password" 
+          placeholder="أدخل كلمة المرور" 
+          value={passwordInput}
+          onChange={(e) => setPasswordInput(e.target.value)}
+          style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
+        />
+        <button onClick={handleLogin} style={{ padding: '10px 20px', marginLeft: '10px', cursor: 'pointer' }}>
+          دخول
+        </button>
+      </div>
+    ) : (
+      // المحتوى الأصلي بتاعك (الجداول والبيانات)
+      <div>
+        <h2>مرحباً بك.. يمكنك الآن إدارة الأصناف ✅</h2>
+        {/* هنا تحط الكود بتاع الجداول والأصناف اللي ضفناها سوا */}
+      </div>
+    )}
+  </div>
+);
+
+
+// نظام حماية بسيط للموقع
+const [isAuthenticated, setIsAuthenticated] = useState(false);
+const [passwordInput, setPasswordInput] = useState("");
+const CORRECT_PASSWORD = "my_secret_password"; // اكتب الباسورد اللي تحبه هنا
+
+const handleLogin = () => {
+  if (passwordInput === CORRECT_PASSWORD) {
+    setIsAuthenticated(true);
+  } else {
+    alert("كلمة المرور خطأ، حاول مرة أخرى!");
+  }
+};
