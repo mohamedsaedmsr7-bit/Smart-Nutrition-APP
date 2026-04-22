@@ -88,6 +88,21 @@ const FOOD_DATABASE = [
   { id: 229, name: "Raw Lentils - عدس ني", category: "Protein/Legume", state: "Raw", carbs: 60, protein: 25, fat: 1.3, calories: 353 },
   { id: 230, name: "Cooked Lentils - عدس مطبوخ", category: "Protein/Legume", state: "Cooked", carbs: 20, protein: 9, fat: 0.4, calories: 116 },
   { id: 231, name: "Cooked Chickpeas - حمص مطبوخ", category: "Protein/Legume", state: "Cooked", carbs: 27, protein: 9, fat: 3, calories: 164 },
+  // --- BEEF & MINCED MEAT (اللحوم والمفروم) ---
+  { id: 203, name: "Lean Minced Beef (No Fat) - لحمة مفرومة بدون دهن", category: "Protein", state: "Raw", carbs: 0, protein: 24, fat: 2, calories: 120 },
+  { id: 204, name: "Minced Beef (5% Fat) - لحمة مفرومة 5% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 21.5, fat: 5, calories: 137 },
+  { id: 205, name: "Minced Beef (10% Fat) - لحمة مفرومة 10% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 20, fat: 10, calories: 176 },
+  { id: 206, name: "Beef Burger (10% Fat) - برجر بقري 10% دهون", category: "Protein", state: "Raw", carbs: 1, protein: 19, fat: 10, calories: 180 },
+
+  { id: 207, name: "Grilled Lean Minced - مفروم بدون دهن مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 30, fat: 3, calories: 160 },
+  { id: 208, name: "Grilled Minced (5% Fat) - مفروم 5% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 28, fat: 7, calories: 185 },
+  { id: 209, name: "Grilled Minced (10% Fat) - مفروم 10% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 26, fat: 13, calories: 230 },
+  { id: 210, name: "Grilled Beef Burger (10% Fat) - برجر مشوي 10% دهون", category: "Protein", state: "Grilled", carbs: 1.5, protein: 24, fat: 12, calories: 225 },
+
+
+
+
+
 
   // --- FAT SOURCES (مصادر الدهون) ---
   { id: 301, name: "Olive Oil - زيت زيتون", category: "Fat", state: "Raw", carbs: 0, protein: 0, fat: 100, calories: 884 },
