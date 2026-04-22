@@ -1,437 +1,313 @@
 "use client";
 import React, { useState, useEffect, useMemo } from 'react';
 import { 
-  Plus, Trash2, Calculator, Search, Printer, ArrowUp, ArrowDown, X
+  Plus, Trash2, Calculator, Search, Printer, ArrowUp, ArrowDown, X, Check, Save, Copy, User, Phone, Globe
 } from 'lucide-react';
 
-// ========== FULL FOOD DATABASE (150 Items) ==========
+// ========== DATABASE: FOOD DATA + EGYPTIAN ADDITIONS ==========
 const FOOD_DATABASE = [
-  // 🍚 CARB SOURCES
-  { id: 1, name: "White Rice - أرز أبيض", state: "Raw", type: "نشويات", carbs: 78, protein: 7, fat: 0.6, calories: 360 },
-  { id: 2, name: "Cooked White Rice - أرز أبيض مطبوخ", state: "Cooked", type: "نشويات", carbs: 28, protein: 2.7, fat: 0.3, calories: 130 },
-  { id: 3, name: "Brown Rice - أرز بني", state: "Raw", type: "نشويات", carbs: 77, protein: 7.5, fat: 2.7, calories: 370 },
-  { id: 4, name: "Cooked Brown Rice - أرز بني مطبوخ", state: "Cooked", type: "نشويات", carbs: 23, protein: 2.6, fat: 0.9, calories: 112 },
-  { id: 5, name: "White Pasta - مكرونة بيضاء", state: "Raw", type: "نشويات", carbs: 75, protein: 13, fat: 1.5, calories: 370 },
-  { id: 6, name: "Boiled White Pasta - مكرونة مسلوقة", state: "Cooked", type: "نشويات", carbs: 25, protein: 5, fat: 1, calories: 130 },
-  { id: 7, name: "Macaroni Béchamel - مكرونة بالبشاميل", state: "Cooked", type: "نشويات", carbs: 20, protein: 6, fat: 8, calories: 180 },
-  { id: 8, name: "Baladi Bread - خبز بلدي", state: "Ready", type: "نشويات", carbs: 55, protein: 9, fat: 1, calories: 280 },
-  { id: 9, name: "Shami Bread - خبز شامي", state: "Ready", type: "نشويات", carbs: 56, protein: 8, fat: 1, calories: 275 },
-  { id: 10, name: "White Toast - توست أبيض", state: "Ready", type: "نشويات", carbs: 49, protein: 8, fat: 4, calories: 265 },
-  { id: 11, name: "Brown Toast - توست بني", state: "Ready", type: "نشويات", carbs: 43, protein: 9, fat: 4, calories: 250 },
-  { id: 12, name: "Oats - شوفان", state: "Raw", type: "نشويات", carbs: 66, protein: 17, fat: 7, calories: 389 },
-  { id: 13, name: "Cooked Oats - شوفان مطبوخ", state: "Cooked", type: "نشويات", carbs: 12, protein: 2.5, fat: 1.5, calories: 70 },
-  { id: 14, name: "Corn - ذرة", state: "Raw", type: "نشويات", carbs: 19, protein: 3.4, fat: 1.2, calories: 96 },
-  { id: 15, name: "Boiled Corn - ذرة مسلوقة", state: "Boiled", type: "نشويات", carbs: 21, protein: 3.4, fat: 1.5, calories: 96 },
-  { id: 16, name: "Potatoes - بطاطس", state: "Raw", type: "نشويات", carbs: 17, protein: 2, fat: 0.1, calories: 77 },
-  { id: 17, name: "Boiled Potatoes - بطاطس مسلوقة", state: "Boiled", type: "نشويات", carbs: 20, protein: 2, fat: 0.1, calories: 87 },
-  { id: 18, name: "Fried Potatoes - بطاطس مقلية", state: "Fried", type: "نشويات", carbs: 35, protein: 3, fat: 10, calories: 250 },
-  { id: 19, name: "Sweet Potato - بطاطا حلوة", state: "Raw", type: "نشويات", carbs: 20, protein: 1.6, fat: 0.1, calories: 86 },
-  { id: 20, name: "Baked Sweet Potato - بطاطا مشوية", state: "Baked", type: "نشويات", carbs: 24, protein: 2, fat: 0.1, calories: 105 },
-  { id: 21, name: "خبز شوفان - Oats Bread", state: "Baked", type: "نشويات", carbs: 42, protein: 9.5, fat: 4.5, calories: 240 },
-
-  // 🍗 PROTEIN SOURCES
-  { id: 22, name: "Raw Chicken Breast - صدور دجاج نية", state: "Raw", type: "بروتين", carbs: 0, protein: 23, fat: 1, calories: 120 },
-  { id: 23, name: "Grilled Chicken Breast - صدور دجاج مشوية", state: "Grilled", type: "بروتين", carbs: 0, protein: 31, fat: 3.6, calories: 165 },
-  { id: 24, name: "Fried Chicken Breast - صدور دجاج مقلية", state: "Fried", type: "بروتين", carbs: 8, protein: 28, fat: 10, calories: 250 },
-  { id: 25, name: "Raw Chicken Thigh - أوراك دجاج نية", state: "Raw", type: "بروتين", carbs: 0, protein: 19, fat: 9, calories: 180 },
-  { id: 26, name: "Cooked Chicken Thigh - أوراك دجاج مطبوخة", state: "Cooked", type: "بروتين", carbs: 0, protein: 26, fat: 10, calories: 209 },
-  { id: 27, name: "Chicken Liver - كبدة دجاج", state: "Cooked", type: "بروتين", carbs: 0, protein: 24, fat: 6, calories: 165 },
-  { id: 28, name: "Raw Chicken Liver - كبدة نية", state: "Raw", type: "بروتين", carbs: 2, protein: 18, fat: 5, calories: 120 },
-  { id: 29, name: "Raw Lean Beef - لحم بقري صافي ني", state: "Raw", type: "بروتين", carbs: 0, protein: 26, fat: 10, calories: 200 },
-  { id: 30, name: "Cooked Lean Beef - لحم بقري مطبوخ", state: "Cooked", type: "بروتين", carbs: 0, protein: 30, fat: 12, calories: 250 },
-  { id: 31, name: "Cooked Fatty Beef - لحم بقري سمين", state: "Cooked", type: "بروتين", carbs: 0, protein: 25, fat: 20, calories: 300 },
-  { id: 32, name: "Grilled Kofta - كفتة مشوية", state: "Grilled", type: "بروتين", carbs: 5, protein: 25, fat: 20, calories: 300 },
-  { id: 33, name: "Cooked Liver - كبدة مطبوخة", state: "Cooked", type: "بروتين", carbs: 5, protein: 26, fat: 5, calories: 175 },
-  { id: 34, name: "Cooked Kidney - كلاوي مطبوخة", state: "Cooked", type: "بروتين", carbs: 4, protein: 24, fat: 6, calories: 160 },
-  { id: 35, name: "Whole Eggs (Gm) - بيض كامل", state: "Raw", type: "بروتين", carbs: 1, protein: 13, fat: 11, calories: 155 },
-  { id: 36, name: "Boiled Eggs - بيض مسلوق", state: "Boiled", type: "بروتين", carbs: 1, protein: 13, fat: 11, calories: 155 },
-  { id: 37, name: "Egg White - بياض بيض", state: "Raw", type: "بروتين", carbs: 0, protein: 11, fat: 0.5, calories: 52 },
-  { id: 38, name: "1 Whole Egg - بيضة كاملة", state: "1 Egg", type: "بروتين", carbs: 0.3, protein: 6, fat: 5, calories: 65 },
-  { id: 39, name: "Canned Tuna (Water) - تونة (ماء)", state: "Canned", type: "بروتين", carbs: 0, protein: 25, fat: 1, calories: 116 },
-  { id: 40, name: "Canned Tuna (Oil) - تونة (زيت)", state: "Canned", type: "بروتين", carbs: 0, protein: 25, fat: 10, calories: 200 },
-  { id: 41, name: "Canned Sardines - سردين معلب", state: "Canned", type: "بروتين", carbs: 0, protein: 25, fat: 11, calories: 208 },
-  { id: 42, name: "Full Fat Milk - حليب كامل الدسم", state: "Liquid", type: "بروتين", carbs: 5, protein: 3.3, fat: 3.5, calories: 61 },
-  { id: 43, name: "Low Fat Milk - حليب قليل الدسم", state: "Liquid", type: "بروتين", carbs: 5, protein: 3.4, fat: 1, calories: 42 },
-  { id: 44, name: "Regular Yogurt - زبادي عادي", state: "Regular", type: "بروتين", carbs: 4, protein: 3.5, fat: 3, calories: 60 },
-  { id: 45, name: "Plain Greek Yogurt - زبادي يوناني", state: "Plain", type: "بروتين", carbs: 4, protein: 10, fat: 5, calories: 97 },
-  { id: 46, name: "Feta Cheese - جبنة فيتا", state: "Regular", type: "بروتين", carbs: 4, protein: 14, fat: 21, calories: 264 },
-  { id: 47, name: "Roumy Cheese - جبنة رومي", state: "Regular", type: "بروتين", carbs: 2, protein: 25, fat: 32, calories: 350 },
-  { id: 48, name: "Cottage Cheese - جبنة قريش", state: "Low Fat", type: "بروتين", carbs: 3, protein: 11, fat: 4, calories: 98 },
-
-  // 🧈 FAT SOURCES
-  { id: 49, name: "Olive Oil - زيت زيتون", state: "Raw", type: "دهون", carbs: 0, protein: 0, fat: 100, calories: 884 },
-  { id: 50, name: "Sunflower Oil - زيت عباد شمس", state: "Raw", type: "دهون", carbs: 0, protein: 0, fat: 100, calories: 884 },
-  { id: 51, name: "Corn Oil - زيت ذرة", state: "Raw", type: "دهون", carbs: 0, protein: 0, fat: 100, calories: 884 },
-  { id: 52, name: "Butter - زبدة", state: "Raw", type: "دهون", carbs: 0, protein: 1, fat: 81, calories: 717 },
-  { id: 53, name: "Ghee (Samna) - سمن بلدي", state: "Raw", type: "دهون", carbs: 0, protein: 0, fat: 100, calories: 900 },
-  { id: 54, name: "Margarine - سمن صناعي", state: "Raw", type: "دهون", carbs: 0, protein: 0, fat: 80, calories: 717 },
-  { id: 55, name: "Mayonnaise - مايونيز", state: "Ready", type: "دهون", carbs: 1, protein: 1, fat: 75, calories: 680 },
-  { id: 56, name: "Tahini - طحينة", state: "Raw", type: "دهون", carbs: 21, protein: 17, fat: 54, calories: 595 },
-
-  // 🥜 NUTS & SEEDS
-  { id: 57, name: "Almonds - لوز", state: "Raw", type: "مكسرات", carbs: 22, protein: 21, fat: 50, calories: 579 },
-  { id: 58, name: "Peanuts - سوداني", state: "Raw", type: "مكسرات", carbs: 16, protein: 26, fat: 49, calories: 567 },
-  { id: 59, name: "Cashews - كاجو", state: "Raw", type: "مكسرات", carbs: 30, protein: 18, fat: 44, calories: 553 },
-  { id: 60, name: "Walnuts - عين جمل", state: "Raw", type: "مكسرات", carbs: 14, protein: 15, fat: 65, calories: 654 },
-  { id: 61, name: "Hazelnuts - بندق", state: "Raw", type: "مكسرات", carbs: 17, protein: 15, fat: 61, calories: 628 },
-  { id: 62, name: "Pistachios - فستق", state: "Raw", type: "مكسرات", carbs: 28, protein: 20, fat: 45, calories: 562 },
-  { id: 63, name: "Sunflower Seeds - لب عباد شمس", state: "Raw", type: "مكسرات", carbs: 20, protein: 21, fat: 51, calories: 584 },
-  { id: 64, name: "Pumpkin Seeds - لب قرع", state: "Raw", type: "مكسرات", carbs: 15, protein: 30, fat: 49, calories: 559 },
-  { id: 65, name: "Sesame Seeds - سمسم", state: "Raw", type: "مكسرات", carbs: 23, protein: 18, fat: 50, calories: 573 },
-  { id: 66, name: "Chia Seeds - بذور شيا", state: "Raw", type: "مكسرات", carbs: 42, protein: 17, fat: 31, calories: 486 },
-  { id: 67, name: "Flax Seeds - بذور كتان", state: "Raw", type: "مكسرات", carbs: 29, protein: 18, fat: 42, calories: 534 },
-
-  // 🍎 FRUITS
-  { id: 68, name: "Apple - تفاح", state: "Raw", type: "فاكهة", carbs: 14, protein: 0.3, fat: 0.2, calories: 52 },
-  { id: 69, name: "Banana - موز", state: "Raw", type: "فاكهة", carbs: 23, protein: 1.1, fat: 0.3, calories: 96 },
-  { id: 70, name: "Orange - برتقال", state: "Raw", type: "فاكهة", carbs: 12, protein: 0.9, fat: 0.1, calories: 47 },
-  { id: 71, name: "Mandarin - يوسفي", state: "Raw", type: "فاكهة", carbs: 13, protein: 0.8, fat: 0.2, calories: 53 },
-  { id: 72, name: "Grapes - عنب", state: "Raw", type: "فاكهة", carbs: 18, protein: 0.7, fat: 0.2, calories: 69 },
-  { id: 73, name: "Mango - مانجو", state: "Raw", type: "فاكهة", carbs: 15, protein: 0.8, fat: 0.4, calories: 60 },
-  { id: 74, name: "Guava - جوافة", state: "Raw", type: "فاكهة", carbs: 14, protein: 2.6, fat: 1, calories: 68 },
-  { id: 75, name: "Watermelon - بطيخ", state: "Raw", type: "فاكهة", carbs: 8, protein: 0.6, fat: 0.2, calories: 30 },
-  { id: 76, name: "Melon (Cantaloupe) - كانتلوب", state: "Raw", type: "فاكهة", carbs: 8, protein: 0.8, fat: 0.2, calories: 34 },
-  { id: 77, name: "Strawberries - فراولة", state: "Raw", type: "فاكهة", carbs: 8, protein: 0.7, fat: 0.3, calories: 32 },
-  { id: 78, name: "Pomegranate - رمان", state: "Raw", type: "فاكهة", carbs: 19, protein: 1.7, fat: 1.2, calories: 83 },
-  { id: 79, name: "Peach - خوخ", state: "Raw", type: "فاكهة", carbs: 10, protein: 0.9, fat: 0.3, calories: 39 },
-  { id: 80, name: "Pear - كمثرى", state: "Raw", type: "فاكهة", carbs: 15, protein: 0.4, fat: 0.1, calories: 57 },
-  { id: 81, name: "Apricot - مشمش", state: "Raw", type: "فاكهة", carbs: 11, protein: 1.4, fat: 0.4, calories: 48 },
-  { id: 82, name: "Plum - برقوق", state: "Raw", type: "فاكهة", carbs: 11, protein: 0.7, fat: 0.3, calories: 46 },
-  { id: 83, name: "Kiwi - كيوي", state: "Raw", type: "فاكهة", carbs: 15, protein: 1.1, fat: 0.5, calories: 61 },
-  { id: 84, name: "Pineapple - أناناس", state: "Raw", type: "فاكهة", carbs: 13, protein: 0.5, fat: 0.1, calories: 50 },
-  { id: 85, name: "Dates - بلح / تمر", state: "Raw", type: "فاكهة", carbs: 75, protein: 2, fat: 0.2, calories: 280 },
-  { id: 86, name: "Avocado - أفوكادو", state: "Raw", type: "فاكهة", carbs: 9, protein: 2, fat: 15, calories: 160 },
+  // مصادر الكربوهيدرات من الملف + إضافات مصرية
+  { id: 1, name: "White Rice - أرز أبيض", type: "نشويات", carbs: 78, protein: 7, fat: 0.6, calories: 360 },
+  { id: 2, name: "Cooked White Rice - أرز أبيض مطبوخ", type: "نشويات", carbs: 28, protein: 2.7, fat: 0.3, calories: 130 },
+  { id: 3, name: "Brown Rice - أرز بني", type: "نشويات", carbs: 77, protein: 7.5, fat: 2.7, calories: 370 },
+  { id: 4, name: "White Pasta - مكرونة بيضاء", type: "نشويات", carbs: 75, protein: 13, fat: 1.5, calories: 370 },
+  { id: 5, name: "Boiled Pasta - مكرونة مسلوقة", type: "نشويات", carbs: 25, protein: 5, fat: 1, calories: 130 },
+  { id: 6, name: "Egyptian Baladi Bread - عيش بلدي", type: "نشويات", carbs: 50, protein: 9, fat: 1.2, calories: 250 },
+  { id: 7, name: "Oats - شوفان", type: "نشويات", carbs: 66, protein: 14, fat: 7, calories: 380 },
+  { id: 8, name: "Sweet Potato - بطاطا حلوة", type: "نشويات", carbs: 20, protein: 1.6, fat: 0.1, calories: 86 },
+  { id: 9, name: "Potato - بطاطس", type: "نشويات", carbs: 17, protein: 2, fat: 0.1, calories: 77 },
   
-  // 🍹 JUICE
-  { id: 87, name: "Orange Juice - عصير برتقال", state: "Fresh", type: "عصائر", carbs: 10, protein: 0.7, fat: 0.2, calories: 45 },
-  { id: 88, name: "Mango Juice - عصير مانجو", state: "Fresh", type: "عصائر", carbs: 14, protein: 0.4, fat: 0.1, calories: 60 },
-  { id: 89, name: "Apple Juice - عصير تفاح", state: "Fresh", type: "عصائر", carbs: 11, protein: 0.1, fat: 0.1, calories: 46 },
+  // البروتين
+  { id: 20, name: "Chicken Breast - صدور دجاج", type: "بروتين", carbs: 0, protein: 31, fat: 3.6, calories: 165 },
+  { id: 21, name: "Lean Beef - لحم بقري أحمر", type: "بروتين", carbs: 0, protein: 26, fat: 10, calories: 200 },
+  { id: 22, name: "Tilapia Fish - سمك بلطي", type: "بروتين", carbs: 0, protein: 20, fat: 1.7, calories: 96 },
+  { id: 23, name: "Tuna (Canned in Water) - تونة مصفاة", type: "بروتين", carbs: 0, protein: 25, fat: 1, calories: 116 },
+  { id: 24, name: "Whole Egg - بيضة كاملة", type: "بروتين", carbs: 0.6, protein: 6, fat: 5, calories: 78 },
+  { id: 25, name: "Egg Whites - بياض بيض", type: "بروتين", carbs: 0.7, protein: 11, fat: 0.2, calories: 52 },
+  { id: 26, name: "Quark/Plow Cheese - جبنة قريش", type: "بروتين", carbs: 3, protein: 11, fat: 4, calories: 98 },
 
-  // 🥗 VEGETABLES & SALADS
-  { id: 90, name: "Lettuce - خس", state: "Raw", type: "خضار", carbs: 3, protein: 1.4, fat: 0.2, calories: 15 },
-  { id: 91, name: "Arugula - جرجير", state: "Raw", type: "خضار", carbs: 3.7, protein: 2.6, fat: 0.7, calories: 25 },
-  { id: 92, name: "Spinach - سبانخ نية", state: "Raw", type: "خضار", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23 },
-  { id: 93, name: "Cooked Spinach - سبانخ مطبوخة", state: "Cooked", type: "خضار", carbs: 4, protein: 3, fat: 0.4, calories: 25 },
-  { id: 94, name: "Tomato - طماطم", state: "Raw", type: "خضار", carbs: 4, protein: 0.9, fat: 0.2, calories: 18 },
-  { id: 95, name: "Cucumber - خيار", state: "Raw", type: "خضار", carbs: 3.6, protein: 0.7, fat: 0.1, calories: 16 },
-  { id: 96, name: "Bell Pepper - فلفل ألوان", state: "Raw", type: "خضار", carbs: 6, protein: 1, fat: 0.3, calories: 31 },
-  { id: 97, name: "Raw Zucchini - كوسة نية", state: "Raw", type: "خضار", carbs: 3, protein: 1.2, fat: 0.3, calories: 17 },
-  { id: 98, name: "Cooked Zucchini - كوسة مطبوخة", state: "Cooked", type: "خضار", carbs: 3.5, protein: 1.2, fat: 0.3, calories: 20 },
-  { id: 99, name: "Cooked Molokhia - ملوخية مطبوخة", state: "Cooked", type: "خضار", carbs: 7, protein: 3, fat: 0.5, calories: 60 },
-  { id: 100, name: "Parsley - بقدونس", state: "Raw", type: "خضار", carbs: 6, protein: 3, fat: 0.8, calories: 36 },
-  { id: 101, name: "Coriander - كزبرة", state: "Raw", type: "خضار", carbs: 4, protein: 2, fat: 0.5, calories: 23 },
-  { id: 102, name: "Dill - شبت", state: "Raw", type: "خضار", carbs: 7, protein: 3.5, fat: 1.1, calories: 43 },
-  { id: 103, name: "Mint - نعناع", state: "Raw", type: "خضار", carbs: 8, protein: 3.8, fat: 0.9, calories: 44 },
-  { id: 104, name: "Green Onion - بصل أخضر", state: "Raw", type: "خضار", carbs: 7, protein: 1.8, fat: 0.2, calories: 32 },
-  { id: 105, name: "Raw Cabbage - كرنب نيء", state: "Raw", type: "خضار", carbs: 6, protein: 1.3, fat: 0.1, calories: 25 },
-  { id: 106, name: "Raw Red Cabbage - كرنب أحمر نيء", state: "Raw", type: "خضار", carbs: 7, protein: 1.4, fat: 0.2, calories: 31 },
-  { id: 107, name: "Cooked Cabbage - كرنب مطبوخ", state: "Cooked", type: "خضار", carbs: 6, protein: 1.3, fat: 0.1, calories: 25 },
-  { id: 108, name: "Onion - بصل", state: "Raw", type: "خضار", carbs: 9, protein: 1.1, fat: 0.1, calories: 40 },
-  { id: 109, name: "Carrot - جزر", state: "Raw", type: "خضار", carbs: 10, protein: 0.9, fat: 0.2, calories: 41 },
-  { id: 110, name: "Beetroot - بنجر", state: "Raw", type: "خضار", carbs: 10, protein: 1.6, fat: 0.2, calories: 43 },
-  { id: 111, name: "Radish - فجل", state: "Raw", type: "خضار", carbs: 3.4, protein: 0.7, fat: 0.1, calories: 16 },
-  { id: 112, name: "Lemon - ليمون", state: "Raw", type: "خضار", carbs: 9, protein: 1.1, fat: 0.3, calories: 29 },
-  { id: 113, name: "Raw Eggplant - باذنجان نيء", state: "Raw", type: "خضار", carbs: 6, protein: 1, fat: 0.2, calories: 25 },
-  { id: 114, name: "Fried Eggplant - باذنجان مقلي", state: "Fried", type: "خضار", carbs: 9, protein: 1, fat: 9, calories: 120 },
-  { id: 115, name: "Grilled Eggplant - باذنجان مشوي", state: "Grilled", type: "خضار", carbs: 6, protein: 1, fat: 0.2, calories: 35 },
-  { id: 116, name: "Raw Okra - بامية نية", state: "Raw", type: "خضار", carbs: 7, protein: 2, fat: 0.1, calories: 33 },
-  { id: 117, name: "Cooked Okra - بامية مطبوخة", state: "Cooked", type: "خضار", carbs: 7, protein: 2, fat: 0.2, calories: 35 },
-  { id: 118, name: "Raw Green Beans - فاصوليا خضراء", state: "Raw", type: "خضار", carbs: 7, protein: 2, fat: 0.1, calories: 31 },
-  { id: 119, name: "Cooked Green Beans - فاصوليا مطبوخة", state: "Cooked", type: "خضار", carbs: 7, protein: 2, fat: 0.1, calories: 35 },
-  { id: 120, name: "Cooked Peas - بسلة مطبوخة", state: "Cooked", type: "خضار", carbs: 14, protein: 5, fat: 0.4, calories: 81 },
-  { id: 121, name: "Raw Cauliflower - قرنبيط نيء", state: "Raw", type: "خضار", carbs: 5, protein: 2, fat: 0.3, calories: 25 },
-  { id: 122, name: "Cooked Cauliflower - قرنبيط مطبوخ", state: "Cooked", type: "خضار", carbs: 5, protein: 2, fat: 0.3, calories: 23 },
-  { id: 123, name: "Raw Broccoli - بروكلي نيء", state: "Raw", type: "خضار", carbs: 7, protein: 2.8, fat: 0.4, calories: 34 },
-  { id: 124, name: "Cooked Broccoli - بروكلي مطبوخ", state: "Cooked", type: "خضار", carbs: 7, protein: 2.4, fat: 0.4, calories: 35 },
-  { id: 125, name: "Raw Mushrooms - مشروم نيء", state: "Raw", type: "خضار", carbs: 3, protein: 3.1, fat: 0.3, calories: 22 },
-  { id: 126, name: "Cooked Mushrooms - مشروم مطبوخ", state: "Cooked", type: "خضار", carbs: 3, protein: 3, fat: 0.3, calories: 28 },
-  { id: 127, name: "Raw Garlic - ثوم نيء", state: "Raw", type: "خضار", carbs: 33, protein: 6.4, fat: 0.5, calories: 149 },
-  { id: 128, name: "Cooked Garlic - ثوم مطبوخ", state: "Cooked", type: "خضار", carbs: 30, protein: 6, fat: 0.5, calories: 140 },
-  { id: 129, name: "Cooked Onion - بصل مطبوخ", state: "Cooked", type: "خضار", carbs: 10, protein: 1.2, fat: 0.1, calories: 44 },
-  { id: 130, name: "Raw Leek - كرات", state: "Raw", type: "خضار", carbs: 14, protein: 1.5, fat: 0.3, calories: 61 },
-  { id: 131, name: "Raw Turnip - لفت نيء", state: "Raw", type: "خضار", carbs: 6, protein: 0.9, fat: 0.1, calories: 28 },
-  { id: 132, name: "Cooked Turnip - لفت مطبوخ", state: "Cooked", type: "خضار", carbs: 7, protein: 1, fat: 0.2, calories: 30 },
-  { id: 133, name: "Cooked Artichoke - خرشوف مطبوخ", state: "Cooked", type: "خضار", carbs: 11, protein: 3.3, fat: 0.2, calories: 53 },
-  { id: 134, name: "Ready Lentil Soup - شوربة عدس", state: "Ready", type: "خضار", carbs: 14, protein: 5, fat: 2, calories: 90 },
-  { id: 135, name: "Green Salad - سلطة خضراء", state: "Ready", type: "خضار", carbs: 4, protein: 1, fat: 0.2, calories: 20 },
-  { id: 136, name: "Green Salad + Lemon - سلطة بالليمون", state: "Ready", type: "خضار", carbs: 4, protein: 1, fat: 0.2, calories: 22 },
-  { id: 137, name: "Green Salad + Olive Oil - سلطة بزيت زيتون", state: "Ready", type: "خضار", carbs: 4, protein: 1, fat: 10, calories: 110 },
-  { id: 138, name: "Pickles (Torshi) - مخلل (طرشي)", state: "Ready", type: "خضار", carbs: 2, protein: 0.5, fat: 0.2, calories: 12 },
-
-  // 🫘 LEGUMES
-  { id: 139, name: "Cooked Lentils - عدس مطبوخ", state: "Cooked", type: "بقوليات", carbs: 20, protein: 9, fat: 0.4, calories: 116 },
-  { id: 140, name: "Cooked Chickpeas - حمص مطبوخ", state: "Cooked", type: "بقوليات", carbs: 27, protein: 9, fat: 2.6, calories: 164 },
-  { id: 141, name: "Fava Beans / Foul - فول مدمس", state: "Cooked", type: "بقوليات", carbs: 18, protein: 8, fat: 0.5, calories: 110 },
-  { id: 142, name: "Cooked Kidney Beans - فاصوليا حمراء", state: "Cooked", type: "بقوليات", carbs: 23, protein: 9, fat: 0.5, calories: 127 },
-  { id: 143, name: "Cooked White Beans - فاصوليا بيضاء", state: "Cooked", type: "بقوليات", carbs: 25, protein: 9, fat: 0.5, calories: 139 },
-  { id: 144, name: "Cooked Black-eyed Peas - لوبيا", state: "Cooked", type: "بقوليات", carbs: 21, protein: 8, fat: 0.5, calories: 116 },
-  { id: 145, name: "Green Peas - بسلة خضراء", state: "Cooked", type: "بقوليات", carbs: 14, protein: 5, fat: 0.4, calories: 81 },
-  { id: 146, name: "Lupin Beans - ترمس", state: "Ready", type: "بقوليات", carbs: 10, protein: 16, fat: 4.9, calories: 119 },
-  { id: 147, name: "Raw Lentils - عدس خام", state: "Raw", type: "بقوليات", carbs: 60, protein: 25, fat: 1.1, calories: 353 },
-  { id: 148, name: "Raw Chickpeas - حمص خام", state: "Raw", type: "بقوليات", carbs: 61, protein: 19, fat: 6, calories: 364 },
-
-  // ☕ HOT DRINKS
-  { id: 149, name: "Tea - شاى", state: "Ready", type: "مشروبات", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 150, name: "Coffee - قهوة", state: "Ready", type: "مشروبات", carbs: 0, protein: 0, fat: 0, calories: 0 }
+  // البقوليات والدهون (إضافات مصرية)
+  { id: 40, name: "Fava Beans - فول مدمس", type: "بقوليات", carbs: 20, protein: 8, fat: 0.5, calories: 110 },
+  { id: 41, name: "Lentils - عدس مطبوخ", type: "بقوليات", carbs: 20, protein: 9, fat: 0.4, calories: 116 },
+  { id: 42, name: "Olive Oil - زيت زيتون", type: "دهون", carbs: 0, protein: 0, fat: 100, calories: 884 },
+  { id: 43, name: "Peanut Butter - زبدة فول سوداني", type: "دهون", carbs: 20, protein: 25, fat: 50, calories: 588 },
+  { id: 44, name: "Mixed Nuts - مكسرات مشكلة", type: "دهون", carbs: 20, protein: 15, fat: 50, calories: 600 },
+  
+  // خضروات وفاكهة
+  { id: 60, name: "Cucumber - خيار", type: "خضار", carbs: 3.6, protein: 0.7, fat: 0.1, calories: 15 },
+  { id: 61, name: "Tomato - طماطم", type: "خضار", carbs: 3.9, protein: 0.9, fat: 0.2, calories: 18 },
+  { id: 62, name: "Spinach - سبانخ", type: "خضار", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23 },
 ];
 
 export default function NutritionPlanner() {
   const [meals, setMeals] = useState([
-    { id: 1, name: "الإفطار", items: [] as any[], isOpen: true },
-    { id: 2, name: "الغداء", items: [] as any[], isOpen: true },
-    { id: 3, name: "العشاء", items: [] as any[], isOpen: true }
+    { id: 1, name: "الوجبة الأولى", items: [] as any[] },
+    { id: 2, name: "الوجبة الثانية", items: [] as any[] }
   ]);
-
-  // Modal State
+  
+  // بيانات العميل والمدرب
+  const [clientData, setClientData] = useState({ name: '', weight: '', goal: '', date: new Date().toISOString().split('T')[0] });
+  const [language, setLanguage] = useState<'ar' | 'en' | 'both'>('both');
+  const [templates, setTemplates] = useState<any[]>([]);
+  
+  // التحكم في الـ Modal والبحث
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeMealId, setActiveMealId] = useState<number | null>(null);
-
-  // Search & Filter State
+  const [selectedFoods, setSelectedFoods] = useState<Set<number>>(new Set());
   const [searchTerm, setSearchTerm] = useState("");
-  const [activeFilter, setActiveFilter] = useState("الكل");
-  const foodTypes = ["الكل", "نشويات", "بروتين", "دهون", "مكسرات", "فاكهة", "خضار", "بقوليات", "عصائر", "مشروبات"];
+
+  // تحصيل القوالب من LocalStorage عند البدء
+  useEffect(() => {
+    const saved = localStorage.getItem('nutrition_templates');
+    if (saved) setTemplates(JSON.parse(saved));
+  }, []);
 
   const filteredDatabase = useMemo(() => {
-    return FOOD_DATABASE.filter(food => {
-      const matchesSearch = food.name.toLowerCase().includes(searchTerm.toLowerCase());
-      const matchesFilter = activeFilter === "الكل" || food.type === activeFilter;
-      return matchesSearch && matchesFilter;
-    });
-  }, [searchTerm, activeFilter]);
+    return FOOD_DATABASE.filter(f => f.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [searchTerm]);
 
-  const calculateTotals = () => {
-    return meals.reduce((acc, meal) => {
-      const mealTotals = meal.items.reduce((mAcc, item) => {
-        const ratio = (item.grams || 0) / 100;
-        return {
-          cal: mAcc.cal + (item.calories * ratio),
-          pro: mAcc.pro + (item.protein * ratio),
-          carb: mAcc.carb + (item.carbs * ratio),
-          fat: mAcc.fat + (item.fat * ratio)
-        };
-      }, { cal: 0, pro: 0, carb: 0, fat: 0 });
-      return {
-        cal: acc.cal + mealTotals.cal, pro: acc.pro + mealTotals.pro,
-        carb: acc.carb + mealTotals.carb, fat: acc.fat + mealTotals.fat
-      };
+  // دالة تنسيق الاسم حسب اللغة المختارة
+  const formatFoodName = (fullName: string) => {
+    const parts = fullName.split(' - ');
+    if (language === 'ar') return parts[1] || parts[0];
+    if (language === 'en') return parts[0];
+    return fullName;
+  };
+
+  // الماكروز الكلية
+  const totals = useMemo(() => {
+    return meals.reduce((acc, m) => {
+      m.items.forEach(it => {
+        const r = it.grams / 100;
+        acc.cal += it.calories * r; acc.pro += it.protein * r;
+        acc.carb += it.carbs * r; acc.fat += it.fat * r;
+      });
+      return acc;
     }, { cal: 0, pro: 0, carb: 0, fat: 0 });
+  }, [meals]);
+
+  // --- Functions ---
+  const toggleFoodSelection = (id: number) => {
+    const next = new Set(selectedFoods);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setSelectedFoods(next);
   };
 
-  const totals = calculateTotals();
+  const addSelectedToMeal = () => {
+    if (activeMealId === null) return;
+    const newItems = FOOD_DATABASE.filter(f => selectedFoods.has(f.id)).map(f => ({ ...f, grams: 100, instId: Math.random() }));
+    setMeals(meals.map(m => m.id === activeMealId ? { ...m, items: [...m.items, ...newItems] } : m));
+    setIsModalOpen(false);
+    setSelectedFoods(new Set());
+  };
 
-  // --- Meal Controls ---
-  const addNewMeal = () => setMeals([...meals, { id: Date.now(), name: "وجبة جديدة", items: [], isOpen: true }]);
-  const deleteMeal = (id: number) => setMeals(meals.filter(m => m.id !== id));
-  const renameMeal = (id: number, name: string) => setMeals(meals.map(m => m.id === id ? { ...m, name } : m));
-  
-  const moveMeal = (idx: number, dir: 'up' | 'down') => {
-    const newMeals = [...meals];
-    const target = dir === 'up' ? idx - 1 : idx + 1;
-    if (target >= 0 && target < newMeals.length) {
-      [newMeals[idx], newMeals[target]] = [newMeals[target], newMeals[idx]];
-      setMeals(newMeals);
+  const saveAsTemplate = () => {
+    const name = prompt("أدخل اسماً لهذا القالب (مثلاً: تضخيم 2500 سعرة):");
+    if (!name) return;
+    const newTemplates = [...templates, { name, meals, id: Date.now() }];
+    setTemplates(newTemplates);
+    localStorage.setItem('nutrition_templates', JSON.stringify(newTemplates));
+    alert("تم حفظ القالب بنجاح!");
+  };
+
+  const loadTemplate = (temp: any) => {
+    if (confirm(`هل تريد تحميل قالب "${temp.name}"؟ سيؤدي ذلك لمسح التعديلات الحالية.`)) {
+      setMeals(temp.meals);
     }
-  };
-
-  // --- Item Controls ---
-  const openAddModal = (mealId: number) => {
-    setActiveMealId(mealId);
-    setIsModalOpen(true);
-    setSearchTerm(""); // Reset search when opening
-  };
-
-  const addItemToActiveMeal = (food: any) => {
-    if (activeMealId !== null) {
-      setMeals(meals.map(m => m.id === activeMealId ? { 
-        ...m, items: [...m.items, { ...food, grams: 100, instanceId: Date.now() }] 
-      } : m));
-      setIsModalOpen(false); // Close modal after adding
-    }
-  };
-
-  const updateGrams = (mealId: number, instId: number, grams: number) => {
-    setMeals(meals.map(m => m.id === mealId ? {
-      ...m, items: m.items.map((it: any) => it.instanceId === instId ? { ...it, grams } : it)
-    } : m));
-  };
-
-  const removeItem = (mealId: number, instId: number) => {
-    setMeals(meals.map(m => m.id === mealId ? { ...m, items: m.items.filter((it: any) => it.instanceId !== instId) } : m));
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 md:p-8 font-sans" dir="rtl">
-      {/* Hide things when printing */}
-      <style dangerouslySetInnerHTML={{ __html: `
-        @media print { .no-print { display: none !important; } body { background: white; color: black; } }
-      `}} />
-
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#0a0a0a] text-white p-4 md:p-10 font-sans print:bg-white print:text-black" dir="rtl">
+      
+      {/* 📄 PRINT HEADER: يظهر فقط في الـ PDF */}
+      <div className="hidden print:block border-b-4 border-blue-600 pb-6 mb-8">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-4xl font-black text-blue-600 mb-1">نظام غذائي احترافي</h1>
+            <p className="text-gray-500 font-bold">Nutrition & Training Plan</p>
+          </div>
+          <div className="text-left border-r-4 border-blue-600 pr-4">
+            <h2 className="text-xl font-black">C/Mohamed Saed</h2>
+            <p className="flex items-center justify-end gap-2 text-sm mt-1">
+              01022816320 <Phone size={14} />
+            </p>
+          </div>
+        </div>
         
-        {/* Header */}
-        <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 mb-8 flex flex-col md:flex-row justify-between items-center gap-4 no-print shadow-2xl">
-          <h1 className="text-2xl font-black text-blue-500 flex items-center gap-3">
-            <Calculator size={32} /> برو نيوتريشن
-          </h1>
-          <div className="flex gap-2">
-            <button onClick={addNewMeal} className="bg-blue-600 hover:bg-blue-700 px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 transition-all">
-              <Plus size={20} /> إضافة وجبة
-            </button>
-            <button onClick={() => window.print()} className="bg-neutral-800 hover:bg-neutral-700 px-5 py-2.5 rounded-xl font-bold flex items-center gap-2 border border-neutral-700">
-              <Printer size={18} /> PDF
+        <div className="grid grid-cols-3 gap-4 mt-8 bg-gray-50 p-4 rounded-xl border border-gray-200">
+          <div><span className="text-gray-400 text-xs block">اسم العميل</span> <p className="font-bold">{clientData.name || '---'}</p></div>
+          <div><span className="text-gray-400 text-xs block">الهدف</span> <p className="font-bold">{clientData.goal || '---'}</p></div>
+          <div><span className="text-gray-400 text-xs block">التاريخ</span> <p className="font-bold">{clientData.date}</p></div>
+        </div>
+      </div>
+
+      <div className="max-w-5xl mx-auto">
+        
+        {/* 🛠 CONTROL PANEL: يختفي في الطباعة */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10 print:hidden">
+          <div className="lg:col-span-2 bg-neutral-900 border border-neutral-800 rounded-3xl p-6 shadow-xl">
+            <h3 className="flex items-center gap-2 mb-4 font-bold text-blue-400"><User size={20}/> بيانات العميل والإعدادات</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <input placeholder="اسم العميل" className="bg-black border border-neutral-700 p-3 rounded-xl outline-none focus:border-blue-500" value={clientData.name} onChange={e => setClientData({...clientData, name: e.target.value})}/>
+              <input placeholder="الهدف (تنشيف / تضخيم)" className="bg-black border border-neutral-700 p-3 rounded-xl outline-none focus:border-blue-500" value={clientData.goal} onChange={e => setClientData({...clientData, goal: e.target.value})}/>
+              
+              <div className="flex bg-black border border-neutral-700 rounded-xl overflow-hidden">
+                <button onClick={() => setLanguage('ar')} className={`flex-1 p-2 text-xs font-bold ${language === 'ar' ? 'bg-blue-600' : ''}`}>عربي</button>
+                <button onClick={() => setLanguage('en')} className={`flex-1 p-2 text-xs font-bold ${language === 'en' ? 'bg-blue-600' : ''}`}>EN</button>
+                <button onClick={() => setLanguage('both')} className={`flex-1 p-2 text-xs font-bold ${language === 'both' ? 'bg-blue-600' : ''}`}>عربي/EN</button>
+              </div>
+              
+              <button onClick={() => window.print()} className="bg-white text-black font-black rounded-xl flex items-center justify-center gap-2 hover:bg-blue-500 hover:text-white transition-all">
+                <Printer size={20}/> استخراج PDF الاحترافي
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-neutral-900 border border-neutral-800 rounded-3xl p-6 shadow-xl">
+            <h3 className="flex items-center gap-2 mb-4 font-bold text-yellow-500"><Save size={20}/> القوالب الجاهزة</h3>
+            <div className="space-y-2 max-h-32 overflow-y-auto">
+              {templates.map(t => (
+                <button key={t.id} onClick={() => loadTemplate(t)} className="w-full text-right p-2 text-sm bg-black/50 border border-neutral-800 rounded-lg hover:border-yellow-500 transition-all flex justify-between">
+                  {t.name} <Copy size={14} className="text-neutral-500"/>
+                </button>
+              ))}
+            </div>
+            <button onClick={saveAsTemplate} className="w-full mt-4 border border-dashed border-neutral-600 p-2 rounded-xl text-xs font-bold hover:bg-neutral-800 transition-all">
+              حفظ النظام الحالي كقالب +
             </button>
           </div>
         </div>
 
-        {/* Totals Summary */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-          <MacroCard label="السعرات" value={totals.cal} color="text-orange-500" unit="kcal" />
-          <MacroCard label="البروتين" value={totals.pro} color="text-red-500" unit="جم" />
-          <MacroCard label="الكارب" value={totals.carb} color="text-blue-500" unit="جم" />
-          <MacroCard label="الدهون" value={totals.fat} color="text-yellow-500" unit="جم" />
+        {/* 📊 TOTALS SUMMARY */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 print:grid-cols-4 print:gap-2">
+          <MacroBox label="السعرات" value={totals.cal} unit="kcal" color="text-orange-500" />
+          <MacroBox label="البروتين" value={totals.pro} unit="جم" color="text-red-500" />
+          <MacroBox label="الكربوهيدرات" value={totals.carb} unit="جم" color="text-blue-500" />
+          <MacroBox label="الدهون" value={totals.fat} unit="جم" color="text-yellow-500" />
         </div>
 
-        {/* Meals List */}
-        <div className="space-y-8">
-          {meals.map((meal, idx) => (
-            <div key={meal.id} className="bg-neutral-900 border border-neutral-800 rounded-3xl overflow-hidden shadow-lg">
-              
-              {/* Meal Header (Rename & Reorder) */}
-              <div className="p-5 flex items-center justify-between bg-neutral-800/40 border-b border-neutral-800">
+        {/* 🥗 MEALS LIST */}
+        <div className="space-y-6">
+          {meals.map((meal) => (
+            <div key={meal.id} className="bg-neutral-900 border border-neutral-800 rounded-3xl overflow-hidden print:bg-white print:border-gray-200 print:rounded-xl print:shadow-none print:break-inside-avoid">
+              <div className="p-4 bg-neutral-800/50 flex justify-between items-center print:bg-blue-50 print:border-b print:border-blue-100">
+                <input className="bg-transparent font-black text-xl outline-none print:text-blue-800" value={meal.name} onChange={e => setMeals(meals.map(m => m.id === meal.id ? {...m, name: e.target.value} : m))}/>
                 <div className="flex items-center gap-4">
-                  <div className="flex flex-col no-print text-neutral-500">
-                    <button onClick={() => moveMeal(idx, 'up')} className="hover:text-blue-400 p-1"><ArrowUp size={16}/></button>
-                    <button onClick={() => moveMeal(idx, 'down')} className="hover:text-blue-400 p-1"><ArrowDown size={16}/></button>
-                  </div>
-                  {/* Click to Rename Meal */}
-                  <input 
-                    className="bg-transparent text-xl font-black outline-none focus:text-blue-400 w-48 border-b-2 border-transparent focus:border-blue-500 transition-colors" 
-                    value={meal.name} 
-                    onChange={(e) => renameMeal(meal.id, e.target.value)} 
-                    placeholder="اسم الوجبة"
-                  />
-                </div>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-bold bg-black/40 px-4 py-1.5 rounded-full border border-neutral-800">
-                    {Math.round(meal.items.reduce((acc, it) => acc + (it.calories * it.grams/100), 0))} kcal
+                  <span className="text-xs bg-black/50 px-3 py-1 rounded-full border border-neutral-700 print:bg-blue-600 print:text-white print:border-none">
+                    {Math.round(meal.items.reduce((acc, i) => acc + (i.calories * i.grams/100), 0))} kcal
                   </span>
-                  <button onClick={() => deleteMeal(meal.id)} className="text-neutral-600 hover:text-red-500 transition-colors no-print p-2">
-                    <Trash2 size={20}/>
-                  </button>
+                  <button onClick={() => setMeals(meals.filter(m => m.id !== meal.id))} className="text-neutral-600 hover:text-red-500 print:hidden"><Trash2 size={18}/></button>
                 </div>
               </div>
-
-              {/* Meal Items */}
-              <div className="p-6">
-                <div className="space-y-3 mb-6">
-                  {meal.items.length === 0 && <p className="text-neutral-500 text-sm text-center py-4">لا توجد أصناف، اضغط لإضافة طعام</p>}
-                  
-                  {meal.items.map((item: any) => (
-                    <div key={item.instanceId} className="flex items-center justify-between bg-black/40 p-3 rounded-2xl border border-neutral-800/50">
-                      <div className="flex-1">
-                        <p className="font-bold text-sm">{item.name}</p>
-                        <p className="text-[10px] text-neutral-500 uppercase">{item.type} | {item.state}</p>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <input 
-                          type="number" 
-                          className="w-16 bg-neutral-800 border border-neutral-700 rounded-lg p-2 text-center text-sm font-black outline-none focus:border-blue-500 no-print" 
-                          value={item.grams} 
-                          onChange={(e) => updateGrams(meal.id, item.instanceId, parseFloat(e.target.value) || 0)} 
-                        />
-                        <span className="text-xs font-bold w-12">{item.grams}جم</span>
-                        <button onClick={() => removeItem(meal.id, item.instanceId)} className="text-neutral-600 hover:text-red-500 no-print transition-colors"><X size={18}/></button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Open Modal Button */}
-                <button 
-                  onClick={() => openAddModal(meal.id)} 
-                  className="w-full no-print py-4 rounded-xl border-2 border-dashed border-neutral-700 hover:border-blue-500 text-neutral-500 hover:text-blue-400 font-bold flex items-center justify-center gap-2 transition-all hover:bg-blue-900/10"
-                >
-                  <Plus size={20} /> إضافة صنف لـ {meal.name}
+              
+              <div className="p-4">
+                <table className="w-full text-right border-collapse">
+                  <thead className="text-xs text-neutral-500 border-b border-neutral-800 print:text-gray-400">
+                    <tr>
+                      <th className="pb-2">الصنف</th>
+                      <th className="pb-2 text-center">الكمية</th>
+                      <th className="pb-2 text-center print:hidden">البروتين</th>
+                      <th className="pb-2 text-center print:hidden">السعرات</th>
+                      <th className="pb-2 text-center print:hidden"></th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-neutral-800/50 print:divide-gray-100">
+                    {meal.items.map((it: any) => (
+                      <tr key={it.instId} className="group">
+                        <td className="py-3 font-medium">
+                          <div className="text-sm print:text-base print:font-bold">{formatFoodName(it.name)}</div>
+                          <div className="text-[10px] text-neutral-500 print:hidden">{it.type}</div>
+                        </td>
+                        <td className="py-3 text-center">
+                          <input type="number" className="w-16 bg-black border border-neutral-800 rounded p-1 text-center print:hidden" value={it.grams} onChange={e => setMeals(meals.map(m => m.id === meal.id ? {...m, items: m.items.map((i:any) => i.instId === it.instId ? {...i, grams: parseFloat(e.target.value)||0} : i)} : m))}/>
+                          <span className="hidden print:inline font-mono font-bold text-blue-600">{it.grams}g</span>
+                        </td>
+                        <td className="py-3 text-center text-xs print:hidden">{Math.round(it.protein * it.grams/100)}g</td>
+                        <td className="py-3 text-center text-xs font-bold print:hidden">{Math.round(it.calories * it.grams/100)}</td>
+                        <td className="py-3 text-center print:hidden">
+                          <button onClick={() => setMeals(meals.map(m => m.id === meal.id ? {...m, items: m.items.filter((i:any) => i.instId !== it.instId)} : m))} className="text-neutral-700 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><X size={14}/></button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                <button onClick={() => {setActiveMealId(meal.id); setIsModalOpen(true);}} className="w-full mt-4 py-2 border border-dashed border-neutral-700 text-neutral-500 text-xs rounded-xl hover:bg-blue-600/10 hover:text-blue-400 transition-all print:hidden">
+                   + إضافة أصناف للوجبة
                 </button>
               </div>
             </div>
           ))}
+          
+          <button onClick={() => setMeals([...meals, {id: Date.now(), name: "وجبة جديدة", items: []}])} className="w-full py-4 bg-neutral-900 border-2 border-dashed border-neutral-800 rounded-3xl text-neutral-400 font-bold hover:bg-neutral-800 transition-all print:hidden">
+            + إضافة وجبة جديدة لليوم
+          </button>
         </div>
 
-        {/* ========== POPUP MODAL (SEPARATE WINDOW) ========== */}
-        {isModalOpen && (
-          <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex justify-center items-center p-4 no-print">
-            <div className="bg-neutral-900 border border-neutral-800 rounded-3xl w-full max-w-2xl max-h-[85vh] flex flex-col shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-              
-              {/* Modal Header */}
-              <div className="p-6 border-b border-neutral-800 flex justify-between items-center bg-neutral-950/50">
-                <h2 className="text-xl font-black">إضافة طعام جديد</h2>
-                <button onClick={() => setIsModalOpen(false)} className="text-neutral-500 hover:text-red-500 bg-neutral-800 hover:bg-red-900/30 p-2 rounded-full transition-all">
-                  <X size={20} />
-                </button>
-              </div>
-
-              {/* Modal Search & Filters */}
-              <div className="p-6 border-b border-neutral-800 bg-neutral-900">
-                <div className="relative mb-4">
-                  <Search className="absolute right-4 top-3.5 text-neutral-500" size={20} />
-                  <input 
-                    type="text" 
-                    placeholder={`ابحث في ${FOOD_DATABASE.length} صنف...`} 
-                    className="w-full bg-black border border-neutral-700 rounded-xl py-3 pr-12 outline-none focus:border-blue-500 transition-all text-lg"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {foodTypes.map(t => (
-                    <button 
-                      key={t} onClick={() => setActiveFilter(t)}
-                      className={`px-4 py-1.5 rounded-full text-xs font-black border transition-all ${activeFilter === t ? 'bg-blue-600 border-blue-600 text-white' : 'bg-neutral-800 border-neutral-700 text-neutral-400 hover:text-white'}`}
-                    >
-                      {t}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Modal Food List (Scrollable) */}
-              <div className="overflow-y-auto p-4 custom-scrollbar bg-black/20" style={{ maxHeight: '50vh' }}>
-                <div className="grid grid-cols-1 gap-2">
-                  {filteredDatabase.map(f => (
-                    <button 
-                      key={f.id} 
-                      onClick={() => addItemToActiveMeal(f)} 
-                      className="flex justify-between items-center p-4 bg-neutral-800/40 border border-neutral-800/80 rounded-2xl hover:bg-blue-600/20 hover:border-blue-500/50 text-right group transition-all"
-                    >
-                      <div className="flex flex-col items-start">
-                         <span className="text-sm font-bold group-hover:text-blue-400">{f.name}</span>
-                         <span className="text-xs text-neutral-500 mt-1">{f.calories} kcal / 100g | {f.type}</span>
-                      </div>
-                      <div className="bg-neutral-900 p-2 rounded-full group-hover:bg-blue-600 transition-colors">
-                        <Plus size={18} className="text-neutral-400 group-hover:text-white" />
-                      </div>
-                    </button>
-                  ))}
-                  {filteredDatabase.length === 0 && (
-                    <div className="text-center text-neutral-500 py-10 font-medium">لا توجد نتائج مطابقة لبحثك</div>
-                  )}
-                </div>
-              </div>
+        {/* 📋 PRINT FOOTER: يظهر فقط في الـ PDF */}
+        <div className="hidden print:block mt-12 pt-8 border-t-2 border-gray-100">
+          <div className="bg-blue-600 text-white p-6 rounded-2xl flex justify-between items-center">
+            <div>
+              <p className="text-xs opacity-80">للمتابعة والاستفسارات</p>
+              <h3 className="text-xl font-black">C/Mohamed Saed</h3>
+            </div>
+            <div className="text-right">
+              <p className="font-mono text-xl">01022816320</p>
             </div>
           </div>
-        )}
+          <p className="text-center text-[10px] text-gray-400 mt-4 italic">هذا النظام صمم خصيصاً بناءً على احتياجاتك الفسيولوجية، يرجى الالتزام بالكميات المحددة.</p>
+        </div>
 
       </div>
+
+      {/* 🔍 MULTI-ADD MODAL */}
+      {isModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex justify-center items-center p-4">
+          <div className="bg-neutral-900 border border-neutral-800 rounded-[2.5rem] w-full max-w-2xl max-h-[80vh] flex flex-col shadow-2xl overflow-hidden">
+            <div className="p-6 border-b border-neutral-800 flex justify-between items-center">
+              <h2 className="text-xl font-black">قائمة الطعام ({selectedFoods.size} محدد)</h2>
+              <button onClick={() => setIsModalOpen(false)} className="bg-neutral-800 p-2 rounded-full hover:text-red-500"><X size={20}/></button>
+            </div>
+            
+            <div className="p-4 bg-black/50">
+              <div className="relative">
+                <Search className="absolute right-4 top-3 text-neutral-500" size={20}/>
+                <input autoFocus className="w-full bg-neutral-800 border border-neutral-700 rounded-2xl py-3 pr-12 outline-none focus:border-blue-500" placeholder="ابحث عن أرز، دجاج، فول..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}/>
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
+              {filteredDatabase.map(f => (
+                <div key={f.id} onClick={() => toggleFoodSelection(f.id)} className={`flex justify-between items-center p-4 rounded-2xl cursor-pointer border transition-all ${selectedFoods.has(f.id) ? 'bg-blue-600 border-blue-400 shadow-lg shadow-blue-900/20' : 'bg-black/40 border-neutral-800 hover:border-neutral-600'}`}>
+                  <div>
+                    <p className="font-bold">{f.name}</p>
+                    <p className="text-[10px] opacity-60">{f.calories} kcal | P: {f.protein}g | C: {f.carbs}g</p>
+                  </div>
+                  {selectedFoods.has(f.id) ? <Check size={20}/> : <Plus size={20} className="text-neutral-600"/>}
+                </div>
+              ))}
+            </div>
+
+            {selectedFoods.size > 0 && (
+              <div className="p-6 border-t border-neutral-800 bg-neutral-950">
+                <button onClick={addSelectedToMeal} className="w-full bg-blue-600 py-4 rounded-2xl font-black text-lg hover:bg-blue-500 transition-all shadow-xl shadow-blue-600/20">
+                  إضافة {selectedFoods.size} أصناف للوجبة الآن
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function MacroCard({ label, value, color, unit }: any) {
+function MacroBox({ label, value, unit, color }: any) {
   return (
-    <div className="bg-neutral-900 border border-neutral-800 p-5 rounded-3xl text-center shadow-inner">
-      <p className="text-[10px] font-black uppercase text-neutral-500 mb-1">{label}</p>
-      <p className={`text-2xl font-black ${color}`}>{Math.round(value)} <span className="text-xs opacity-60">{unit}</span></p>
+    <div className="bg-neutral-900 border border-neutral-800 p-4 rounded-3xl text-center print:bg-white print:border-gray-200 print:rounded-xl print:p-2">
+      <p className="text-[10px] font-black text-neutral-500 mb-1 uppercase print:text-gray-400">{label}</p>
+      <p className={`text-xl font-black ${color} print:text-black print:text-lg`}>
+        {Math.round(value)} <span className="text-[10px] opacity-50 print:opacity-100">{unit}</span>
+      </p>
     </div>
   );
 }
