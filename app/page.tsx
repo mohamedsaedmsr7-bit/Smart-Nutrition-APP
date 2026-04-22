@@ -2,7 +2,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { 
   Plus, Trash2, Search, Printer, ArrowUp, ArrowDown, X, Check, Save, Copy, User, 
-  Settings, ChevronDown, ChevronUp, Sun, Moon, Info, Layout, GripVertical
+  Settings, ChevronDown, ChevronUp, Sun, Moon, Info, Layout, GripVertical, Lock
 } from 'lucide-react';
 import {
   DndContext, 
@@ -51,10 +51,10 @@ const FOOD_DATABASE = [
   { id: 119, name: "Sweet Potato - بطاطا حلوة", category: "Carb", state: "Raw", carbs: 20.0, protein: 1.6, fat: 0.1, calories: 86.0 },
   { id: 120, name: "Baked Sweet Potato - بطاطا حلوة مشوية", category: "Carb", state: "Baked", carbs: 24.0, protein: 2.0, fat: 0.1, calories: 105.0 },
   { id: 121, name: "Oats Bread - خبز شوفان", category: "Carb", state: "Baked", carbs: 42.0, protein: 9.5, fat: 4.5, calories: 240.0 },
-  { id: 122, name: "burglar cooked  - مطبوخ برغل", category: "Carb", state: "cooked", carbs: 19, protein: 3, fat: 0.25, calories: 85 },
-  { id: 123, name: "burglar - برغل", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat:1.3, calories: 342 },
-  { id: 124, name: "Freekeh cooked  - فريك مطبوخ ", category: "Carb", state: "cooked", carbs: 19, protein: 6, fat: 0.5, calories: 150 },
-  { id: 125, name: "Freekeh - فريك", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat:1.5, calories: 340 },
+  { id: 122, name: "burglar cooked - مطبوخ برغل", category: "Carb", state: "cooked", carbs: 19, protein: 3, fat: 0.25, calories: 85 },
+  { id: 123, name: "burglar - برغل", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat: 1.3, calories: 342 },
+  { id: 124, name: "Freekeh cooked - فريك مطبوخ ", category: "Carb", state: "cooked", carbs: 19, protein: 6, fat: 0.5, calories: 150 },
+  { id: 125, name: "Freekeh - فريك", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat: 1.5, calories: 340 },
 
   // --- PROTEIN SOURCES (مصادر البروتين) ---
   { id: 201, name: "Raw Chicken Breast - صدور دجاج نية", category: "Protein", state: "Raw", carbs: 0, protein: 23, fat: 1, calories: 120 },
@@ -88,6 +88,16 @@ const FOOD_DATABASE = [
   { id: 229, name: "Raw Lentils - عدس ني", category: "Protein/Legume", state: "Raw", carbs: 60, protein: 25, fat: 1.3, calories: 353 },
   { id: 230, name: "Cooked Lentils - عدس مطبوخ", category: "Protein/Legume", state: "Cooked", carbs: 20, protein: 9, fat: 0.4, calories: 116 },
   { id: 231, name: "Cooked Chickpeas - حمص مطبوخ", category: "Protein/Legume", state: "Cooked", carbs: 27, protein: 9, fat: 3, calories: 164 },
+  
+  // --- BEEF & MINCED MEAT (اللحوم والمفروم) ---
+  { id: 232, name: "Lean Minced Beef (No Fat) - لحمة مفرومة بدون دهن", category: "Protein", state: "Raw", carbs: 0, protein: 24, fat: 2, calories: 120 },
+  { id: 233, name: "Minced Beef (5% Fat) - لحمة مفرومة 5% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 21.5, fat: 5, calories: 137 },
+  { id: 234, name: "Minced Beef (10% Fat) - لحمة مفرومة 10% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 20, fat: 10, calories: 176 },
+  { id: 235, name: "Beef Burger (10% Fat) - برجر بقري 10% دهون", category: "Protein", state: "Raw", carbs: 1, protein: 19, fat: 10, calories: 180 },
+  { id: 236, name: "Grilled Lean Minced - مفروم بدون دهن مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 30, fat: 3, calories: 160 },
+  { id: 237, name: "Grilled Minced (5% Fat) - مفروم 5% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 28, fat: 7, calories: 185 },
+  { id: 238, name: "Grilled Minced (10% Fat) - مفروم 10% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 26, fat: 13, calories: 230 },
+  { id: 239, name: "Grilled Beef Burger (10% Fat) - برجر مشوي 10% دهون", category: "Protein", state: "Grilled", carbs: 1.5, protein: 24, fat: 12, calories: 225 },
 
   // --- FAT SOURCES (مصادر الدهون) ---
   { id: 301, name: "Olive Oil - زيت زيتون", category: "Fat", state: "Raw", carbs: 0, protein: 0, fat: 100, calories: 884 },
@@ -195,17 +205,6 @@ const FOOD_DATABASE = [
   { id: 1002, name: "Hawawshi - حواوشي", category: "Meal", state: "Baked", carbs: 30, protein: 15, fat: 20, calories: 350 },
   { id: 1003, name: "Falafel - طعمية", category: "Meal", state: "Fried", carbs: 20, protein: 8, fat: 15, calories: 250 },
   { id: 1004, name: "Stuffed Vine Leaves - ورق عنب", category: "Meal", state: "Cooked", carbs: 25, protein: 3, fat: 8, calories: 180 },
-// --- BEEF & MINCED MEAT (اللحوم والمفروم) ---
-  { id: 203, name: "Lean Minced Beef (No Fat) - لحمة مفرومة بدون دهن", category: "Protein", state: "Raw", carbs: 0, protein: 24, fat: 2, calories: 120 },
-  { id: 204, name: "Minced Beef (5% Fat) - لحمة مفرومة 5% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 21.5, fat: 5, calories: 137 },
-  { id: 205, name: "Minced Beef (10% Fat) - لحمة مفرومة 10% دهون", category: "Protein", state: "Raw", carbs: 0, protein: 20, fat: 10, calories: 176 },
-  { id: 206, name: "Beef Burger (10% Fat) - برجر بقري 10% دهون", category: "Protein", state: "Raw", carbs: 1, protein: 19, fat: 10, calories: 180 },
-
-  // --- COOKED VERSIONS (الأصناف بعد الطهي) ---
-  { id: 207, name: "Grilled Lean Minced - مفروم بدون دهن مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 30, fat: 3, calories: 160 },
-  { id: 208, name: "Grilled Minced (5% Fat) - مفروم 5% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 28, fat: 7, calories: 185 },
-  { id: 209, name: "Grilled Minced (10% Fat) - مفروم 10% دهون مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 26, fat: 13, calories: 230 },
-  { id: 210, name: "Grilled Beef Burger (10% Fat) - برجر مشوي 10% دهون", category: "Protein", state: "Grilled", carbs: 1.5, protein: 24, fat: 12, calories: 225 },
 ];
 
 // --- Types ---
@@ -236,7 +235,11 @@ interface TargetMacros {
   fat: number;
 }
 
-export default function NutritionPro() {
+export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState('');
+  const [loginError, setLoginError] = useState(false);
+
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [meals, setMeals] = useState<Meal[]>([
     { id: 'meal-1', name: "الوجبة الأولى", notes: "", items: [] },
@@ -270,6 +273,16 @@ export default function NutritionPro() {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('pro_theme', theme);
   }, [theme]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === 'admin123') {
+      setIsAuthenticated(true);
+      setLoginError(false);
+    } else {
+      setLoginError(true);
+    }
+  };
 
   // Fuzzy Search Implementation
   const normalizeArabic = (str: string) => {
@@ -389,6 +402,70 @@ export default function NutritionPro() {
       setTargetMacros(temp.targetMacros);
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className={cn(
+        "min-h-screen flex items-center justify-center p-4 transition-colors duration-300",
+        theme === 'dark' ? "bg-[#080808] text-white" : "bg-gray-50 text-gray-900"
+      )} dir="rtl">
+        <div className={cn(
+          "w-full max-w-md p-10 rounded-[3rem] border transition-all shadow-2xl relative overflow-hidden",
+          theme === 'dark' ? "bg-neutral-900/50 border-neutral-800 shadow-blue-900/10" : "bg-white border-gray-100 shadow-gray-200"
+        )}>
+          {/* Decorative background element */}
+          <div className="absolute -top-24 -right-24 w-48 h-48 bg-blue-600/10 blur-[100px] rounded-full" />
+          
+          <div className="flex flex-col items-center mb-10 relative z-10">
+            <div className="w-20 h-20 bg-blue-600 rounded-[2rem] flex items-center justify-center shadow-2xl shadow-blue-600/40 mb-6 rotate-3">
+              <Lock className="text-white" size={32} />
+            </div>
+            <h1 className="text-3xl font-black tracking-tight">برو نيوتريشن <span className="text-blue-500">PRO</span></h1>
+            <p className="text-[10px] opacity-40 uppercase tracking-[0.3em] font-black mt-2">Protected System Access</p>
+          </div>
+
+          <form onSubmit={handleLogin} className="space-y-6 relative z-10">
+            <div className="space-y-3">
+              <label className="text-[11px] font-black opacity-40 uppercase mr-1 tracking-widest block">كلمة المرور</label>
+              <input 
+                type="password"
+                autoFocus
+                className={cn(
+                  "w-full bg-black/40 border-2 p-5 rounded-[1.5rem] outline-none transition-all font-black text-center tracking-[0.6em] text-xl",
+                  loginError ? "border-red-500/50 bg-red-500/5" : "border-neutral-800 focus:border-blue-600/50 focus:bg-blue-600/5"
+                )}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  setLoginError(false);
+                }}
+              />
+              {loginError && (
+                <p className="text-red-500 text-[10px] font-black text-center mt-3 animate-pulse bg-red-500/10 py-2 rounded-lg">
+                  خطأ في كلمة المرور، يرجى إعادة المحاولة
+                </p>
+              )}
+            </div>
+
+            <button 
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white py-5 rounded-[1.5rem] font-black text-lg transition-all shadow-xl shadow-blue-600/30 active:scale-[0.97] flex items-center justify-center gap-3"
+            >
+              دخول النظام <Check size={20}/>
+            </button>
+          </form>
+
+          <div className="mt-10 pt-8 border-t border-neutral-800/50 text-center relative z-10">
+            <p className="text-[9px] opacity-30 font-black leading-relaxed uppercase tracking-widest">
+              Authorized Personnel Only<br/>
+              © 2026 PRO NUTRITION ENGINEERING
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={cn(
