@@ -51,13 +51,10 @@ const FOOD_DATABASE = [
   { id: 119, name: "Sweet Potato - بطاطا حلوة", category: "Carb", state: "Raw", carbs: 20.0, protein: 1.6, fat: 0.1, calories: 86.0 },
   { id: 120, name: "Baked Sweet Potato - بطاطا حلوة مشوية", category: "Carb", state: "Baked", carbs: 24.0, protein: 2.0, fat: 0.1, calories: 105.0 },
   { id: 121, name: "Oats Bread - خبز شوفان", category: "Carb", state: "Baked", carbs: 42.0, protein: 9.5, fat: 4.5, calories: 240.0 },
-  { id: 121, name: "burglar cooked  - مطبوخ برغل", category: "Carb", state: "cooked", carbs: 19, protein: 3, fat: 0.25, calories: 85 },
-  { id: 121, name: "burglar - فريك", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat:1.3, calories: 342 },
-  { id: 121, name: "Freekeh cooked  - فريك مطبوخ ", category: "Carb", state: "cooked", carbs: 19, protein: 6, fat: 0.5, calories: 150 },
-  { id: 121, name: "Freekeh - فريك", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat:1.5, calories: 340 },
-
-
-
+  { id: 122, name: "burglar cooked  - مطبوخ برغل", category: "Carb", state: "cooked", carbs: 19, protein: 3, fat: 0.25, calories: 85 },
+  { id: 123, name: "burglar - برغل", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat:1.3, calories: 342 },
+  { id: 124, name: "Freekeh cooked  - فريك مطبوخ ", category: "Carb", state: "cooked", carbs: 19, protein: 6, fat: 0.5, calories: 150 },
+  { id: 125, name: "Freekeh - فريك", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat:1.5, calories: 340 },
 
   // --- PROTEIN SOURCES (مصادر البروتين) ---
   { id: 201, name: "Raw Chicken Breast - صدور دجاج نية", category: "Protein", state: "Raw", carbs: 0, protein: 23, fat: 1, calories: 120 },
@@ -76,7 +73,7 @@ const FOOD_DATABASE = [
   { id: 214, name: "Whole Eggs (Gm) - بيض كامل (جم)", category: "Protein", state: "Raw", carbs: 1, protein: 13, fat: 11, calories: 155 },
   { id: 215, name: "Boiled Eggs - بيض مسلوق", category: "Protein", state: "Boiled", carbs: 1, protein: 13, fat: 11, calories: 155 },
   { id: 216, name: "Egg White - بياض بيض", category: "Protein", state: "Raw", carbs: 0, protein: 11, fat: 0.5, calories: 52 },
-  { id: 217, name: "1 Whole Egg - بيضة كاملة واحدة", category: "Protein", state: "1 Egg", carbs: 0.3, protein: 8, fat: 6, calories: 75 }, // Adjusted calories to typical egg
+  { id: 217, name: "1 Whole Egg - بيضة كاملة واحدة", category: "Protein", state: "1 Egg", carbs: 0.3, protein: 8, fat: 6, calories: 75 },
   { id: 218, name: "Canned Tuna (Water) - تونة معلبة (ماء)", category: "Protein", state: "Canned", carbs: 0, protein: 25, fat: 1, calories: 116 },
   { id: 219, name: "Canned Tuna (Oil) - تونة معلبة (زيت)", category: "Protein", state: "Canned", carbs: 0, protein: 25, fat: 10, calories: 200 },
   { id: 220, name: "Canned Sardines - سردين معلب", category: "Protein", state: "Canned", carbs: 0, protein: 25, fat: 11, calories: 208 },
@@ -711,11 +708,18 @@ function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal
         </div>
         
         <div className="flex items-center gap-3">
-          <div className="flex gap-2 mr-4 print:hidden">
-             <div className="text-[10px] font-black bg-orange-500/10 text-orange-500 px-3 py-1.5 rounded-full border border-orange-500/20">{Math.round(mealTotals.cal)} kcal</div>
-             <div className="text-[10px] font-black bg-red-500/10 text-red-500 px-3 py-1.5 rounded-full border border-red-500/20">{Math.round(mealTotals.pro)}g P</div>
+          <div className="flex gap-1.5 mr-4 print:hidden">
+             <div className="text-[9px] font-black bg-orange-500/10 text-orange-500 px-2.5 py-1.5 rounded-full border border-orange-500/20">{Math.round(mealTotals.cal)} kcal</div>
+             <div className="text-[9px] font-black bg-red-500/10 text-red-500 px-2.5 py-1.5 rounded-full border border-red-500/20">{Math.round(mealTotals.pro)}g P</div>
+             <div className="text-[9px] font-black bg-blue-500/10 text-blue-500 px-2.5 py-1.5 rounded-full border border-blue-500/20">{Math.round(mealTotals.carb)}g C</div>
+             <div className="text-[9px] font-black bg-yellow-500/10 text-yellow-500 px-2.5 py-1.5 rounded-full border border-yellow-500/20">{Math.round(mealTotals.fat)}g F</div>
           </div>
-          <div className="hidden print:block text-xs font-black text-blue-600">{Math.round(mealTotals.cal)} kcal</div>
+          <div className="hidden print:flex gap-3 text-xs font-black text-blue-700">
+            <span>{Math.round(mealTotals.cal)} kcal</span>
+            <span className="opacity-60">P: {Math.round(mealTotals.pro)}g</span>
+            <span className="opacity-60">C: {Math.round(mealTotals.carb)}g</span>
+            <span className="opacity-60">F: {Math.round(mealTotals.fat)}g</span>
+          </div>
           
           <button onClick={onDuplicate} title="تكرار الوجبة" className="p-2 text-neutral-500 hover:text-emerald-500 print:hidden transition-all">
             <Copy size={18}/>
@@ -890,3 +894,4 @@ function InfoBox({ label, value }: any) {
     </div>
   );
 }
+
