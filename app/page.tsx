@@ -910,43 +910,81 @@ function InfoBox({ label, value }: any) {
   );
 }
 
-return (
-  <div className="app-container">
-    {!isAuthenticated ? (
-      // واجهة طلب الباسورد
-      <div style={{ textAlign: 'center', marginTop: '50px' }}>
-        <h2>🔐 نظام إدارة السعرات - v11</h2>
-        <input 
-          type="password" 
-          placeholder="أدخل كلمة المرور" 
-          value={passwordInput}
-          onChange={(e) => setPasswordInput(e.target.value)}
-          style={{ padding: '10px', borderRadius: '5px', border: '1px solid #ccc' }}
-        />
-        <button onClick={handleLogin} style={{ padding: '10px 20px', marginLeft: '10px', cursor: 'pointer' }}>
-          دخول
-        </button>
-      </div>
-    ) : (
-      // المحتوى الأصلي بتاعك (الجداول والبيانات)
-      <div>
-        <h2>مرحباً بك.. يمكنك الآن إدارة الأصناف ✅</h2>
-        {/* هنا تحط الكود بتاع الجداول والأصناف اللي ضفناها سوا */}
-      </div>
-    )}
-  </div>
-);
+"use client"; // تأكد إن السطر ده موجود فوق خالص لو بتستخدم Next.js App Router
 
+import { useState } from "react";
 
-// نظام حماية بسيط للموقع
-const [isAuthenticated, setIsAuthenticated] = useState(false);
-const [passwordInput, setPasswordInput] = useState("");
-const CORRECT_PASSWORD = "my_secret_password"; // اكتب الباسورد اللي تحبه هنا
+export default function Home() {
+  // 1. التعريفات (States) - لازم تكون جوه الفانكشن وقبل الـ return
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [passwordInput, setPasswordInput] = useState("");
+  const CORRECT_PASSWORD = "123"; // الباسورد بتاعك هنا
 
-const handleLogin = () => {
-  if (passwordInput === CORRECT_PASSWORD) {
-    setIsAuthenticated(true);
-  } else {
-    alert("كلمة المرور خطأ، حاول مرة أخرى!");
-  }
-};
+  const handleLogin = () => {
+    if (passwordInput === CORRECT_PASSWORD) {
+      setIsAuthenticated(true);
+    } else {
+      alert("كلمة المرور خطأ!");
+    }
+  };
+
+  // 2. الـ return الأساسي - هو ده اللي بيتحكم في عرض الصفحة
+  return (
+    <div className="app-container">
+      {!isAuthenticated ? (
+        // --- واجهة طلب الباسورد ---
+        <div style={{ 
+          display: 'flex', 
+          flexDirection: 'column', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          height: '100vh',
+          direction: 'rtl' 
+        }}>
+          <h2 style={{ marginBottom: '20px' }}>🔐 نظام إدارة السعرات - v11</h2>
+          <input 
+            type="password" 
+            placeholder="أدخل كلمة المرور" 
+            value={passwordInput}
+            onChange={(e) => setPasswordInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()} // يفتح بالضغط على Enter
+            style={{ 
+              padding: '12px', 
+              borderRadius: '8px', 
+              border: '1px solid #ccc',
+              width: '250px',
+              textAlign: 'center'
+            }}
+          />
+          <button 
+            onClick={handleLogin} 
+            style={{ 
+              padding: '10px 30px', 
+              marginTop: '15px', 
+              backgroundColor: '#0070f3', 
+              color: 'white', 
+              border: 'none', 
+              borderRadius: '8px', 
+              cursor: 'pointer' 
+            }}
+          >
+            دخول
+          </button>
+        </div>
+      ) : (
+        // --- المحتوى الأصلي بتاعك (الجداول والبيانات) ---
+        <main>
+          <header style={{ padding: '20px', textAlign: 'center', background: '#f0f0f0' }}>
+            <h2>مرحباً بك.. يمكنك الآن إدارة الأصناف ✅</h2>
+            <button onClick={() => setIsAuthenticated(false)} style={{ color: 'red', cursor: 'pointer' }}>تسجيل خروج</button>
+          </header>
+
+          {/* هنا تحط الجداول وباقي كود التطبيق بتاعك */}
+          <div className="content">
+            {/* ... الكود القديم بتاعك ... */}
+          </div>
+        </main>
+      )}
+    </div>
+  );
+} // نهاية الفانكشن Home
