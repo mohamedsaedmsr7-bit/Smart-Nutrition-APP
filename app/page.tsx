@@ -50,6 +50,13 @@ const FOOD_DATABASE = [
   { id: 119, name: "Sweet Potato - بطاطا حلوة", category: "Carb", state: "Raw", carbs: 20.0, protein: 1.6, fat: 0.1, calories: 86.0 },
   { id: 120, name: "Baked Sweet Potato - بطاطا حلوة مشوية", category: "Carb", state: "Baked", carbs: 24.0, protein: 2.0, fat: 0.1, calories: 105.0 },
   { id: 121, name: "Oats Bread - خبز شوفان", category: "Carb", state: "Baked", carbs: 42.0, protein: 9.5, fat: 4.5, calories: 240.0 },
+  { id: 121, name: "burglar cooked  - مطبوخ برغل", category: "Carb", state: "cooked", carbs: 19, protein: 3, fat: 0.25, calories: 85 },
+  { id: 121, name: "burglar - فريك", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat:1.3, calories: 342 },
+  { id: 121, name: "Freekeh cooked  - فريك مطبوخ ", category: "Carb", state: "cooked", carbs: 19, protein: 6, fat: 0.5, calories: 150 },
+  { id: 121, name: "Freekeh - فريك", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat:1.5, calories: 340 },
+
+
+
 
   // --- PROTEIN SOURCES (مصادر البروتين) ---
   { id: 201, name: "Raw Chicken Breast - صدور دجاج نية", category: "Protein", state: "Raw", carbs: 0, protein: 23, fat: 1, calories: 120 },
