@@ -11,6 +11,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  DragEndEvent
 } from '@dnd-kit/core';
 import {
   arrayMove,
@@ -198,14 +199,14 @@ export default function NutritionPro() {
         acc.fat += it.fat * ratio;
       });
       return acc;
-    }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
+    }, { calories: 0, protein: 0, carbs: 0, fat: 0 } as TargetMacros);
   };
 
   const totals = calculateTotals();
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
+    if (over && active.id !== over.id) {
       setMeals((items) => {
         const oldIndex = items.findIndex(i => i.id === active.id);
         const newIndex = items.findIndex(i => i.id === over.id);
@@ -407,6 +408,28 @@ export default function NutritionPro() {
                 <ProgressBar label="الدهون" current={totals.fat} target={targetMacros.fat} unit="g" color="bg-yellow-500" />
               </div>
             </div>
+
+            {templates.length > 0 && (
+              <div className={cn("p-6 rounded-[2rem] border transition-all", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
+                <h3 className="flex items-center gap-2 mb-4 font-bold text-purple-500"><Copy size={18}/> القوالب المحفوظة</h3>
+                <div className="space-y-2">
+                  {templates.map(t => (
+                    <div key={t.id} className="flex gap-2">
+                      <button onClick={() => loadTemplate(t)} className="flex-1 text-right p-3 bg-neutral-800/50 rounded-xl hover:bg-neutral-800 text-xs font-bold border border-neutral-700/50 transition-all truncate">
+                        {t.name}
+                      </button>
+                      <button onClick={() => {
+                        const next = templates.filter(x => x.id !== t.id);
+                        setTemplates(next);
+                        localStorage.setItem('pro_nutrition_templates', JSON.stringify(next));
+                      }} className="p-3 text-neutral-500 hover:text-red-500">
+                        <Trash2 size={16}/>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </aside>
 
           <main className="lg:col-span-8 space-y-8">
@@ -420,7 +443,7 @@ export default function NutritionPro() {
                     onAddItems={() => { setActiveMealId(meal.id); setIsModalOpen(true); }}
                     onRemove={() => removeMeal(meal.id)}
                     onDuplicate={() => duplicateMeal(meal)}
-                    onUpdateMeal={(updated) => setMeals(meals.map(m => m.id === meal.id ? updated : m))}
+                    onUpdateMeal={(updated: Meal) => setMeals(meals.map(m => m.id === meal.id ? updated : m))}
                     moveItem={(itemInstId, dir) => moveItem(meal.id, itemInstId, dir)}
                   />
                 ))}
@@ -523,17 +546,25 @@ export default function NutritionPro() {
   );
 }
 
-function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal, moveItem }: any) {
+function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal, moveItem }: { 
+  meal: Meal, 
+  theme: 'dark' | 'light', 
+  onAddItems: () => void, 
+  onRemove: () => void, 
+  onDuplicate: () => void, 
+  onUpdateMeal: (updated: Meal) => void, 
+  moveItem: (itemInstId: string, direction: 'up' | 'down') => void 
+}) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: meal.id });
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1 };
 
-  const mealTotals = meal.items.reduce((acc: any, it: any) => {
+  const mealTotals = meal.items.reduce((acc, it) => {
     const r = it.grams / 100;
     acc.cal += it.calories * r; acc.pro += it.protein * r; acc.carb += it.carbs * r; acc.fat += it.fat * r;
     return acc;
-  }, { cal: 0, pro: 0, carb: 0, fat: 0 });
+  }, { cal: 0, pro: 0, carb: 0, fat: 0 } as { cal: number, pro: number, carb: number, fat: number });
 
   return (
     <div ref={setNodeRef} style={style} className={cn("rounded-[2.5rem] border transition-all overflow-hidden print:border-none print:shadow-none print:mb-12 print:break-inside-avoid", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-100 shadow-sm", isDragging && "opacity-50 ring-2 ring-blue-600")}>
@@ -577,14 +608,14 @@ function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal
               </tr>
             </thead>
             <tbody>
-              {meal.items.map((it: any) => (
+              {meal.items.map((it) => (
                 <tr key={it.instId} className={cn("group rounded-2xl", theme === 'dark' ? "bg-black/20" : "bg-gray-50/50")}>
                   <td className="py-4 pr-4 rounded-r-2xl">
                     <div className="font-bold text-sm">{it.name}</div>
                     <div className="text-[10px] opacity-40 font-bold">{it.category}</div>
                   </td>
                   <td className="py-4 text-center">
-                    <input type="number" className={cn("w-16 p-2 rounded-xl text-center font-black text-xs border print:hidden", theme === 'dark' ? "bg-black border-neutral-800" : "bg-white border-gray-200")} value={it.grams} onChange={e => onUpdateMeal({ ...meal, items: meal.items.map((i: any) => i.instId === it.instId ? { ...i, grams: parseFloat(e.target.value) || 0 } : i) })} />
+                    <input type="number" className={cn("w-16 p-2 rounded-xl text-center font-black text-xs border print:hidden", theme === 'dark' ? "bg-black border-neutral-800" : "bg-white border-gray-200")} value={it.grams} onChange={e => onUpdateMeal({ ...meal, items: meal.items.map((i) => i.instId === it.instId ? { ...i, grams: parseFloat(e.target.value) || 0 } : i) })} />
                     <span className="hidden print:inline font-black text-sm">{it.grams} جم</span>
                   </td>
                   <td className="py-4 text-center text-xs font-bold text-red-500/80">{Math.round(it.protein * it.grams/100)}g</td>
@@ -632,7 +663,15 @@ function MacroInput({ label, value, onChange, color }: { label: string, value: n
   );
 }
 
-function ProgressBar({ label, current, target, unit, color }: any) {
+interface ProgressBarProps {
+  label: string;
+  current: number;
+  target: number;
+  unit: string;
+  color: string;
+}
+
+function ProgressBar({ label, current, target, unit, color }: ProgressBarProps) {
   const percentage = Math.min((current / target) * 100, 100);
   return (
     <div>
@@ -647,7 +686,7 @@ function ProgressBar({ label, current, target, unit, color }: any) {
   );
 }
 
-function InfoBox({ label, value }: any) {
+function InfoBox({ label, value }: { label: string, value: string | number }) {
   return (
     <div className="border-r-2 border-gray-100 pr-4 last:border-none">
       <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{label}</span>
