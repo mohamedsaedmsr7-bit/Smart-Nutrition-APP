@@ -1,7 +1,7 @@
 cd my-nutrition-app
 cd meal-calculator
 git add .
-git commit -m "log in password"
+git commit -m " اصناف اكل اخرى
 git push origin main
 
 

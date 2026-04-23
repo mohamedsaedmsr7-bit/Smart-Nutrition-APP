@@ -52,6 +52,48 @@ const FOOD_DATABASE = [
   { id: 119, name: "Bulgur - برغل", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat: 1.3, calories: 342 },
   { id: 120, name: "Freekeh Cooked - فريك مطبوخ", category: "Carb", state: "Cooked", carbs: 19, protein: 6, fat: 0.5, calories: 150 },
   { id: 121, name: "Freekeh - فريك", category: "Carb", state: "Raw", carbs: 76, protein: 12, fat: 1.5, calories: 340 },
+// --- LEGUMES (البقوليات - نيء ومطبوخ) ---
+  
+  // الفول المدمس (أساسي في مصر والخليج)
+  { id: 501, name: "Dry Fava Beans - فول تدميس تدميس (نيء)", category: "Legumes", state: "Raw", carbs: 58, protein: 26, fat: 1.5, calories: 340 },
+  { id: 502, name: "Cooked Fava Beans - فول مدمس (مسلوق سادة)", category: "Legumes", state: "Cooked", carbs: 18, protein: 8, fat: 0.5, calories: 110 },
+
+  // العدس (بأنواعه الأصفر وبجبة)
+  { id: 503, name: "Dry Lentils - عدس (نيء)", category: "Legumes", state: "Raw", carbs: 60, protein: 24, fat: 1, calories: 350 },
+  { id: 504, name: "Cooked Lentils - عدس مطبوخ / مسلوق", category: "Legumes", state: "Cooked", carbs: 20, protein: 9, fat: 0.4, calories: 116 },
+
+  // الحمص (حمص الشام / بليلة)
+  { id: 505, name: "Dry Chickpeas - حمص شام (نيء)", category: "Legumes", state: "Raw", carbs: 61, protein: 19, fat: 6, calories: 364 },
+  { id: 506, name: "Cooked Chickpeas - حمص شام مسلوق", category: "Legumes", state: "Cooked", carbs: 27, protein: 8.9, fat: 2.6, calories: 164 },
+
+  // الفاصوليا البيضاء
+  { id: 507, name: "Dry White Beans - فاصوليا بيضاء (نيء)", category: "Legumes", state: "Raw", carbs: 60, protein: 22, fat: 1.2, calories: 337 },
+  { id: 508, name: "Cooked White Beans - فاصوليا بيضاء مسلوقة", category: "Legumes", state: "Cooked", carbs: 25, protein: 9.7, fat: 0.5, calories: 139 },
+
+  // اللوبيا (ذات العين السوداء)
+  { id: 509, name: "Dry Black-eyed Peas - لوبيا (نيء)", category: "Legumes", state: "Raw", carbs: 60, protein: 23, fat: 1.3, calories: 336 },
+  { id: 510, name: "Cooked Black-eyed Peas - لوبيا مسلوقة", category: "Legumes", state: "Cooked", carbs: 21, protein: 8, fat: 0.5, calories: 116 },
+
+  // الترمس (تسالي مصرية وخليجية)
+  { id: 511, name: "Dry Lupini Beans - ترمس (نيء)", category: "Legumes", state: "Raw", carbs: 40, protein: 36, fat: 9, calories: 371 },
+  { id: 512, name: "Cooked Lupini Beans - ترمس مسلوق", category: "Legumes", state: "Cooked", carbs: 10, protein: 16, fat: 4.8, calories: 119 },
+
+  // البسلة (البازلاء)
+  { id: 513, name: "Dry Split Peas - بسلة ناشفة (نيء)", category: "Legumes", state: "Raw", carbs: 60, protein: 24, fat: 1.2, calories: 341 },
+  { id: 514, name: "Cooked Green Peas - بسلة خضراء مسلوقة", category: "Legumes", state: "Cooked", carbs: 14.5, protein: 5.4, fat: 0.4, calories: 81 },
+
+  // الفول الأخضر (الحيراتي)
+  { id: 515, name: "Fresh Green Fava Beans - فول أخضر (حيراتي)", category: "Legumes", state: "Raw", carbs: 18, protein: 8, fat: 0.7, calories: 88 },
+
+  // فول الصويا
+  { id: 516, name: "Dry Soybeans - فول صويا (نيء)", category: "Legumes", state: "Raw", carbs: 30, protein: 36, fat: 20, calories: 446 },
+  { id: 517, name: "Cooked Soybeans - فول صويا مسلوق", category: "Legumes", state: "Cooked", carbs: 11, protein: 18, fat: 9, calories: 173 },
+
+  // الفاصوليا الحمراء (تستخدم بكثرة في السلطات والطبخ الخليجي)
+  { id: 518, name: "Dry Red Kidney Beans - فاصوليا حمراء (نيء)", category: "Legumes", state: "Raw", carbs: 60, protein: 24, fat: 0.8, calories: 333 },
+  { id: 519, name: "Cooked Red Kidney Beans - فاصوليا حمراء مسلوقة", category: "Legumes", state: "Cooked", carbs: 22.8, protein: 8.7, fat: 0.5, calories: 127 }
+
+
 
   // --- PROTEIN SOURCES ---
   { id: 201, name: "Grilled Chicken Breast - صدور دجاج مشوية", category: "Protein", state: "Grilled", carbs: 0, protein: 31, fat: 3.6, calories: 165 },
