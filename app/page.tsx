@@ -276,7 +276,7 @@ export default function NutritionPro() {
     return list;
   }, [searchTerm, selectedCategory]);
 
-  const categories = ["All", "Carb", "Protein", "Fat", "Fruit", "Vegetable", "Legumes"];
+  const categories = ["All", "Carb", "Protein", "Fat", "Fruit", "Vegetable", "Legumes", "Dairy"];
 
   const calculateTotals = () => {
     return meals.reduce((acc, meal) => {
