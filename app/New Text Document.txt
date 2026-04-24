@@ -1,7 +1,7 @@
 cd my-nutrition-app
 cd meal-calculator
 git add .
-git commit -m " لبن و بيض
+git commit -m " copy to whatsapp
 git push origin main
 
 

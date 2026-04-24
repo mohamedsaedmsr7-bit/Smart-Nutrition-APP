@@ -1,4 +1,3 @@
-
 "use client";
 import { useState, useEffect, useMemo } from 'react';
 import { 
@@ -92,7 +91,7 @@ const FOOD_DATABASE = [
   { id: 306, name: "Avocado - أفوكادو", category: "Fruit/Fat", state: "Raw", carbs: 9, protein: 2, fat: 15, calories: 160 }, 
   { id: 317, name: "Ghee (Ghi) - سمنة بلدي", category: "Fat", state: "Raw", carbs: 0, protein: 0, fat: 100.0, calories: 900.0 },
  
-  // --- NUTS & SEEDS (المكسرات والبذور) ---
+  // --- NUTS & SEEDS ---
   { id: 307, name: "Walnuts - عين جمل", category: "Fat/Nut", state: "Raw", carbs: 14.0, protein: 15.0, fat: 65.0, calories: 654.0 },
   { id: 308, name: "Cashews - كاجو", category: "Fat/Nut", state: "Raw", carbs: 30.0, protein: 18.0, fat: 44.0, calories: 553.0 },
   { id: 309, name: "Pistachios - فستق", category: "Fat/Nut", state: "Raw", carbs: 27.0, protein: 20.0, fat: 45.0, calories: 562.0 },
@@ -109,18 +108,16 @@ const FOOD_DATABASE = [
   { id: 602, name: "Tomato - طماطم", category: "Vegetable", state: "Raw", carbs: 4, protein: 0.9, fat: 0.2, calories: 18 },
   { id: 603, name: "Cucumber - خيار", category: "Vegetable", state: "Raw", carbs: 3.6, protein: 0.7, fat: 0.1, calories: 16 },
   { id: 610, name: "Molokhia - ملوخية مطبوخة", category: "Vegetable", state: "Cooked", carbs: 6.0, protein: 3.0, fat: 2.0, calories: 55.0 },
-  
-  // --- COOKED VEGETABLES (خضار مطبوخ بالصلصة) ---
   { id: 611, name: "Cooked Green Beans - فاصوليا خضراء (مطبوخة)", category: "Vegetable", state: "Cooked", carbs: 9.0, protein: 2.0, fat: 2.5, calories: 65.0 },
   { id: 612, name: "Cooked Peas & Carrots - بسلة بالجزر (مطبوخة)", category: "Vegetable", state: "Cooked", carbs: 14.0, protein: 4.0, fat: 2.5, calories: 95.0 },
   { id: 613, name: "Cooked Zucchini - كوسة مطبوخة", category: "Vegetable", state: "Cooked", carbs: 5.0, protein: 1.5, fat: 2.0, calories: 45.0 },
   { id: 614, name: "Cooked Okra - بامية مطبوخة", category: "Vegetable", state: "Cooked", carbs: 8.5, protein: 2.0, fat: 2.5, calories: 65.0 },
 
-  // --- SAUCES (الصلصات) ---
+  // --- SAUCES ---
   { id: 701, name: "Tomato Sauce (Homemade) - صلصة طماطم (منزلية)", category: "Vegetable", state: "Cooked", carbs: 4.5, protein: 1.5, fat: 0.2, calories: 25 },
   { id: 702, name: "Tomato Paste - معجون طماطم (صلصة معلبة)", category: "Vegetable", state: "Ready", carbs: 18, protein: 4.3, fat: 0.5, calories: 82 },
 
-  // --- LEGUMES (البقوليات) ---
+  // --- LEGUMES ---
   { id: 501, name: "Dry Fava Beans - فول تدميس (نيء)", category: "Legumes", state: "Raw", carbs: 58, protein: 26, fat: 1.5, calories: 340 },
   { id: 502, name: "Cooked Fava Beans - فول مدمس (مسلوق سادة)", category: "Legumes", state: "Cooked", carbs: 18, protein: 8, fat: 0.5, calories: 110 },
   { id: 503, name: "Dry Lentils - عدس (نيء)", category: "Legumes", state: "Raw", carbs: 60, protein: 24, fat: 1, calories: 350 },
@@ -140,7 +137,7 @@ const FOOD_DATABASE = [
   { id: 519, name: "Cooked Red Kidney Beans - فاصوليا حمراء مسلوقة", category: "Legumes", state: "Cooked", carbs: 22.8, protein: 8.7, fat: 0.5, calories: 127 },
   { id: 520, name: "Baked Falafel - طعمية مشوية (قلاية هوائية)", category: "Legumes", state: "Cooked", carbs: 22.0, protein: 13.0, fat: 4.5, calories: 180.0 },
 
-  // --- CHEESE & DAIRY (الأجبان والألبان) ---
+  // --- CHEESE & DAIRY ---
   { id: 401, name: "Full Fat Mozzarella - موتزاريلّا كامل الدسم", category: "Dairy", state: "Ready", carbs: 2.2, protein: 22, fat: 22, calories: 280 },
   { id: 402, name: "Light Mozzarella - موتزاريلّا لايت", category: "Dairy", state: "Ready", carbs: 2.5, protein: 24, fat: 8, calories: 160 },
   { id: 403, name: "Old Roumy Cheese - جبنة رومي قديم", category: "Dairy", state: "Ready", carbs: 1.5, protein: 25, fat: 28, calories: 350 },
@@ -149,78 +146,18 @@ const FOOD_DATABASE = [
   { id: 406, name: "Feta Low Salt - فيتا خفيفة الملح", category: "Dairy", state: "Ready", carbs: 4, protein: 14, fat: 21, calories: 260 },
   { id: 407, name: "Feta Light - فيتا لايت", category: "Dairy", state: "Ready", carbs: 5, protein: 15, fat: 10, calories: 170 },
   { id: 408, name: "Creamy Cheese (Jar) - جبنة كريمي (كاسات)", category: "Dairy", state: "Ready", carbs: 4, protein: 7, fat: 30, calories: 315 },
-  { id: 409, name: "Light Creamy Cheese - جبنة كريمي لايت", category: "Dairy", state: "Ready", carbs: 6, protein: 9, fat: 15, calories: 195 },
-  { id: 410, name: "Halloumi - حلوم (خليجي)", category: "Dairy", state: "Ready", carbs: 2, protein: 21, fat: 26, calories: 320 },
-  { id: 411, name: "Labneh - لبنة (خليجي)", category: "Dairy", state: "Ready", carbs: 4, protein: 6, fat: 12, calories: 150 },
   { id: 412, name: "Full Cream Milk - لبن كامل الدسم (كوب 200مل)", category: "Dairy", state: "Liquid", carbs: 9.6, protein: 6.4, fat: 6.5, calories: 120 },
-  { id: 413, name: "Half-Skimmed Milk - لبن نصف دسم (كوب 200مل)", category: "Dairy", state: "Liquid", carbs: 9.8, protein: 6.6, fat: 3.0, calories: 95 },
-  { id: 414, name: "Skimmed Milk - لبن خالي الدسم (كوب 200مل)", category: "Dairy", state: "Liquid", carbs: 10, protein: 6.8, fat: 0.4, calories: 70 },
-  
-  // --- ADDITIONAL FRUITS (فواكه إضافية - مصر والخليج) ---
+
+  // --- FRUITS ---
   { id: 318, name: "Prickly Pear - تين شوكي", category: "Fruit", state: "Raw", carbs: 9.6, protein: 0.7, fat: 0.5, calories: 41 },
   { id: 319, name: "Peach - خوخ", category: "Fruit", state: "Raw", carbs: 9.5, protein: 0.9, fat: 0.3, calories: 39 },
   { id: 320, name: "Apricot - مشمش", category: "Fruit", state: "Raw", carbs: 11, protein: 1.4, fat: 0.4, calories: 48 },
-  { id: 321, name: "Plum - برقوق", category: "Fruit", state: "Raw", carbs: 11.4, protein: 0.7, fat: 0.3, calories: 46 },
-  { id: 322, name: "Pear - كمثرى", category: "Fruit", state: "Raw", carbs: 15, protein: 0.4, fat: 0.1, calories: 57 },
-  { id: 323, name: "Persimmon - كاكا", category: "Fruit", state: "Raw", carbs: 18.6, protein: 0.6, fat: 0.2, calories: 70 },
-  { id: 324, name: "Cantaloupe - كانتلوب / شمام", category: "Fruit", state: "Raw", carbs: 8, protein: 0.8, fat: 0.2, calories: 34 },
-  { id: 325, name: "Sweet Melon - شمام أصفر (خربز)", category: "Fruit", state: "Raw", carbs: 9, protein: 0.5, fat: 0.1, calories: 36 },
-  { id: 326, name: "Kiwi - كيوي", category: "Fruit", state: "Raw", carbs: 15, protein: 1.1, fat: 0.5, calories: 61 },
-  { id: 327, name: "Pineapple - أناناس", category: "Fruit", state: "Raw", carbs: 13, protein: 0.5, fat: 0.1, calories: 50 },
-  { id: 328, name: "Papaya - بابايا", category: "Fruit", state: "Raw", carbs: 11, protein: 0.5, fat: 0.3, calories: 43 },
-  { id: 329, name: "Dragon Fruit - دراجون فروت (فاكهة التنين)", category: "Fruit", state: "Raw", carbs: 13, protein: 1.2, fat: 1.5, calories: 60 },
-  { id: 330, name: "Blueberries - توت أزرق", category: "Fruit", state: "Raw", carbs: 14.5, protein: 0.7, fat: 0.3, calories: 57 },
-  { id: 331, name: "Raspberries - توت أحمر", category: "Fruit", state: "Raw", carbs: 12, protein: 1.2, fat: 0.7, calories: 52 },
-  { id: 332, name: "Sukkari Dates (Dry) - تمر سكري (مكبوس)", category: "Fruit", state: "Raw", carbs: 75, protein: 2.5, fat: 0.5, calories: 290 },
-  { id: 333, name: "Ajwa Dates - تمر عجوة", category: "Fruit", state: "Raw", carbs: 68, protein: 2.2, fat: 0.4, calories: 275 },
-  { id: 334, name: "Coconut (Meat) - جوز هند (ثمرة)", category: "Fruit", state: "Raw", carbs: 15, protein: 3.3, fat: 33, calories: 354 },
-  { id: 335, name: "Cherry - كرز", category: "Fruit", state: "Raw", carbs: 16, protein: 1.1, fat: 0.2, calories: 50 },
-  { id: 336, name: "Pomelo - بوملي", category: "Fruit", state: "Raw", carbs: 9.6, protein: 0.8, fat: 0, calories: 38 },
-
-  // --- ADDITIONAL FRUITS & VARIANTS (فواكه إضافية وأنواع الموز) ---
-  { id: 337, name: "Imported Banana - موز مستورد (كافيندش)", category: "Fruit", state: "Raw", carbs: 23, protein: 1.1, fat: 0.3, calories: 89 },
-  { id: 338, name: "Egyptian Banana - موز بلدي صغير", category: "Fruit", state: "Raw", carbs: 21, protein: 1.2, fat: 0.2, calories: 85 },
-  { id: 339, name: "Avocado - أفوكادو", category: "Fruit", state: "Raw", carbs: 8.5, protein: 2, fat: 14.7, calories: 160 },
-  { id: 340, name: "Mandarin / Clementine - يوسفي", category: "Fruit", state: "Raw", carbs: 13.3, protein: 0.8, fat: 0.3, calories: 53 },
-  { id: 341, name: "Grapefruit - جريب فروت", category: "Fruit", state: "Raw", carbs: 11, protein: 0.8, fat: 0.1, calories: 42 },
-  { id: 342, name: "Custard Apple - قشطة", category: "Fruit", state: "Raw", carbs: 23.6, protein: 2.1, fat: 0.3, calories: 94 },
-  { id: 343, name: "Mulberry (Local) - توت بلدي / شامي", category: "Fruit", state: "Raw", carbs: 9.8, protein: 1.4, fat: 0.4, calories: 43 },
-  { id: 344, name: "Blackberry - توت أسود (عليق)", category: "Fruit", state: "Raw", carbs: 9.6, protein: 1.4, fat: 0.5, calories: 43 },
-  { id: 345, name: "Passion Fruit - باشن فروت", category: "Fruit", state: "Raw", carbs: 23.4, protein: 2.2, fat: 0.7, calories: 97 },
-  { id: 346, name: "Lychee - ليتشي", category: "Fruit", state: "Raw", carbs: 16.5, protein: 0.8, fat: 0.4, calories: 66 },
-  { id: 347, name: "Nectarine - نكتارين", category: "Fruit", state: "Raw", carbs: 10.5, protein: 1.1, fat: 0.3, calories: 44 },
-  { id: 348, name: "Quince - سفرجل", category: "Fruit", state: "Raw", carbs: 15.3, protein: 0.4, fat: 0.1, calories: 57 },
-  { id: 349, name: "Starfruit - فاكهة النجمة (كارامبولا)", category: "Fruit", state: "Raw", carbs: 6.7, protein: 1, fat: 0.3, calories: 31 },
-  { id: 350, name: "Kumquat - كمكوات (موالح صغيرة)", category: "Fruit", state: "Raw", carbs: 15.9, protein: 1.9, fat: 0.9, calories: 71 },
-  { id: 351, name: "Fresh Lemon - ليمون طازج", category: "Fruit", state: "Raw", carbs: 9, protein: 1.1, fat: 0.3, calories: 29 },
-  { id: 352, name: "Lime - ليمون بنزهير / أخضر", category: "Fruit", state: "Raw", carbs: 10.5, protein: 0.7, fat: 0.2, calories: 30 },
-
-  // --- ORANGES VARIANTS (أنواع البرتقال) ---
+  { id: 337, name: "Imported Banana - موز مستورد", category: "Fruit", state: "Raw", carbs: 23, protein: 1.1, fat: 0.3, calories: 89 },
   { id: 353, name: "Navel Orange - برتقال أبو سرة", category: "Fruit", state: "Raw", carbs: 12.5, protein: 0.9, fat: 0.1, calories: 52 },
-  { id: 354, name: "Valencia Orange (Summer) - برتقال صيفي", category: "Fruit", state: "Raw", carbs: 11, protein: 0.8, fat: 0.2, calories: 46 },
-  { id: 355, name: "Baladi Orange - برتقال بلدي", category: "Fruit", state: "Raw", carbs: 10.5, protein: 0.7, fat: 0.2, calories: 44 },
-  { id: 356, name: "Blood Orange - برتقال بدمه", category: "Fruit", state: "Raw", carbs: 12, protein: 1, fat: 0.1, calories: 50 },
-  { id: 357, name: "Bitter Orange (Naranj) - نارنج", category: "Fruit", state: "Raw", carbs: 9, protein: 0.6, fat: 0.1, calories: 37 },
-  { id: 358, name: "Fresh Orange Juice - عصير برتقال فريش (بدون سكر)", category: "Fruit", state: "Liquid", carbs: 10, protein: 0.7, fat: 0.2, calories: 45 },
 
-  // --- LIGHT SAUCES (الصوصات اللايت) ---
-  { id: 703, name: "Light Mayonnaise - مايونيز لايت", category: "Fat", state: "Ready", carbs: 6.0, protein: 1.0, fat: 28.0, calories: 280.0 },
-  { id: 704, name: "Zero Treat/Sugar Sauce - صوص زيرو (مثل الكاتشب)", category: "Carb", state: "Ready", carbs: 2.0, protein: 0.1, fat: 0.1, calories: 15.0 },
-  { id: 705, name: "Light Ketchup - كاتشب لايت", category: "Carb", state: "Ready", carbs: 15.0, protein: 1.0, fat: 0.1, calories: 65.0 },
-  
-  // --- SUPPLEMENTS (المكملات الغذائية) ---
+  // --- SUPPLEMENTS ---
   { id: 901, name: "Whey Protein (1 Scoop) - واي بروتين (سكوب)", category: "Protein", state: "Powder", carbs: 3.0, protein: 24.0, fat: 1.5, calories: 120.0 },
   { id: 902, name: "Isolate Protein (1 Scoop) - أيزوليت بروتين (سكوب)", category: "Protein", state: "Powder", carbs: 1.0, protein: 25.0, fat: 0.5, calories: 110.0 },
-  { id: 903, name: "Casein Protein (1 Scoop) - كازين بروتين (سكوب)", category: "Protein", state: "Powder", carbs: 3.0, protein: 24.0, fat: 1.0, calories: 120.0 },
-  { id: 904, name: "Creatine Monohydrate (5g) - كرياتين مونوهيدرات", category: "Protein", state: "Powder", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 905, name: "BCAA / Amino (1 Scoop) - بي سي أيه أيه", category: "Protein", state: "Powder", carbs: 1.0, protein: 5.0, fat: 0, calories: 25.0 },
-  { id: 906, name: "Mass Gainer (100g) - ماس جينر (بودر)", category: "Carb", state: "Powder", carbs: 75.0, protein: 15.0, fat: 2.0, calories: 370.0 },
-  { id: 907, name: "Pre-Workout (1 Scoop) - بري ورك أوت", category: "Carb", state: "Powder", carbs: 2.0, protein: 0, fat: 0, calories: 10.0 },
-  { id: 908, name: "Beta-Alanine - بيتا ألانين", category: "Supplements", state: "Powder", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 909, name: "L-Citrulline Malate - سيترولين ماليت", category: "Supplements", state: "Powder", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 910, name: "L-Arginine - أرجينين", category: "Supplements", state: "Powder", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 911, name: "Multivitamins (1 Tablet) - مالتي فيتامين", category: "Supplements", state: "Ready", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 912, name: "Omega-3 (1 Capsule) - أوميجا 3", category: "Supplements", state: "Ready", carbs: 0, protein: 0, fat: 0.9, calories: 9.0 },
 ];
 
 // --- Types ---
@@ -270,7 +207,6 @@ export default function NutritionPro() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [selectedFoods, setSelectedFoods] = useState<Set<number>>(new Set());
-  const [templates, setTemplates] = useState<any[]>([]);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -278,8 +214,6 @@ export default function NutritionPro() {
   );
 
   useEffect(() => {
-    const savedTemplates = localStorage.getItem('pro_nutrition_templates');
-    if (savedTemplates) setTemplates(JSON.parse(savedTemplates));
     const savedTheme = localStorage.getItem('pro_theme');
     if (savedTheme) setTheme(savedTheme as 'dark' | 'light');
     const savedNotes = localStorage.getItem('pro_system_notes');
@@ -313,15 +247,14 @@ export default function NutritionPro() {
       .toLowerCase();
   };
 
-  // ✅ الفلتر أصبح آمناً الآن لأننا أصلحنا المصفوفة العلوية
   const filteredFoods = useMemo(() => {
     let list = FOOD_DATABASE;
     if (selectedCategory !== "All") {
-      list = list.filter(f => f && f.category && f.category.includes(selectedCategory));
+      list = list.filter(f => f.category.includes(selectedCategory));
     }
     if (searchTerm) {
       const normalizedSearch = normalizeArabic(searchTerm);
-      list = list.filter(f => f && f.name && normalizeArabic(f.name).includes(normalizedSearch));
+      list = list.filter(f => normalizeArabic(f.name).includes(normalizedSearch));
     }
     return list;
   }, [searchTerm, selectedCategory]);
@@ -425,13 +358,6 @@ export default function NutritionPro() {
     alert("✅ تم نسخ النظام بالكامل بنجاح!");
   };
 
-  const loadTemplate = (temp: any) => {
-    if (confirm("تحميل القالب؟ سيتم مسح البيانات الحالية.")) {
-      setMeals(temp.meals);
-      setTargetMacros(temp.targetMacros);
-    }
-  };
-
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center p-4 font-sans" dir="rtl">
@@ -471,7 +397,6 @@ export default function NutritionPro() {
       theme === 'dark' ? "bg-[#080808] text-white" : "bg-gray-50 text-gray-900"
     )} dir="rtl">
       
-      {/* 🖨 PRINT HEADER */}
       <div className="hidden print:block bg-white text-black p-8 border-b-8 border-blue-600">
         <div className="flex justify-between items-center mb-10">
           <div>
@@ -554,33 +479,10 @@ export default function NutritionPro() {
                 <ProgressBar label="الدهون" current={totals.fat} target={targetMacros.fat} unit="g" color="bg-yellow-500" />
               </div>
             </div>
-
-            {templates.length > 0 && (
-              <div className={cn("p-6 rounded-[2rem] border transition-all", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
-                <h3 className="flex items-center gap-2 mb-4 font-bold text-purple-500"><Copy size={18}/> القوالب المحفوظة</h3>
-                <div className="space-y-2">
-                  {templates.map(t => (
-                    <div key={t.id} className="flex gap-2">
-                      <button onClick={() => loadTemplate(t)} className="flex-1 text-right p-3 bg-neutral-800/50 rounded-xl hover:bg-neutral-800 text-xs font-bold border border-neutral-700/50 transition-all truncate">
-                        {t.name}
-                      </button>
-                      <button onClick={() => {
-                        const next = templates.filter(x => x.id !== t.id);
-                        setTemplates(next);
-                        localStorage.setItem('pro_nutrition_templates', JSON.stringify(next));
-                      }} className="p-3 text-neutral-500 hover:text-red-500">
-                        <Trash2 size={16}/>
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </aside>
 
           <main className="lg:col-span-8 space-y-8">
             <div className="flex flex-wrap gap-3 mb-6 print:hidden">
-              {/* زر النسخ */}
               <button 
                 onClick={copyToClipboard}
                 className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-lg shadow-blue-600/20"
@@ -588,28 +490,6 @@ export default function NutritionPro() {
                 <Copy size={18} />
                 نسخ النظام بالكامل
               </button>
-
-              {/* قائمة القوالب المحفوظة */}
-              {templates.length > 0 && (
-                <div className="relative group">
-                  <button className="flex items-center gap-2 bg-neutral-800 text-white px-6 py-3.5 rounded-2xl font-bold border border-neutral-700">
-                    <Layout size={18} />
-                    أنظمتي المحفوظة ({templates.length})
-                  </button>
-                  <div className="absolute top-full right-0 mt-2 w-64 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl hidden group-hover:block z-50 overflow-hidden">
-                    {templates.map(temp => (
-                      <div 
-                        key={temp.id}
-                        onClick={() => loadTemplate(temp)}
-                        className="p-4 hover:bg-neutral-800 cursor-pointer border-b border-neutral-800 last:border-0 flex justify-between items-center"
-                      >
-                        <span className="text-sm font-bold truncate">{temp.name}</span>
-                        <ChevronDown size={14} className="text-neutral-500" />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -634,7 +514,6 @@ export default function NutritionPro() {
               <span className="font-black text-lg">إضافة وجبة جديدة</span>
             </button>
 
-            {/* 📋 PRINT FOOTER */}
             <div className="hidden print:block mt-16 pt-10 border-t-4 border-gray-100">
               <div className="flex justify-between items-start gap-10">
                 <div className="flex-1">
@@ -654,7 +533,6 @@ export default function NutritionPro() {
         </div>
       </div>
 
-      {/* SEARCH MODAL */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
           <div className={cn("w-full max-w-3xl max-h-[85vh] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border", theme === 'dark' ? "bg-neutral-900 border-neutral-800" : "bg-white border-gray-200")}>
@@ -678,7 +556,7 @@ export default function NutritionPro() {
                 />
               </div>
               
-              <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+              <div className="flex gap-2 overflow-x-auto pb-2">
                 {categories.map(cat => (
                   <button key={cat} onClick={() => setSelectedCategory(cat)} className={cn("px-5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all border", selectedCategory === cat ? "bg-blue-600 text-white" : "bg-neutral-800 text-neutral-400")}>
                     {cat}
@@ -687,7 +565,7 @@ export default function NutritionPro() {
               </div>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-8 pb-8 space-y-3 custom-scrollbar">
+            <div className="flex-1 overflow-y-auto px-8 pb-8 space-y-3">
               {filteredFoods.map(f => {
                 const isSelected = selectedFoods.has(f.id);
                 return (
@@ -757,14 +635,6 @@ function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal
           <div className="flex gap-2 mr-4 print:hidden">
              <div className="text-[10px] font-black bg-orange-500/10 text-orange-500 px-3 py-1.5 rounded-full">{Math.round(mealTotals.cal)} kcal</div>
              <div className="text-[10px] font-black bg-red-500/10 text-red-500 px-3 py-1.5 rounded-full">{Math.round(mealTotals.pro)}g P</div>
-             <div className="text-[10px] font-black bg-blue-500/10 text-blue-500 px-3 py-1.5 rounded-full">{Math.round(mealTotals.carb)}g C</div>
-             <div className="text-[10px] font-black bg-yellow-500/10 text-yellow-500 px-3 py-1.5 rounded-full">{Math.round(mealTotals.fat)}g F</div>
-          </div>
-          <div className="hidden print:flex gap-6 text-xl font-black text-blue-700">
-            <span>{Math.round(mealTotals.cal)} kcal</span>
-            <span className="opacity-60">P:{Math.round(mealTotals.pro)}g</span>
-            <span className="opacity-60">C:{Math.round(mealTotals.carb)}g</span>
-            <span className="opacity-60">F:{Math.round(mealTotals.fat)}g</span>
           </div>
           <button onClick={onDuplicate} className="p-2 text-neutral-500 hover:text-emerald-500 print:hidden"><Copy size={18}/></button>
           <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 text-neutral-500 hover:text-blue-500 print:hidden">{isCollapsed ? <ChevronDown size={20}/> : <ChevronUp size={20}/>}</button>
@@ -791,7 +661,6 @@ function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal
                 <tr key={it.instId} className={cn("group rounded-2xl", theme === 'dark' ? "bg-black/20" : "bg-gray-50/50")}>
                   <td className="py-4 pr-4 rounded-r-2xl">
                     <div className="font-bold text-sm">{it.name}</div>
-                    <div className="text-[10px] opacity-40 font-bold">{it.category}</div>
                   </td>
                   <td className="py-4 text-center">
                     <input type="number" className={cn("w-16 p-2 rounded-xl text-center font-black text-xs border print:hidden", theme === 'dark' ? "bg-black border-neutral-800" : "bg-white border-gray-200")} value={it.grams} onChange={e => onUpdateMeal({ ...meal, items: meal.items.map((i) => i.instId === it.instId ? { ...i, grams: parseFloat(e.target.value) || 0 } : i) })} />
@@ -813,7 +682,6 @@ function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal
           </table>
           <div className="mt-6 flex flex-col md:flex-row gap-4 items-end">
             <div className="flex-1 w-full">
-              <p className="text-[10px] font-black text-neutral-500 mb-2 uppercase mr-2 print:hidden">ملاحظات الوجبة</p>
               <textarea placeholder="ملاحظات لهذه الوجبة..." className={cn("w-full p-4 rounded-2xl text-xs font-bold outline-none border transition-all h-20 print:italic print:border-none", theme === 'dark' ? "bg-black/40 border-neutral-800" : "bg-gray-50 border-gray-100")} value={meal.notes} onChange={e => onUpdateMeal({ ...meal, notes: e.target.value })} />
             </div>
             <button onClick={onAddItems} className="flex items-center gap-2 px-6 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm print:hidden"><Plus size={18}/> إضافة صنف</button>
@@ -842,15 +710,7 @@ function MacroInput({ label, value, onChange, color }: { label: string, value: n
   );
 }
 
-interface ProgressBarProps {
-  label: string;
-  current: number;
-  target: number;
-  unit: string;
-  color: string;
-}
-
-function ProgressBar({ label, current, target, unit, color }: ProgressBarProps) {
+function ProgressBar({ label, current, target, unit, color }: { label: string, current: number, target: number, unit: string, color: string }) {
   const percentage = Math.min((current / target) * 100, 100);
   return (
     <div>
@@ -873,4 +733,3 @@ function InfoBox({ label, value }: { label: string, value: string | number }) {
     </div>
   );
 }
-```
