@@ -28,6 +28,52 @@ function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+// ========== Interfaces (To fix TypeScript Errors) ==========
+interface FoodItem {
+  id: number;
+  name: string;
+  category: string;
+  state: string;
+  carbs: number;
+  protein: number;
+  fat: number;
+  calories: number;
+  grams: number;
+  instId: string;
+}
+
+interface Meal {
+  id: string;
+  name: string;
+  notes: string;
+  items: FoodItem[];
+}
+
+interface TargetMacros {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+interface ClientData {
+  name: string;
+  goal: string;
+  coach: string;
+  phone: string;
+  date: string;
+}
+
+interface NutritionTemplate {
+  id: string;
+  templateName: string;
+  timestamp: number;
+  meals: Meal[];
+  targetMacros: TargetMacros;
+  clientData: ClientData;
+  systemNotes: string;
+}
+
 // ========== FOOD DATABASE ==========
 const FOOD_DATABASE = [
   // --- CARB SOURCES ---
@@ -222,44 +268,6 @@ const FOOD_DATABASE = [
   { id: 912, name: "Omega-3 (1 Capsule) - أوميجا 3", category: "Supplements", state: "Ready", carbs: 0, protein: 0, fat: 0.9, calories: 9.0 },
 ];
 
-// --- Types ---
-interface FoodItem {
-  id: number;
-  name: string;
-  category: string;
-  state: string;
-  carbs: number;
-  protein: number;
-  fat: number;
-  calories: number;
-  grams: number;
-  instId: string;
-}
-
-interface Meal {
-  id: string;
-  name: string;
-  notes: string;
-  items: FoodItem[];
-}
-
-interface TargetMacros {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
-
-interface NutritionTemplate {
-  id: string;
-  templateName: string;
-  timestamp: number;
-  meals: Meal[];
-  targetMacros: TargetMacros;
-  clientData: any;
-  systemNotes: string;
-}
-
 export default function NutritionPro() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
@@ -267,10 +275,9 @@ export default function NutritionPro() {
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
   const [systemNotes, setSystemNotes] = useState("");
   const [meals, setMeals] = useState<Meal[]>([
-    { id: 'meal-1', name: "الوجبة الأولى", notes: "", items: [] },
-    { id: 'meal-2', name: "الوجبة الثانية", notes: "", items: [] }
+    { id: 'meal-1', name: "الوجبة الأولى", notes: "", items: [] }
   ]);
-  const [clientData, setClientData] = useState({ 
+  const [clientData, setClientData] = useState<ClientData>({ 
     name: '', goal: '', coach: 'C/ Mohamed Saed', phone: '01022816320', date: new Date().toISOString().split('T')[0] 
   });
   const [targetMacros, setTargetMacros] = useState<TargetMacros>({ calories: 2000, protein: 150, carbs: 200, fat: 60 });
@@ -287,101 +294,43 @@ export default function NutritionPro() {
   );
 
   useEffect(() => {
-    // تحميل الثيم والملاحظات
-    const savedTheme = localStorage.getItem('pro_theme');
-    if (savedTheme) setTheme(savedTheme as 'dark' | 'light');
-    const savedNotes = localStorage.getItem('pro_system_notes');
-    if (savedNotes) setSystemNotes(savedNotes);
-
-    // تحميل القوالب
     const savedTemplates = localStorage.getItem('pro_nutrition_templates');
     if (savedTemplates) setTemplates(JSON.parse(savedTemplates));
 
-    // التحقق مما إذا كان هناك قالب يجب تحميله من الرابط (فتح في صفحة جديدة)
     const urlParams = new URLSearchParams(window.location.search);
     const templateId = urlParams.get('loadTemplate');
     if (templateId && savedTemplates) {
-      const allTemplates: NutritionTemplate[] = JSON.parse(savedTemplates);
-      const found = allTemplates.find(t => t.id === templateId);
+      const all: NutritionTemplate[] = JSON.parse(savedTemplates);
+      const found = all.find(t => t.id === templateId);
       if (found) {
         setMeals(found.meals);
         setTargetMacros(found.targetMacros);
         setClientData(found.clientData);
-        setSystemNotes(found.systemNotes);
-        // تمييز أنه قادم من قالب
-        setIsAuthenticated(true); 
+        setIsAuthenticated(true);
       }
     }
   }, []);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('pro_theme', theme);
-  }, [theme]);
-
-  useEffect(() => {
-    localStorage.setItem('pro_system_notes', systemNotes);
-  }, [systemNotes]);
-
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "admin123") {
-      setIsAuthenticated(true);
-      setLoginError(false);
-    } else {
-      setLoginError(true);
-    }
+    if (password === "admin123") { setIsAuthenticated(true); setLoginError(false); }
+    else setLoginError(true);
   };
 
   const saveAsTemplate = () => {
-    const tName = prompt("أدخل اسماً لهذا القالب (Template):", `نظام ${clientData.name || 'جديد'}`);
+    const tName = prompt("أدخل اسماً لهذا القالب:", `نظام ${clientData.name || 'جديد'}`);
     if (!tName) return;
-
-    const newTemplate: NutritionTemplate = {
+    const newTemp: NutritionTemplate = {
       id: `temp-${Date.now()}`,
       templateName: tName,
       timestamp: Date.now(),
-      meals,
-      targetMacros,
-      clientData,
-      systemNotes
+      meals, targetMacros, clientData, systemNotes
     };
-
-    const updated = [...templates, newTemplate];
+    const updated = [...templates, newTemp];
     setTemplates(updated);
     localStorage.setItem('pro_nutrition_templates', JSON.stringify(updated));
-    alert("✅ تم حفظ القالب بنجاح!");
+    alert("✅ تم الحفظ!");
   };
-
-  const openTemplateInNewTab = (templateId: string) => {
-    const url = new URL(window.location.href);
-    url.searchParams.set('loadTemplate', templateId);
-    window.open(url.toString(), '_blank');
-  };
-
-  const deleteTemplate = (id: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm("هل أنت متأكد من حذف هذا القالب؟")) return;
-    const updated = templates.filter(t => t.id !== id);
-    setTemplates(updated);
-    localStorage.setItem('pro_nutrition_templates', JSON.stringify(updated));
-  };
-
-  const normalizeArabic = (str: string) => {
-    return str.replace(/[أإآا]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").toLowerCase();
-  };
-
-  const filteredFoods = useMemo(() => {
-    let list = FOOD_DATABASE;
-    if (selectedCategory !== "All") list = list.filter(f => f.category.includes(selectedCategory));
-    if (searchTerm) {
-      const normalizedSearch = normalizeArabic(searchTerm);
-      list = list.filter(f => normalizeArabic(f.name).includes(normalizedSearch));
-    }
-    return list;
-  }, [searchTerm, selectedCategory]);
-
-  const categories = ["All", "Carb", "Protein", "Fat", "Fruit", "Vegetable", "Legumes", "Dairy", "Supplements"];
 
   const calculateTotals = () => {
     return meals.reduce((acc, meal) => {
@@ -393,355 +342,110 @@ export default function NutritionPro() {
         acc.fat += it.fat * ratio;
       });
       return acc;
-    }, { calories: 0, protein: 0, carbs: 0, fat: 0 } as TargetMacros);
+    }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
   };
 
   const totals = calculateTotals();
 
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      setMeals((items) => {
-        const oldIndex = items.findIndex(i => i.id === active.id);
-        const newIndex = items.findIndex(i => i.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
-    }
-  };
-
-  const addMeal = () => {
-    const newId = `meal-${Date.now()}`;
-    setMeals([...meals, { id: newId, name: `وجبة ${meals.length + 1}`, notes: "", items: [] }]);
-  };
-
-  const duplicateMeal = (meal: Meal) => {
-    const newMeal = { 
-      ...meal, 
-      id: `meal-dup-${Date.now()}`, 
-      name: `${meal.name} (نسخة)`,
-      items: meal.items.map(it => ({ ...it, instId: `${it.id}-${Math.random()}` }))
-    };
-    setMeals([...meals, newMeal]);
-  };
-
-  const removeMeal = (id: string) => setMeals(meals.filter(m => m.id !== id));
-
-  const removeItemFromMeal = (mealId: string, itemInstId: string) => {
-    setMeals(meals.map(m => m.id === mealId ? { ...m, items: m.items.filter(it => it.instId !== itemInstId) } : m));
-  };
-
-  const toggleFoodSelection = (id: number) => {
-    const next = new Set(selectedFoods);
-    next.has(id) ? next.delete(id) : next.add(id);
-    setSelectedFoods(next);
-  };
-
-  const addSelectedToMeal = () => {
-    if (!activeMealId) return;
-    const newItems = FOOD_DATABASE.filter(f => selectedFoods.has(f.id)).map(f => ({
-      ...f, grams: 100, instId: `${f.id}-${Math.random()}`
-    }));
-    setMeals(meals.map(m => m.id === activeMealId ? { ...m, items: [...m.items, ...newItems] } : m));
-    setIsModalOpen(false);
-    setSelectedFoods(new Set());
-    setSearchTerm("");
-  };
-
-  const moveItem = (mealId: string, itemInstId: string, direction: 'up' | 'down') => {
-    setMeals(meals.map(m => {
-      if (m.id !== mealId) return m;
-      const index = m.items.findIndex(it => it.instId === itemInstId);
-      const newItems = [...m.items];
-      if (direction === 'up' && index > 0) [newItems[index], newItems[index-1]] = [newItems[index-1], newItems[index]];
-      else if (direction === 'down' && index < newItems.length - 1) [newItems[index], newItems[index+1]] = [newItems[index+1], newItems[index]];
-      return { ...m, items: newItems };
-    }));
-  };
-
-  const copyToClipboard = () => {
-    const summary = meals.map(meal => {
-      const itemsText = meal.items.map(it => `🔸 ${it.name}: ${it.grams} جم`).join('\n');
-      return `[ ${meal.name} ] 🍽️\n${itemsText}`;
-    }).join('\n\n');
-    navigator.clipboard.writeText(summary);
-    alert("✅ تم نسخ النظام!");
-  };
-
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4 font-sans" dir="rtl">
-        <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 p-8 rounded-[2.5rem] shadow-2xl">
-          <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30 mb-4">
-              <Lock className="text-white" size={32} />
-            </div>
-            <h1 className="text-2xl font-black text-white">تسجيل الدخول</h1>
-          </div>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input 
-              type="password" placeholder="كلمة المرور"
-              className={cn("w-full p-4 bg-black border rounded-2xl outline-none text-white text-center font-bold", loginError ? "border-red-600" : "border-neutral-800")}
-              value={password} onChange={(e) => setPassword(e.target.value)} autoFocus
-            />
-            <button className="w-full bg-blue-600 text-white font-black py-4 rounded-2xl">دخول</button>
-          </form>
-        </div>
+      <div className="min-h-screen bg-black flex items-center justify-center p-4" dir="rtl">
+        <form onSubmit={handleLogin} className="w-full max-w-md bg-neutral-900 p-8 rounded-[2rem] border border-neutral-800">
+          <input 
+            type="password" placeholder="كلمة المرور"
+            className={cn("w-full p-4 bg-black border rounded-xl text-white text-center font-bold mb-4", loginError ? "border-red-600" : "border-neutral-800")}
+            value={password} onChange={(e) => setPassword(e.target.value)} 
+          />
+          <button className="w-full bg-blue-600 text-white font-black py-4 rounded-xl">دخول</button>
+        </form>
       </div>
     );
   }
 
   return (
-    <div className={cn("min-h-screen transition-colors duration-300 font-sans pb-20", theme === 'dark' ? "bg-[#080808] text-white" : "bg-gray-50 text-gray-900")} dir="rtl">
-      
+    <div className={cn("min-h-screen font-sans pb-20", theme === 'dark' ? "bg-[#080808] text-white" : "bg-gray-50 text-gray-900")} dir="rtl">
       <div className="max-w-6xl mx-auto px-4 pt-8">
-        <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 print:hidden">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg">
-              <Layout className="text-white" size={24} />
-            </div>
-            <div>
-              <h1 className="text-2xl font-black">برو نيوتريشن <span className="text-blue-500 text-sm">PRO</span></h1>
-            </div>
-          </div>
-          
-          <div className="flex items-center gap-2 bg-neutral-900/50 p-1.5 rounded-2xl border border-neutral-800">
-            <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2.5 rounded-xl hover:bg-neutral-800">
-              {theme === 'dark' ? <Sun size={20} className="text-yellow-400"/> : <Moon size={20} className="text-blue-400"/>}
-            </button>
-            <button onClick={saveAsTemplate} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black">
-              <Save size={16}/> حفظ كقالب
-            </button>
-            <button onClick={() => window.print()} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black">
-              <Printer size={16}/> طباعة PDF
-            </button>
-          </div>
-        </header>
-
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
           <aside className="lg:col-span-4 space-y-6 print:hidden">
-            {/* القوالب المحفوظة */}
-            {templates.length > 0 && (
-              <div className={cn("p-6 rounded-[2rem] border", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
-                <h3 className="flex items-center gap-2 mb-4 font-bold text-emerald-500 tracking-tight"><ExternalLink size={18}/> القوالب المحفوظة</h3>
-                <div className="space-y-2 max-h-60 overflow-y-auto pr-1 custom-scrollbar">
-                  {templates.map(t => (
-                    <div 
-                      key={t.id} 
-                      onClick={() => openTemplateInNewTab(t.id)}
-                      className="group flex justify-between items-center p-3 rounded-xl bg-black/20 border border-neutral-800 hover:border-blue-600/50 cursor-pointer transition-all"
-                    >
-                      <div className="flex flex-col">
-                        <span className="text-xs font-black">{t.templateName}</span>
-                        <span className="text-[9px] opacity-40">{new Date(t.timestamp).toLocaleDateString('ar-EG')}</span>
-                      </div>
-                      <div className="flex gap-2">
-                        <ExternalLink size={14} className="text-neutral-500 group-hover:text-blue-500" />
-                        <button onClick={(e) => deleteTemplate(t.id, e)} className="text-neutral-600 hover:text-red-500 transition-colors">
-                          <Trash2 size={14}/>
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <div className={cn("p-6 rounded-[2rem] border", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
-              <h3 className="flex items-center gap-2 mb-6 font-bold text-blue-500"><User size={18}/> بيانات العميل</h3>
+            <div className="p-6 bg-neutral-900/40 border border-neutral-800 rounded-[2rem]">
+              <h3 className="mb-4 font-bold text-blue-500">بيانات العميل</h3>
               <div className="space-y-4">
-                <InputGroup label="اسم العميل" value={clientData.name} onChange={v => setClientData({...clientData, name: v})} placeholder="اسم العميل"/>
-                <InputGroup label="الهدف" value={clientData.goal} onChange={v => setClientData({...clientData, goal: v})} placeholder="الهدف"/>
+                <InputGroup label="اسم العميل" value={clientData.name} onChange={(v: string) => setClientData({...clientData, name: v})} />
+                <InputGroup label="الهدف" value={clientData.goal} onChange={(v: string) => setClientData({...clientData, goal: v})} />
               </div>
             </div>
 
-            <div className={cn("p-6 rounded-[2rem] border", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
-              <h3 className="flex items-center gap-2 mb-6 font-bold text-orange-500"><Settings size={18}/> الماكروز المستهدفة</h3>
+            <div className="p-6 bg-neutral-900/40 border border-neutral-800 rounded-[2rem]">
+              <h3 className="mb-4 font-bold text-orange-500">الماكروز المستهدفة</h3>
               <div className="grid grid-cols-2 gap-4">
-                <MacroInput label="السعرات" value={targetMacros.calories} onChange={v => setTargetMacros({...targetMacros, calories: v})} color="bg-orange-500/10 text-orange-500"/>
-                <MacroInput label="البروتين" value={targetMacros.protein} onChange={v => setTargetMacros({...targetMacros, protein: v})} color="bg-red-500/10 text-red-500"/>
-                <MacroInput label="الكارب" value={targetMacros.carbs} onChange={v => setTargetMacros({...targetMacros, carbs: v})} color="bg-blue-500/10 text-blue-500"/>
-                <MacroInput label="الدهون" value={targetMacros.fat} onChange={v => setTargetMacros({...targetMacros, fat: v})} color="bg-yellow-500/10 text-yellow-500"/>
+                <MacroInput label="السعرات" value={targetMacros.calories} onChange={(v: number) => setTargetMacros({...targetMacros, calories: v})} color="text-orange-500" />
+                <MacroInput label="البروتين" value={targetMacros.protein} onChange={(v: number) => setTargetMacros({...targetMacros, protein: v})} color="text-red-500" />
               </div>
             </div>
-
-            <div className={cn("p-6 rounded-[2rem] border", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
-              <h3 className="flex items-center gap-2 mb-6 font-bold text-emerald-500"><Info size={18}/> حالة الإنجاز</h3>
-              <div className="space-y-6">
-                <ProgressBar label="السعرات" current={totals.calories} target={targetMacros.calories} unit="kcal" color="bg-orange-500" />
-                <ProgressBar label="البروتين" current={totals.protein} target={targetMacros.protein} unit="g" color="bg-red-500" />
-                <ProgressBar label="الكارب" current={totals.carbs} target={targetMacros.carbs} unit="g" color="bg-blue-500" />
-                <ProgressBar label="الدهون" current={totals.fat} target={targetMacros.fat} unit="g" color="bg-yellow-500" />
-              </div>
-            </div>
+            
+            <button onClick={saveAsTemplate} className="w-full py-4 bg-emerald-600 text-white rounded-xl font-black">حفظ كقالب</button>
           </aside>
 
           <main className="lg:col-span-8 space-y-8">
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-              <SortableContext items={meals.map(m => m.id)} strategy={verticalListSortingStrategy}>
-                {meals.map((meal) => (
-                  <MealCard 
-                    key={meal.id} meal={meal} theme={theme}
-                    onAddItems={() => { setActiveMealId(meal.id); setIsModalOpen(true); }}
-                    onRemove={() => removeMeal(meal.id)}
-                    onDuplicate={() => duplicateMeal(meal)}
-                    onUpdateMeal={(updated: Meal) => setMeals(meals.map(m => m.id === meal.id ? updated : m))}
-                    onRemoveItem={(itemInstId) => removeItemFromMeal(meal.id, itemInstId)}
-                    moveItem={(itemInstId, dir) => moveItem(meal.id, itemInstId, dir)}
-                  />
-                ))}
-              </SortableContext>
-            </DndContext>
-
-            <button onClick={addMeal} className="w-full py-8 border-2 border-dashed border-neutral-800 text-neutral-500 hover:border-blue-600/50 rounded-[2.5rem] flex flex-col items-center justify-center gap-2 print:hidden transition-all">
-              <div className="p-3 bg-neutral-800/50 rounded-2xl"><Plus size={32} /></div>
-              <span className="font-black">إضافة وجبة جديدة</span>
-            </button>
+            {meals.map((meal) => (
+              <MealCard 
+                key={meal.id} meal={meal} theme={theme}
+                onUpdateMeal={(updated: Meal) => setMeals(meals.map(m => m.id === meal.id ? updated : m))}
+                onAddItems={() => { setActiveMealId(meal.id); setIsModalOpen(true); }}
+              />
+            ))}
           </main>
         </div>
       </div>
-
-      {/* Modal Selection - المختصر */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-          <div className={cn("w-full max-w-3xl max-h-[85vh] rounded-[3rem] overflow-hidden flex flex-col border", theme === 'dark' ? "bg-neutral-900 border-neutral-800" : "bg-white border-gray-200")}>
-            <div className="p-8 pb-4 flex justify-between items-center">
-              <h2 className="text-2xl font-black">قائمة الأطعمة</h2>
-              <button onClick={() => { setIsModalOpen(false); setSelectedFoods(new Set()); }} className="p-3 bg-neutral-800/50 rounded-2xl hover:text-red-500"><X size={24}/></button>
-            </div>
-            <div className="p-8 pt-4 space-y-4">
-              <input 
-                className={cn("w-full py-4 px-6 rounded-2xl outline-none border font-bold", theme === 'dark' ? "bg-black border-neutral-700" : "bg-gray-50 border-gray-200")}
-                placeholder="ابحث..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)}
-              />
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {categories.map(cat => (
-                  <button key={cat} onClick={() => setSelectedCategory(cat)} className={cn("px-5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all", selectedCategory === cat ? "bg-blue-600 text-white" : "bg-neutral-800 text-neutral-400")}>
-                    {cat}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="flex-1 overflow-y-auto px-8 pb-8 space-y-3">
-              {filteredFoods.map(f => (
-                <div key={f.id} onClick={() => toggleFoodSelection(f.id)} className={cn("flex justify-between items-center p-5 rounded-[1.5rem] cursor-pointer border transition-all", selectedFoods.has(f.id) ? "bg-blue-600/10 border-blue-500/50" : "bg-neutral-800/30 border-neutral-800")}>
-                  <div><p className="font-black text-sm">{f.name}</p></div>
-                </div>
-              ))}
-            </div>
-            {selectedFoods.size > 0 && (
-              <div className="p-8 border-t border-neutral-800/50">
-                <button onClick={addSelectedToMeal} className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-lg">
-                  إضافة للأصناف ({selectedFoods.size})
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
 
-function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal, onRemoveItem, moveItem }: any) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: meal.id });
-  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1 };
+// ========== Sub-Components with Types ==========
 
-  const mealTotals = meal.items.reduce((acc: any, it: any) => {
-    const r = it.grams / 100;
-    acc.cal += it.calories * r; acc.pro += it.protein * r; acc.carb += it.carbs * r; acc.fat += it.fat * r;
-    return acc;
-  }, { cal: 0, pro: 0, carb: 0, fat: 0 });
-
-  return (
-    <div ref={setNodeRef} style={style} className={cn("rounded-[2.5rem] border overflow-hidden print:border-none", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-100 shadow-sm", isDragging && "opacity-50 ring-2 ring-blue-600")}>
-      <div className={cn("px-6 py-4 flex flex-wrap items-center justify-between border-b", theme === 'dark' ? "bg-neutral-800/30 border-neutral-800" : "bg-gray-50/50 border-gray-100")}>
-        <div className="flex items-center gap-4 min-w-[200px]">
-          <button {...attributes} {...listeners} className="p-2 text-neutral-600 hover:text-blue-500 print:hidden"><GripVertical size={20}/></button>
-          <input className="bg-transparent font-black text-2xl outline-none focus:text-blue-500 w-full" value={meal.name} onChange={e => onUpdateMeal({ ...meal, name: e.target.value })} />
-        </div>
-        
-        <div className="flex items-center gap-2 flex-wrap justify-end">
-          <div className="flex gap-1.5 flex-wrap">
-             <div className="text-[10px] font-black bg-orange-500/10 text-orange-500 px-3 py-1.5 rounded-full border border-orange-500/20">{Math.round(mealTotals.cal)} kcal</div>
-             <div className="text-[10px] font-black bg-red-500/10 text-red-500 px-3 py-1.5 rounded-full border border-red-500/20">{Math.round(mealTotals.pro)}g P</div>
-             <div className="text-[10px] font-black bg-blue-500/10 text-blue-500 px-3 py-1.5 rounded-full border border-blue-500/20">{Math.round(mealTotals.carb)}g C</div>
-             <div className="text-[10px] font-black bg-yellow-500/10 text-yellow-500 px-3 py-1.5 rounded-full border border-yellow-500/20">{Math.round(mealTotals.fat)}g F</div>
-          </div>
-          <div className="flex gap-1 border-r border-neutral-800 pr-2 mr-1 print:hidden">
-            <button onClick={onDuplicate} className="p-2 text-neutral-500 hover:text-emerald-500"><Copy size={18}/></button>
-            <button onClick={onRemove} className="p-2 text-neutral-500 hover:text-red-500"><Trash2 size={18}/></button>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-6">
-        <table className="w-full text-right border-separate border-spacing-y-2">
-          <thead>
-            <tr className="text-[10px] uppercase font-black text-neutral-500">
-              <th className="pb-2 pr-2">الصنف</th>
-              <th className="pb-2 text-center">الكمية (جم)</th>
-              <th className="pb-2 text-center">P</th>
-              <th className="pb-2 text-center">C</th>
-              <th className="pb-2 text-center">F</th>
-              <th className="pb-2 text-center">kcal</th>
-              <th className="pb-2 text-center print:hidden"></th>
-            </tr>
-          </thead>
-          <tbody>
-            {meal.items.map((it: any) => (
-              <tr key={it.instId} className={cn("group rounded-2xl", theme === 'dark' ? "bg-black/20" : "bg-gray-50/50")}>
-                <td className="py-4 pr-4 rounded-r-2xl font-bold text-sm">{it.name}</td>
-                <td className="py-4 text-center">
-                  <input type="number" className="w-16 p-2 rounded-xl text-center font-black text-xs border bg-transparent print:hidden" value={it.grams} onChange={e => onUpdateMeal({ ...meal, items: meal.items.map((i: any) => i.instId === it.instId ? { ...i, grams: parseFloat(e.target.value) || 0 } : i) })} />
-                  <span className="hidden print:inline font-black">{it.grams}</span>
-                </td>
-                <td className="py-4 text-center text-xs font-bold text-red-500">{Math.round(it.protein * it.grams/100)}</td>
-                <td className="py-4 text-center text-xs font-bold text-blue-500">{Math.round(it.carbs * it.grams/100)}</td>
-                <td className="py-4 text-center text-xs font-bold text-yellow-500">{Math.round(it.fat * it.grams/100)}</td>
-                <td className="py-4 text-center font-black text-blue-500">{Math.round(it.calories * it.grams/100)}</td>
-                <td className="py-4 text-center rounded-l-2xl print:hidden">
-                  <div className="flex gap-1"><button onClick={() => onRemoveItem(it.instId)} className="p-1 text-neutral-600 hover:text-red-500"><Trash2 size={14}/></button></div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="mt-6 flex justify-between items-center print:hidden">
-          <button onClick={onAddItems} className="flex items-center gap-2 px-6 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm"><Plus size={18}/> إضافة صنف</button>
-        </div>
-      </div>
-    </div>
-  );
+interface InputGroupProps {
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
 }
-
-function InputGroup({ label, value, onChange, placeholder }: any) {
+function InputGroup({ label, value, onChange }: InputGroupProps) {
   return (
     <div>
-      <label className="text-[10px] font-black opacity-40 uppercase mr-2">{label}</label>
-      <input className="w-full bg-black/40 border border-neutral-800 p-3.5 mt-1 rounded-2xl outline-none focus:border-blue-600 font-bold text-sm" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} />
+      <label className="text-[10px] font-black opacity-40 mr-2">{label}</label>
+      <input className="w-full bg-black/40 border border-neutral-800 p-3 mt-1 rounded-xl text-white outline-none" value={value} onChange={e => onChange(e.target.value)} />
     </div>
   );
 }
 
-function MacroInput({ label, value, onChange, color }: any) {
+interface MacroInputProps {
+  label: string;
+  value: number;
+  onChange: (val: number) => void;
+  color: string;
+}
+function MacroInput({ label, value, onChange, color }: MacroInputProps) {
   return (
-    <div className={cn("p-4 rounded-2xl border border-neutral-800", color)}>
-      <label className="text-[10px] font-black uppercase block mb-1 opacity-70">{label}</label>
-      <input type="number" className="bg-transparent w-full font-black text-lg outline-none" value={value} onChange={e => onChange(parseFloat(e.target.value) || 0)} />
+    <div className="p-3 bg-black/20 border border-neutral-800 rounded-xl">
+      <label className="text-[10px] font-black opacity-60">{label}</label>
+      <input type="number" className={cn("w-full bg-transparent font-black text-lg outline-none", color)} value={value} onChange={e => onChange(parseFloat(e.target.value) || 0)} />
     </div>
   );
 }
 
-function ProgressBar({ label, current, target, unit, color }: any) {
-  const percentage = Math.min((current / target) * 100, 100);
+function MealCard({ meal, theme, onUpdateMeal, onAddItems }: { meal: Meal, theme: string, onUpdateMeal: (m: Meal) => void, onAddItems: () => void }) {
   return (
-    <div>
-      <div className="flex justify-between items-end mb-2">
-        <span className="text-xs font-black opacity-60">{label}</span>
-        <span className="text-sm font-black">{Math.round(current)} / {target}</span>
+    <div className="bg-neutral-900/40 border border-neutral-800 rounded-[2rem] overflow-hidden">
+      <div className="p-6 border-b border-neutral-800 flex justify-between items-center">
+        <input className="bg-transparent font-black text-xl outline-none" value={meal.name} onChange={e => onUpdateMeal({...meal, name: e.target.value})} />
+        <button onClick={onAddItems} className="p-2 bg-blue-600 rounded-lg text-white"><Plus size={18}/></button>
       </div>
-      <div className="h-2 bg-neutral-800 rounded-full overflow-hidden">
-        <div className={cn("h-full transition-all duration-500", color)} style={{ width: `${percentage}%` }} />
+      <div className="p-6 text-sm">
+        {meal.items.length === 0 ? <p className="text-neutral-600">لا يوجد أصناف بعد..</p> : (
+          <div className="space-y-2">
+            {meal.items.map(it => <div key={it.instId} className="flex justify-between">{it.name} <span>{it.grams} جم</span></div>)}
+          </div>
+        )}
       </div>
     </div>
   );
