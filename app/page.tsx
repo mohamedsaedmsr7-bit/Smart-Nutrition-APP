@@ -1,4 +1,3 @@
-
 "use client";
 import { useState, useEffect, useMemo, useRef } from 'react';
 import {
@@ -261,7 +260,6 @@ const FOOD_DATABASE = [
   { id: 907, name: "Pre-Workout 1 Scoop - بري ورك", category: "Supplement", state: "Powder", carbs: 2.0, protein: 0, fat: 0, calories: 10.0 },
   { id: 908, name: "Omega-3 1 Capsule - أوميجا 3", category: "Supplement", state: "Ready", carbs: 0, protein: 0, fat: 0.9, calories: 9.0 },
 ];
-
 // =====================================================================
 // TYPES
 // =====================================================================
@@ -467,6 +465,32 @@ export default function NutritionPro() {
     setActiveTab('planner');
   };
 
+  // Copy Plan to WhatsApp
+  const copyToWhatsApp = () => {
+    const summary = meals.map(meal => {
+      const itemsText = meal.items.map(it =>
+        `🔸 ${it.name.split(' - ')[0]}: ${it.grams}${it.state === "Liquid" ? "ml" : "g"}`
+      ).join('\n');
+      return `*🍽️ ${meal.name}*\n${itemsText}${meal.notes ? `\n📝 _ملاحظة: ${meal.notes}_` : ''}`;
+    }).join('\n\n');
+
+    const totalsText = `*📊 إجمالي الماكروز لليوم:*\n🔥 السعرات: ${Math.round(totals.calories)} kcal\n💪 البروتين: ${Math.round(totals.protein)}g\n🍞 الكارب: ${Math.round(totals.carbs)}g\n🥑 الدهون: ${Math.round(totals.fat)}g\n💧 هدف الماء: ${waterTarget} أكواب`;
+
+    const clientInfo = `🌟 *نظامك الغذائي المخصص - PRO Nutrition* 🌟\n\n👤 العميل: ${clientData.name || 'غير محدد'}\n🎯 الهدف: ${clientData.goal || 'غير محدد'}\n📅 التاريخ: ${clientData.date}\n\n`;
+
+    const systemNotesText = systemNotes ? `\n\n*💡 تعليمات هامة:*\n${systemNotes}` : '';
+
+    const footerText = `\n\n💪 مع تحيات: ${clientData.coach}\n📞 للتواصل: ${clientData.phone}`;
+
+    const fullText = `${clientInfo}${summary}\n\n${totalsText}${systemNotesText}${footerText}`;
+
+    navigator.clipboard.writeText(fullText).then(() => {
+      alert("✅ تم نسخ النظام بالكامل بنجاح! يمكنك الآن لصقه في الواتساب.");
+    }).catch(err => {
+      alert("❌ حدث خطأ أثناء النسخ.");
+    });
+  };
+
   // Pie chart data
   const pieData = useMemo(() => {
     const total = totals.protein * 4 + totals.carbs * 4 + totals.fat * 9;
@@ -552,8 +576,11 @@ export default function NutritionPro() {
             <button onClick={() => { setIsTemplateModalOpen(true); setTemplateView('list'); }} className={cn("flex items-center gap-1.5 px-3 py-2.5 rounded-xl text-xs font-bold transition-all border", theme === 'dark' ? "bg-neutral-900 border-neutral-800 hover:bg-neutral-800" : "bg-white border-gray-200 hover:bg-gray-100")}>
               <BookOpen size={15}/> القوالب {templates.length > 0 && <span className="bg-blue-600 text-white text-[10px] px-1.5 py-0.5 rounded-full">{templates.length}</span>}
             </button>
+            <button onClick={copyToWhatsApp} className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black transition-all shadow-lg shadow-blue-600/20">
+              <Copy size={15}/> نسخ النظام بالكامل
+            </button>
             <button onClick={() => window.print()} className="flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black transition-all shadow-lg shadow-blue-600/20">
-              <Printer size={15}/> PDF
+              <Printer size={15}/> استخراج PDF
             </button>
           </div>
         </header>
@@ -1019,7 +1046,7 @@ function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal
                       </td>
                       <td className="py-3 text-center">
                         <input type="number" min="0" className={cn("w-14 p-1.5 rounded-lg text-center font-black text-xs border outline-none print:hidden", theme === 'dark' ? "bg-black border-neutral-800 text-white" : "bg-white border-gray-200")} value={it.grams} onChange={e => onUpdateMeal({ ...meal, items: meal.items.map(i => i.instId === it.instId ? { ...i, grams: parseFloat(e.target.value) || 0 } : i) })}/>
-                        <span className="hidden print:inline font-black text-sm">{it.grams}g</span>
+                        <span className="hidden print:inline font-black text-sm">{it.grams}{it.state === "Liquid" ? "ml" : "g"}</span>
                       </td>
                       <td className="py-3 text-center text-xs font-bold text-red-500/80">{Math.round(it.protein * it.grams / 100)}g</td>
                       <td className="py-3 text-center text-xs font-bold text-blue-500/80">{Math.round(it.carbs * it.grams / 100)}g</td>
