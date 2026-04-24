@@ -1,62 +1,31 @@
 "use client";
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { 
-  Plus, Trash2, Search, Printer, X, Copy, User, 
-  Settings, Sun, Moon, Layout, GripVertical, Lock, Save, ExternalLink, ClipboardCheck
+  Plus, Trash2, Search, Printer, ArrowUp, ArrowDown, X, Check, Save, Copy, User, 
+  Settings, ChevronDown, ChevronUp, Sun, Moon, Info, Layout, GripVertical, Lock
 } from 'lucide-react';
 import {
-  DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent
+  DndContext, 
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
 } from '@dnd-kit/core';
 import {
-  arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable,
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-// Utility for Tailwind classes
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
-}
-
-// ========== Interfaces (Strict Typing for Vercel) ==========
-interface FoodItem {
-  id: number;
-  name: string;
-  category: string;
-  state: string;
-  carbs: number;
-  protein: number;
-  fat: number;
-  calories: number;
-  grams: number;
-  instId: string; // Unique instance ID for DND
-}
-
-interface Meal {
-  id: string;
-  name: string;
-  items: FoodItem[];
-}
-
-interface TargetMacros {
-  calories: number;
-  protein: number;
-  carbs: number;
-  fat: number;
-}
-
-interface ClientData {
-  name: string;
-  goal: string;
-}
-
-interface NutritionTemplate {
-  id: string;
-  templateName: string;
-  meals: Meal[];
-  targetMacros: TargetMacros;
-  timestamp: number;
 }
 
 // ========== FOOD DATABASE ==========
@@ -252,77 +221,126 @@ const FOOD_DATABASE = [
   { id: 911, name: "Multivitamins (1 Tablet) - مالتي فيتامين", category: "Supplements", state: "Ready", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 912, name: "Omega-3 (1 Capsule) - أوميجا 3", category: "Supplements", state: "Ready", carbs: 0, protein: 0, fat: 0.9, calories: 9.0 },
 ];
+// --- Types ---
+interface FoodItem {
+  id: number;
+  name: string;
+  category: string;
+  state: string;
+  carbs: number;
+  protein: number;
+  fat: number;
+  calories: number;
+  grams: number;
+  instId: string;
+}
 
-export default function SmartNutritionApp() {
-  // --- States ---
+interface Meal {
+  id: string;
+  name: string;
+  notes: string;
+  items: FoodItem[];
+}
+
+interface TargetMacros {
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+export default function NutritionPro() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState(false);
   const [theme, setTheme] = useState<'dark' | 'light'>('dark');
+  const [systemNotes, setSystemNotes] = useState("");
   const [meals, setMeals] = useState<Meal[]>([
-    { id: 'meal-1', name: "الوجبة الأولى", items: [] }
+    { id: 'meal-1', name: "الوجبة الأولى", notes: "", items: [] },
+    { id: 'meal-2', name: "الوجبة الثانية", notes: "", items: [] }
   ]);
-  const [clientData, setClientData] = useState<ClientData>({ name: '', goal: '' });
+  const [clientData, setClientData] = useState({ 
+    name: '', goal: '', coach: 'C/ Mohamed Saed', phone: '01022816320', date: new Date().toISOString().split('T')[0] 
+  });
   const [targetMacros, setTargetMacros] = useState<TargetMacros>({ calories: 2000, protein: 150, carbs: 200, fat: 60 });
-  const [templates, setTemplates] = useState<NutritionTemplate[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeMealId, setActiveMealId] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("All");
+  const [selectedFoods, setSelectedFoods] = useState<Set<number>>(new Set());
+  const [templates, setTemplates] = useState<any[]>([]);
 
-  // --- Sensors for DND ---
-  const sensors = useSensors(useSensor(PointerSensor), useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }));
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
 
-  // --- Effects ---
   useEffect(() => {
-    const savedTemplates = localStorage.getItem('smart_templates');
+    const savedTemplates = localStorage.getItem('pro_nutrition_templates');
     if (savedTemplates) setTemplates(JSON.parse(savedTemplates));
-    
-    const savedWork = localStorage.getItem('current_work');
-    if (savedWork) {
-      const parsed = JSON.parse(savedWork);
-      setMeals(parsed.meals);
-      setTargetMacros(parsed.targetMacros);
-    }
+    const savedTheme = localStorage.getItem('pro_theme');
+    if (savedTheme) setTheme(savedTheme as 'dark' | 'light');
+    const savedNotes = localStorage.getItem('pro_system_notes');
+    if (savedNotes) setSystemNotes(savedNotes);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('current_work', JSON.stringify({ meals, targetMacros }));
-  }, [meals, targetMacros]);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+    localStorage.setItem('pro_theme', theme);
+  }, [theme]);
 
-  // --- Functions ---
+  useEffect(() => {
+    localStorage.setItem('pro_system_notes', systemNotes);
+  }, [systemNotes]);
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === "admin123") setIsAuthenticated(true);
+    if (password === "admin123") {
+      setIsAuthenticated(true);
+      setLoginError(false);
+    } else {
+      setLoginError(true);
+    }
   };
 
-  const saveAsTemplate = () => {
-    const name = prompt("أدخل اسم القالب:");
-    if (!name) return;
-    const newTemplate: NutritionTemplate = {
-      id: `temp-${Date.now()}`,
-      templateName: name,
-      meals,
-      targetMacros,
-      timestamp: Date.now()
-    };
-    const updated = [...templates, newTemplate];
-    setTemplates(updated);
-    localStorage.setItem('smart_templates', JSON.stringify(updated));
+  const normalizeArabic = (str: string) => {
+    return str
+      .replace(/[أإآا]/g, "ا")
+      .replace(/ة/g, "ه")
+      .replace(/ى/g, "ي")
+      .toLowerCase();
   };
 
-  const loadTemplate = (temp: NutritionTemplate) => {
-    setMeals(temp.meals);
-    setTargetMacros(temp.targetMacros);
+  const filteredFoods = useMemo(() => {
+    let list = FOOD_DATABASE;
+    if (selectedCategory !== "All") {
+      list = list.filter(f => f.category.includes(selectedCategory));
+    }
+    if (searchTerm) {
+      const normalizedSearch = normalizeArabic(searchTerm);
+      list = list.filter(f => normalizeArabic(f.name).includes(normalizedSearch));
+    }
+    return list;
+  }, [searchTerm, selectedCategory]);
+
+  const categories = ["All", "Carb", "Protein", "Fat", "Fruit", "Vegetable", "Legumes", "Dairy"];
+
+  const calculateTotals = () => {
+    return meals.reduce((acc, meal) => {
+      meal.items.forEach(it => {
+        const ratio = it.grams / 100;
+        acc.calories += it.calories * ratio;
+        acc.protein += it.protein * ratio;
+        acc.carbs += it.carbs * ratio;
+        acc.fat += it.fat * ratio;
+      });
+      return acc;
+    }, { calories: 0, protein: 0, carbs: 0, fat: 0 } as TargetMacros);
   };
 
-  const copyPlanToClipboard = () => {
-    const text = meals.map(m => {
-      const items = m.items.map(i => `• ${i.name}: ${i.grams}g`).join('\n');
-      return `[${m.name}]\n${items}`;
-    }).join('\n\n');
-    navigator.clipboard.writeText(text);
-    alert("تم نسخ النظام بنجاح!");
-  };
+  const totals = calculateTotals();
 
-  const onDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
       setMeals((items) => {
@@ -333,24 +351,101 @@ export default function SmartNutritionApp() {
     }
   };
 
+  const addMeal = () => {
+    const newId = `meal-${Date.now()}`;
+    setMeals([...meals, { id: newId, name: `وجبة ${meals.length + 1}`, notes: "", items: [] }]);
+  };
+
+  const duplicateMeal = (meal: Meal) => {
+    const newMeal = { 
+      ...meal, 
+      id: `meal-dup-${Date.now()}`, 
+      name: `${meal.name} (نسخة)`,
+      items: meal.items.map(it => ({ ...it, instId: `${it.id}-${Math.random()}` }))
+    };
+    setMeals([...meals, newMeal]);
+  };
+
+  const removeMeal = (id: string) => {
+    setMeals(meals.filter(m => m.id !== id));
+  };
+
+  const toggleFoodSelection = (id: number) => {
+    const next = new Set(selectedFoods);
+    next.has(id) ? next.delete(id) : next.add(id);
+    setSelectedFoods(next);
+  };
+
+  const addSelectedToMeal = () => {
+    if (!activeMealId) return;
+    const newItems = FOOD_DATABASE.filter(f => selectedFoods.has(f.id)).map(f => ({
+      ...f,
+      grams: 100,
+      instId: `${f.id}-${Math.random()}`
+    }));
+    setMeals(meals.map(m => m.id === activeMealId ? { ...m, items: [...m.items, ...newItems] } : m));
+    setIsModalOpen(false);
+    setSelectedFoods(new Set());
+    setSearchTerm("");
+  };
+
+  const moveItem = (mealId: string, itemInstId: string, direction: 'up' | 'down') => {
+    setMeals(meals.map(m => {
+      if (m.id !== mealId) return m;
+      const index = m.items.findIndex(it => it.instId === itemInstId);
+      const newItems = [...m.items];
+      if (direction === 'up' && index > 0) {
+        [newItems[index], newItems[index-1]] = [newItems[index-1], newItems[index]];
+      } else if (direction === 'down' && index < newItems.length - 1) {
+        [newItems[index], newItems[index+1]] = [newItems[index+1], newItems[index]];
+      }
+      return { ...m, items: newItems };
+    }));
+  };
+
+  const saveTemplate = () => {
+    const name = prompt("اسم القالب:");
+    if (!name) return;
+    const newTemp = { id: Date.now(), name, meals, targetMacros };
+    const updated = [...templates, newTemp];
+    setTemplates(updated);
+    localStorage.setItem('pro_nutrition_templates', JSON.stringify(updated));
+  };
+
+  const loadTemplate = (temp: any) => {
+    if (confirm("تحميل القالب؟ سيتم مسح البيانات الحالية.")) {
+      setMeals(temp.meals);
+      setTargetMacros(temp.targetMacros);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6 font-sans" dir="rtl">
-        <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 p-10 rounded-[2.5rem] shadow-2xl">
+      <div className="min-h-screen bg-black flex items-center justify-center p-4 font-sans" dir="rtl">
+        <div className="w-full max-w-md bg-neutral-900 border border-neutral-800 p-8 rounded-[2.5rem] shadow-2xl">
           <div className="flex flex-col items-center mb-8">
-            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-blue-600/20">
-              <Lock className="text-white" size={30} />
+            <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30 mb-4">
+              <Lock className="text-white" size={32} />
             </div>
-            <h1 className="text-2xl font-black text-white">Smart Nutrition PRO</h1>
-            <p className="text-neutral-500 text-sm mt-2">يرجى تسجيل الدخول للمتابعة</p>
+            <h1 className="text-2xl font-black text-white">تسجيل الدخول</h1>
+            <p className="text-neutral-500 text-sm mt-2">يرجى إدخال كلمة المرور للوصول للنظام</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
             <input 
-              type="password" placeholder="كلمة المرور"
-              className="w-full p-4 bg-black border border-neutral-800 rounded-2xl outline-none text-white text-center focus:border-blue-600 transition-all"
-              value={password} onChange={(e) => setPassword(e.target.value)} 
+              type="password"
+              placeholder="كلمة المرور"
+              className={cn(
+                "w-full p-4 bg-black border rounded-2xl outline-none focus:border-blue-600 transition-all text-white text-center font-bold",
+                loginError ? "border-red-600" : "border-neutral-800"
+              )}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoFocus
             />
-            <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl shadow-lg transition-all">دخول النظام</button>
+            {loginError && <p className="text-red-500 text-xs text-center font-bold">كلمة المرور غير صحيحة!</p>}
+            <button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black py-4 rounded-2xl transition-all shadow-lg shadow-blue-600/20">
+              دخول النظام
+            </button>
           </form>
         </div>
       </div>
@@ -358,113 +453,228 @@ export default function SmartNutritionApp() {
   }
 
   return (
-    <div className={cn("min-h-screen transition-all duration-300 font-sans pb-20", theme === 'dark' ? "bg-[#080808] text-white" : "bg-gray-50 text-gray-900")} dir="rtl">
+    <div className={cn(
+      "min-h-screen transition-colors duration-300 font-sans pb-20",
+      theme === 'dark' ? "bg-[#080808] text-white" : "bg-gray-50 text-gray-900"
+    )} dir="rtl">
       
-      {/* --- Navbar --- */}
-      <nav className="sticky top-0 z-50 backdrop-blur-xl border-b border-neutral-800/50 bg-black/50 px-6 py-4 mb-8">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <div className="bg-blue-600 p-2 rounded-xl"><Layout size={20} className="text-white"/></div>
-            <h1 className="text-lg font-black tracking-tight">Smart Nutrition <span className="text-blue-500">PRO</span></h1>
+      {/* 🖨 PRINT HEADER */}
+      <div className="hidden print:block bg-white text-black p-8 border-b-8 border-blue-600">
+        <div className="flex justify-between items-center mb-10">
+          <div>
+            <h1 className="text-5xl font-black text-blue-700 tracking-tight">نظام غذائي متطور</h1>
+            <p className="text-lg text-gray-500 font-bold mt-2">Personalized Nutrition Strategy</p>
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={saveAsTemplate} className="flex items-center gap-2 px-4 py-2 bg-emerald-600/10 text-emerald-500 border border-emerald-600/20 rounded-xl text-xs font-black hover:bg-emerald-600 hover:text-white transition-all">
-              <Save size={14}/> حفظ كقالب
-            </button>
-            <button onClick={copyPlanToClipboard} className="p-2.5 bg-neutral-800 rounded-xl hover:bg-neutral-700 transition-all text-neutral-400 hover:text-white">
-              <ClipboardCheck size={20}/>
-            </button>
+          <div className="text-left">
+            <h2 className="text-2xl font-black uppercase">{clientData.coach}</h2>
+            <p className="text-blue-600 font-mono text-lg">{clientData.phone}</p>
           </div>
         </div>
-      </nav>
+        
+        <div className="grid grid-cols-4 gap-6 bg-gray-50 p-6 rounded-3xl border-2 border-gray-100">
+          <InfoBox label="العميل" value={clientData.name || '---'} />
+          <InfoBox label="الهدف" value={clientData.goal || '---'} />
+          <InfoBox label="التاريخ" value={clientData.date} />
+          <InfoBox label="الإجمالي" value={`${Math.round(totals.calories)} سعرة`} />
+        </div>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="max-w-6xl mx-auto px-4 pt-8 print:p-0">
+        <header className="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 print:hidden">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-600/30">
+              <Layout className="text-white" size={24} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-black">برو نيوتريشن <span className="text-blue-500 text-sm font-medium">PRO</span></h1>
+              <p className="text-[10px] opacity-50 uppercase tracking-widest font-bold">Nutrition Engineering v2.0</p>
+            </div>
+          </div>
           
-          {/* --- Sidebar --- */}
-          <aside className="lg:col-span-4 space-y-6">
-            {/* Templates Section */}
+          <div className="flex items-center gap-2 bg-neutral-900/50 p-1.5 rounded-2xl border border-neutral-800 backdrop-blur-md">
+            <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className="p-2.5 rounded-xl hover:bg-neutral-800 transition-all">
+              {theme === 'dark' ? <Sun size={20} className="text-yellow-400"/> : <Moon size={20} className="text-blue-400"/>}
+            </button>
+            <div className="w-px h-6 bg-neutral-800 mx-1" />
+            <button onClick={saveTemplate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold transition-all">
+              <Save size={16}/> حفظ كقالب
+            </button>
+            <button onClick={() => window.print()} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black transition-all shadow-lg shadow-blue-600/20">
+              <Printer size={16}/> استخراج PDF
+            </button>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <aside className="lg:col-span-4 space-y-6 print:hidden">
+            <div className={cn("p-6 rounded-[2rem] border transition-all", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
+              <h3 className="flex items-center gap-2 mb-6 font-bold text-blue-500"><User size={18}/> بيانات العميل</h3>
+              <div className="space-y-4">
+                <InputGroup label="اسم العميل" value={clientData.name} onChange={v => setClientData({...clientData, name: v})} placeholder="مثال: محمد علي"/>
+                <InputGroup label="الهدف" value={clientData.goal} onChange={v => setClientData({...clientData, goal: v})} placeholder="تضخيم عضلي / تنشيف"/>
+              </div>
+            </div>
+
+            <div className={cn("p-6 rounded-[2rem] border transition-all", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
+              <h3 className="flex items-center gap-2 mb-6 font-bold text-emerald-500"><Info size={18}/> ملاحظات النظام والتعليمات</h3>
+              <textarea 
+                className="w-full p-4 bg-black/40 border border-neutral-800 rounded-2xl text-xs font-bold outline-none focus:border-blue-600 transition-all h-40 resize-none"
+                placeholder="اكتب ملاحظات النظام التي ستظهر في نهاية الطباعة..."
+                value={systemNotes}
+                onChange={(e) => setSystemNotes(e.target.value)}
+              />
+            </div>
+
+            <div className={cn("p-6 rounded-[2rem] border transition-all", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
+              <h3 className="flex items-center gap-2 mb-6 font-bold text-orange-500"><Settings size={18}/> الماكروز المستهدفة</h3>
+              <div className="grid grid-cols-2 gap-4">
+                <MacroInput label="السعرات" value={targetMacros.calories} onChange={v => setTargetMacros({...targetMacros, calories: v})} color="bg-orange-500/10 text-orange-500"/>
+                <MacroInput label="البروتين" value={targetMacros.protein} onChange={v => setTargetMacros({...targetMacros, protein: v})} color="bg-red-500/10 text-red-500"/>
+                <MacroInput label="الكارب" value={targetMacros.carbs} onChange={v => setTargetMacros({...targetMacros, carbs: v})} color="bg-blue-500/10 text-blue-500"/>
+                <MacroInput label="الدهون" value={targetMacros.fat} onChange={v => setTargetMacros({...targetMacros, fat: v})} color="bg-yellow-500/10 text-yellow-500"/>
+              </div>
+            </div>
+            
+            <div className={cn("p-6 rounded-[2rem] border transition-all", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
+              <h3 className="flex items-center gap-2 mb-6 font-bold text-emerald-500"><Info size={18}/> حالة الإنجاز</h3>
+              <div className="space-y-6">
+                <ProgressBar label="السعرات" current={totals.calories} target={targetMacros.calories} unit="kcal" color="bg-orange-500" />
+                <ProgressBar label="البروتين" current={totals.protein} target={targetMacros.protein} unit="g" color="bg-red-500" />
+                <ProgressBar label="الكارب" current={totals.carbs} target={targetMacros.carbs} unit="g" color="bg-blue-500" />
+                <ProgressBar label="الدهون" current={totals.fat} target={targetMacros.fat} unit="g" color="bg-yellow-500" />
+              </div>
+            </div>
+
             {templates.length > 0 && (
-              <div className="p-6 bg-neutral-900/40 border border-neutral-800/50 rounded-[2rem]">
-                <h3 className="flex items-center gap-2 mb-4 text-xs font-black uppercase text-neutral-500 tracking-widest"><ExternalLink size={14}/> القوالب المحفوظة</h3>
+              <div className={cn("p-6 rounded-[2rem] border transition-all", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-200 shadow-sm")}>
+                <h3 className="flex items-center gap-2 mb-4 font-bold text-purple-500"><Copy size={18}/> القوالب المحفوظة</h3>
                 <div className="space-y-2">
                   {templates.map(t => (
-                    <button key={t.id} onClick={() => loadTemplate(t)} className="w-full flex justify-between items-center p-4 bg-black/40 border border-neutral-800 rounded-2xl hover:border-blue-600/50 group transition-all">
-                      <span className="text-sm font-bold">{t.templateName}</span>
-                      <span className="text-[10px] text-neutral-600 group-hover:text-blue-500">تحميل</span>
-                    </button>
+                    <div key={t.id} className="flex gap-2">
+                      <button onClick={() => loadTemplate(t)} className="flex-1 text-right p-3 bg-neutral-800/50 rounded-xl hover:bg-neutral-800 text-xs font-bold border border-neutral-700/50 transition-all truncate">
+                        {t.name}
+                      </button>
+                      <button onClick={() => {
+                        const next = templates.filter(x => x.id !== t.id);
+                        setTemplates(next);
+                        localStorage.setItem('pro_nutrition_templates', JSON.stringify(next));
+                      }} className="p-3 text-neutral-500 hover:text-red-500">
+                        <Trash2 size={16}/>
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
             )}
-
-            {/* Target Macros */}
-            <div className="p-6 bg-neutral-900/40 border border-neutral-800/50 rounded-[2rem]">
-              <h3 className="flex items-center gap-2 mb-6 text-xs font-black uppercase text-neutral-500 tracking-widest"><Settings size={14}/> الأهداف اليومية</h3>
-              <div className="grid grid-cols-2 gap-3">
-                <MacroInput label="السعرات" value={targetMacros.calories} onChange={(v) => setTargetMacros({...targetMacros, calories: v})} color="orange" />
-                <MacroInput label="البروتين" value={targetMacros.protein} onChange={(v) => setTargetMacros({...targetMacros, protein: v})} color="red" />
-                <MacroInput label="الكارب" value={targetMacros.carbs} onChange={(v) => setTargetMacros({...targetMacros, carbs: v})} color="blue" />
-                <MacroInput label="الدهون" value={targetMacros.fat} onChange={(v) => setTargetMacros({...targetMacros, fat: v})} color="yellow" />
-              </div>
-            </div>
           </aside>
 
-          {/* --- Main Content --- */}
-          <main className="lg:col-span-8 space-y-6">
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={onDragEnd}>
+          <main className="lg:col-span-8 space-y-8">
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={meals.map(m => m.id)} strategy={verticalListSortingStrategy}>
                 {meals.map((meal) => (
                   <MealCard 
                     key={meal.id} 
                     meal={meal} 
-                    onUpdate={(updated) => setMeals(meals.map(m => m.id === meal.id ? updated : m))}
-                    onDelete={() => setMeals(meals.filter(m => m.id !== meal.id))}
+                    theme={theme}
                     onAddItems={() => { setActiveMealId(meal.id); setIsModalOpen(true); }}
+                    onRemove={() => removeMeal(meal.id)}
+                    onDuplicate={() => duplicateMeal(meal)}
+                    onUpdateMeal={(updated: Meal) => setMeals(meals.map(m => m.id === meal.id ? updated : m))}
+                    moveItem={(itemInstId, dir) => moveItem(meal.id, itemInstId, dir)}
                   />
                 ))}
               </SortableContext>
             </DndContext>
-            
-            <button 
-              onClick={() => setMeals([...meals, { id: `meal-${Date.now()}`, name: `وجبة ${meals.length + 1}`, items: [] }])}
-              className="w-full py-10 border-2 border-dashed border-neutral-800 rounded-[2.5rem] text-neutral-600 hover:border-blue-600 hover:text-blue-500 transition-all flex flex-col items-center gap-2"
-            >
-              <Plus size={30}/>
-              <span className="font-black text-sm">إضافة وجبة جديدة</span>
+
+            <button onClick={addMeal} className={cn("w-full py-8 border-2 border-dashed rounded-[2.5rem] flex flex-col items-center justify-center gap-2 transition-all print:hidden", theme === 'dark' ? "border-neutral-800 text-neutral-500 hover:border-blue-600/50" : "border-gray-200 text-gray-400 hover:border-blue-400 shadow-sm")}>
+              <div className="p-3 bg-current/10 rounded-2xl"><Plus size={32} /></div>
+              <span className="font-black text-lg">إضافة وجبة جديدة</span>
             </button>
+
+            {/* 📋 PRINT FOOTER */}
+            <div className="hidden print:block mt-16 pt-10 border-t-4 border-gray-100">
+              <div className="flex justify-between items-start gap-10">
+                <div className="flex-1">
+                  <h4 className="text-xl font-black mb-4 text-blue-700">ملاحظات النظام والتعليمات:</h4>
+                  <div className="text-sm text-gray-600 whitespace-pre-line leading-relaxed font-medium">
+                    {systemNotes || "لا توجد ملاحظات إضافية لهذا العميل."}
+                  </div>
+                </div>
+                <div className="w-1/3 text-center bg-blue-600 text-white p-6 rounded-3xl">
+                  <p className="text-xs font-bold opacity-80 mb-2 uppercase tracking-widest">Connect with Coach</p>
+                  <p className="text-2xl font-black mb-1">{clientData.coach}</p>
+                  <p className="text-lg font-mono">{clientData.phone}</p>
+                </div>
+              </div>
+            </div>
           </main>
         </div>
       </div>
 
-      {/* --- Food Picker Modal --- */}
+      {/* SEARCH MODAL */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="w-full max-w-2xl bg-neutral-900 border border-neutral-800 rounded-[3rem] p-8 max-h-[80vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-xl font-black">اختر الأصناف</h2>
-              <button onClick={() => setIsModalOpen(false)} className="p-2 bg-neutral-800 rounded-full"><X/></button>
+        <div className="fixed inset-0 z-[100] bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+          <div className={cn("w-full max-w-3xl max-h-[85vh] rounded-[3rem] shadow-2xl overflow-hidden flex flex-col border", theme === 'dark' ? "bg-neutral-900 border-neutral-800" : "bg-white border-gray-200")}>
+            <div className="p-8 pb-4 flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-black">قائمة الأطعمة الذكية</h2>
+                <p className="text-xs opacity-50 font-bold mt-1">اختر الأصناف المراد إضافتها ({selectedFoods.size})</p>
+              </div>
+              <button onClick={() => { setIsModalOpen(false); setSelectedFoods(new Set()); }} className="p-3 bg-neutral-800/50 rounded-2xl hover:text-red-500"><X size={24}/></button>
             </div>
-            <div className="grid grid-cols-1 gap-3">
-              {FOOD_DATABASE.map(food => (
-                <button 
-                  key={food.id}
-                  onClick={() => {
-                    if (!activeMealId) return;
-                    const newItem: FoodItem = { ...food, grams: 100, instId: `${food.id}-${Date.now()}` };
-                    setMeals(meals.map(m => m.id === activeMealId ? { ...m, items: [...m.items, newItem] } : m));
-                    setIsModalOpen(false);
-                  }}
-                  className="flex justify-between items-center p-5 bg-black/40 border border-neutral-800 rounded-2xl hover:border-blue-600 transition-all text-right"
-                >
-                  <div>
-                    <p className="font-bold text-sm">{food.name}</p>
-                    <p className="text-[10px] text-neutral-500">{food.category} • {food.calories} kcal/100g</p>
+
+            <div className="p-8 pt-4 space-y-4">
+              <div className="relative">
+                <Search className="absolute right-5 top-1/2 -translate-y-1/2 text-neutral-500" size={20}/>
+                <input 
+                  autoFocus
+                  className={cn("w-full py-4 pr-14 pl-6 rounded-2xl outline-none border transition-all font-bold", theme === 'dark' ? "bg-black border-neutral-700" : "bg-gray-50 border-gray-200")}
+                  placeholder="ابحث عن: دجاج، أرز، شوفان..."
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                />
+              </div>
+              
+              <div className="flex gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                {categories.map(cat => (
+                  <button key={cat} onClick={() => setSelectedCategory(cat)} className={cn("px-5 py-2 rounded-xl text-xs font-black whitespace-nowrap transition-all border", selectedCategory === cat ? "bg-blue-600 text-white" : "bg-neutral-800 text-neutral-400")}>
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-8 pb-8 space-y-3 custom-scrollbar">
+              {filteredFoods.map(f => {
+                const isSelected = selectedFoods.has(f.id);
+                return (
+                  <div key={f.id} onClick={() => toggleFoodSelection(f.id)} className={cn("flex justify-between items-center p-5 rounded-[1.5rem] cursor-pointer border transition-all", isSelected ? "bg-blue-600/10 border-blue-500/50" : "bg-neutral-800/30 border-neutral-800")}>
+                    <div className="flex items-center gap-4">
+                      <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center font-bold text-xs", isSelected ? "bg-blue-600 text-white" : "bg-neutral-800 text-neutral-500")}>
+                        {isSelected ? <Check size={20}/> : f.category[0]}
+                      </div>
+                      <div>
+                        <p className="font-black text-sm">{f.name}</p>
+                        <div className="flex gap-3 mt-1 text-[10px] font-bold opacity-60">
+                          <span className="text-orange-500">{f.calories} kcal</span>
+                          <span className="text-red-500">P: {f.protein}g</span>
+                          <span className="text-blue-500">C: {f.carbs}g</span>
+                          <span className="text-yellow-500">F: {f.fat}g</span>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <Plus size={18} className="text-blue-500"/>
-                </button>
-              ))}
+                );
+              })}
             </div>
+
+            {selectedFoods.size > 0 && (
+              <div className="p-8 border-t border-neutral-800/50">
+                <button onClick={addSelectedToMeal} className="w-full bg-blue-600 text-white py-5 rounded-2xl font-black text-lg shadow-xl shadow-blue-600/30">
+                  إضافة {selectedFoods.size} أصناف للوجبة الآن
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
@@ -472,97 +682,151 @@ export default function SmartNutritionApp() {
   );
 }
 
-// ========== Components (Strictly Typed) ==========
+function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal, moveItem }: { 
+  meal: Meal, 
+  theme: 'dark' | 'light', 
+  onAddItems: () => void, 
+  onRemove: () => void, 
+  onDuplicate: () => void, 
+  onUpdateMeal: (updated: Meal) => void, 
+  moveItem: (itemInstId: string, direction: 'up' | 'down') => void 
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: meal.id });
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-function MealCard({ meal, onUpdate, onDelete, onAddItems }: { meal: Meal, onUpdate: (m: Meal) => void, onDelete: () => void, onAddItems: () => void }) {
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: meal.id });
-  
-  const totals = meal.items.reduce((acc, it) => {
+  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1 };
+
+  const mealTotals = meal.items.reduce((acc, it) => {
     const r = it.grams / 100;
-    return {
-      cal: acc.cal + it.calories * r,
-      pro: acc.pro + it.protein * r,
-      carb: acc.carb + it.carbs * r,
-      fat: acc.fat + it.fat * r,
-    };
-  }, { cal: 0, pro: 0, carb: 0, fat: 0 });
+    acc.cal += it.calories * r; acc.pro += it.protein * r; acc.carb += it.carbs * r; acc.fat += it.fat * r;
+    return acc;
+  }, { cal: 0, pro: 0, carb: 0, fat: 0 } as { cal: number, pro: number, carb: number, fat: number });
 
   return (
-    <div ref={setNodeRef} style={{ transform: CSS.Transform.toString(transform), transition }} className="bg-neutral-900/40 border border-neutral-800 rounded-[2.5rem] overflow-hidden">
-      <div className="p-6 border-b border-neutral-800/50 flex justify-between items-center bg-white/[0.02]">
-        <div className="flex items-center gap-4">
-          <button {...attributes} {...listeners} className="text-neutral-700 hover:text-neutral-500"><GripVertical size={20}/></button>
-          <input 
-            className="bg-transparent font-black text-xl outline-none focus:text-blue-500 transition-all" 
-            value={meal.name} onChange={(e) => onUpdate({...meal, name: e.target.value})} 
-          />
+    <div ref={setNodeRef} style={style} className={cn("rounded-[2.5rem] border transition-all overflow-hidden print:border-none print:shadow-none print:mb-12 print:break-inside-avoid", theme === 'dark' ? "bg-neutral-900/40 border-neutral-800" : "bg-white border-gray-100 shadow-sm", isDragging && "opacity-50 ring-2 ring-blue-600")}>
+      <div className={cn("px-6 py-4 flex items-center justify-between border-b print:bg-white print:border-none", theme === 'dark' ? "bg-neutral-800/30 border-neutral-800" : "bg-gray-50/50 border-gray-100")}>
+        <div className="flex items-center gap-4 flex-1">
+          <button {...attributes} {...listeners} className="p-2 text-neutral-600 hover:text-blue-500 print:hidden"><GripVertical size={20}/></button>
+          <input className="bg-transparent font-black text-2xl outline-none focus:text-blue-500 transition-colors w-full print:text-blue-600 print:text-5xl print:font-black" value={meal.name} onChange={e => onUpdateMeal({ ...meal, name: e.target.value })} />
         </div>
+        
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex gap-2">
-             <MacroBadge value={totals.cal} label="Kcal" color="orange" />
-             <MacroBadge value={totals.pro} label="P" color="red" />
-             <MacroBadge value={totals.carb} label="C" color="blue" />
-             <MacroBadge value={totals.fat} label="F" color="yellow" />
+          <div className="flex gap-2 mr-4 print:hidden">
+             <div className="text-[10px] font-black bg-orange-500/10 text-orange-500 px-3 py-1.5 rounded-full">{Math.round(mealTotals.cal)} kcal</div>
+             <div className="text-[10px] font-black bg-red-500/10 text-red-500 px-3 py-1.5 rounded-full">{Math.round(mealTotals.pro)}g P</div>
+             <div className="text-[10px] font-black bg-blue-500/10 text-blue-500 px-3 py-1.5 rounded-full">{Math.round(mealTotals.carb)}g C</div>
+             <div className="text-[10px] font-black bg-yellow-500/10 text-yellow-500 px-3 py-1.5 rounded-full">{Math.round(mealTotals.fat)}g F</div>
           </div>
-          <button onClick={onDelete} className="p-2 text-neutral-600 hover:text-red-500 transition-colors"><Trash2 size={18}/></button>
+          <div className="hidden print:flex gap-6 text-xl font-black text-blue-700">
+            <span>{Math.round(mealTotals.cal)} kcal</span>
+            <span className="opacity-60">P:{Math.round(mealTotals.pro)}g</span>
+            <span className="opacity-60">C:{Math.round(mealTotals.carb)}g</span>
+            <span className="opacity-60">F:{Math.round(mealTotals.fat)}g</span>
+          </div>
+          <button onClick={onDuplicate} className="p-2 text-neutral-500 hover:text-emerald-500 print:hidden"><Copy size={18}/></button>
+          <button onClick={() => setIsCollapsed(!isCollapsed)} className="p-2 text-neutral-500 hover:text-blue-500 print:hidden">{isCollapsed ? <ChevronDown size={20}/> : <ChevronUp size={20}/>}</button>
+          <button onClick={onRemove} className="p-2 text-neutral-500 hover:text-red-500 print:hidden"><Trash2 size={18}/></button>
         </div>
       </div>
 
-      <div className="p-6 space-y-3">
-        {meal.items.map(item => (
-          <div key={item.instId} className="flex items-center justify-between p-4 bg-black/20 rounded-2xl border border-neutral-800/50">
-            <span className="font-bold text-sm text-neutral-300">{item.name}</span>
-            <div className="flex items-center gap-4">
-               <div className="flex items-center gap-2">
-                 <input 
-                   type="number" className="w-16 bg-neutral-800 border-none rounded-lg p-1.5 text-center text-xs font-black"
-                   value={item.grams} onChange={(e) => onUpdate({
-                     ...meal, 
-                     items: meal.items.map(i => i.instId === item.instId ? {...i, grams: Number(e.target.value)} : i)
-                   })}
-                 />
-                 <span className="text-[10px] font-bold text-neutral-600">جم</span>
-               </div>
-               <button onClick={() => onUpdate({...meal, items: meal.items.filter(i => i.instId !== item.instId)})} className="text-neutral-700 hover:text-red-500"><X size={14}/></button>
+      {!isCollapsed && (
+        <div className="p-6">
+          <table className="w-full text-right border-separate border-spacing-y-2">
+            <thead>
+              <tr className="text-[10px] uppercase font-black text-neutral-500">
+                <th className="pb-2 pr-2">الصنف</th>
+                <th className="pb-2 text-center">الكمية (جم)</th>
+                <th className="pb-2 text-center">البروتين</th>
+                <th className="pb-2 text-center">الكارب</th>
+                <th className="pb-2 text-center">الدهون</th>
+                <th className="pb-2 text-center">السعرات</th>
+                <th className="pb-2 text-center print:hidden"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {meal.items.map((it) => (
+                <tr key={it.instId} className={cn("group rounded-2xl", theme === 'dark' ? "bg-black/20" : "bg-gray-50/50")}>
+                  <td className="py-4 pr-4 rounded-r-2xl">
+                    <div className="font-bold text-sm">{it.name}</div>
+                    <div className="text-[10px] opacity-40 font-bold">{it.category}</div>
+                  </td>
+                  <td className="py-4 text-center">
+                    <input type="number" className={cn("w-16 p-2 rounded-xl text-center font-black text-xs border print:hidden", theme === 'dark' ? "bg-black border-neutral-800" : "bg-white border-gray-200")} value={it.grams} onChange={e => onUpdateMeal({ ...meal, items: meal.items.map((i) => i.instId === it.instId ? { ...i, grams: parseFloat(e.target.value) || 0 } : i) })} />
+                    <span className="hidden print:inline font-black text-sm">{it.grams} جم</span>
+                  </td>
+                  <td className="py-4 text-center text-xs font-bold text-red-500/80">{Math.round(it.protein * it.grams/100)}g</td>
+                  <td className="py-4 text-center text-xs font-bold text-blue-500/80">{Math.round(it.carbs * it.grams/100)}g</td>
+                  <td className="py-4 text-center text-xs font-bold text-yellow-500/80">{Math.round(it.fat * it.grams/100)}g</td>
+                  <td className="py-4 text-center text-sm font-black text-blue-500">{Math.round(it.calories * it.grams/100)}</td>
+                  <td className="py-4 text-center rounded-l-2xl print:hidden">
+                    <div className="flex items-center justify-center gap-1">
+                      <button onClick={() => moveItem(it.instId, 'up')} className="p-1 text-neutral-600 hover:text-blue-500"><ArrowUp size={14}/></button>
+                      <button onClick={() => moveItem(it.instId, 'down')} className="p-1 text-neutral-600 hover:text-blue-500"><ArrowDown size={14}/></button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="mt-6 flex flex-col md:flex-row gap-4 items-end">
+            <div className="flex-1 w-full">
+              <p className="text-[10px] font-black text-neutral-500 mb-2 uppercase mr-2 print:hidden">ملاحظات الوجبة</p>
+              <textarea placeholder="ملاحظات لهذه الوجبة..." className={cn("w-full p-4 rounded-2xl text-xs font-bold outline-none border transition-all h-20 print:italic print:border-none", theme === 'dark' ? "bg-black/40 border-neutral-800" : "bg-gray-50 border-gray-100")} value={meal.notes} onChange={e => onUpdateMeal({ ...meal, notes: e.target.value })} />
             </div>
+            <button onClick={onAddItems} className="flex items-center gap-2 px-6 py-4 bg-blue-600 text-white rounded-2xl font-black text-sm print:hidden"><Plus size={18}/> إضافة صنف</button>
           </div>
-        ))}
-        <button onClick={onAddItems} className="w-full py-4 rounded-2xl bg-blue-600/5 border border-blue-600/10 text-blue-500 font-black text-xs hover:bg-blue-600 hover:text-white transition-all">
-          + إضافة صنف للوجبة
-        </button>
-      </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function InputGroup({ label, value, onChange, placeholder }: { label: string, value: string, onChange: (v: string) => void, placeholder?: string }) {
+  return (
+    <div>
+      <label className="text-[10px] font-black opacity-40 uppercase mr-2 tracking-widest">{label}</label>
+      <input className="w-full bg-black/40 border border-neutral-800 p-3.5 mt-1 rounded-2xl outline-none focus:border-blue-600 font-bold text-sm" value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder} />
     </div>
   );
 }
 
 function MacroInput({ label, value, onChange, color }: { label: string, value: number, onChange: (v: number) => void, color: string }) {
-  const colors: Record<string, string> = {
-    orange: "text-orange-500 bg-orange-500/5 border-orange-500/10 focus-within:border-orange-500",
-    red: "text-red-500 bg-red-500/5 border-red-500/10 focus-within:border-red-500",
-    blue: "text-blue-500 bg-blue-500/5 border-blue-500/10 focus-within:border-blue-500",
-    yellow: "text-yellow-500 bg-yellow-500/5 border-yellow-500/10 focus-within:border-yellow-500",
-  };
   return (
-    <div className={cn("p-4 rounded-2xl border transition-all", colors[color])}>
-      <label className="text-[9px] font-black uppercase opacity-60 block mb-1">{label}</label>
-      <input 
-        type="number" className="bg-transparent w-full outline-none font-black text-lg"
-        value={value} onChange={(e) => onChange(Number(e.target.value))}
-      />
+    <div className={cn("p-4 rounded-2xl border border-neutral-800", color)}>
+      <label className="text-[10px] font-black uppercase block mb-1 opacity-70">{label}</label>
+      <input type="number" className="bg-transparent w-full font-black text-lg outline-none" value={value} onChange={e => onChange(parseFloat(e.target.value) || 0)} />
     </div>
   );
 }
 
-function MacroBadge({ value, label, color }: { value: number, label: string, color: string }) {
-  const colors: Record<string, string> = {
-    orange: "bg-orange-500/10 text-orange-500",
-    red: "bg-red-500/10 text-red-500",
-    blue: "bg-blue-500/10 text-blue-500",
-    yellow: "bg-yellow-500/10 text-yellow-500",
-  };
+interface ProgressBarProps {
+  label: string;
+  current: number;
+  target: number;
+  unit: string;
+  color: string;
+}
+
+function ProgressBar({ label, current, target, unit, color }: ProgressBarProps) {
+  const percentage = Math.min((current / target) * 100, 100);
   return (
-    <div className={cn("px-3 py-1.5 rounded-full text-[10px] font-black border border-white/5", colors[color])}>
-      {Math.round(value)} <span className="opacity-50 text-[8px]">{label}</span>
+    <div>
+      <div className="flex justify-between items-end mb-2">
+        <span className="text-xs font-black opacity-60">{label}</span>
+        <span className="text-sm font-black">{Math.round(current)} <span className="opacity-40">/ {target} {unit}</span></span>
+      </div>
+      <div className="h-2.5 bg-neutral-800 rounded-full overflow-hidden">
+        <div className={cn("h-full transition-all duration-500 rounded-full", color)} style={{ width: `${percentage}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function InfoBox({ label, value }: { label: string, value: string | number }) {
+  return (
+    <div className="border-r-2 border-gray-100 pr-4 last:border-none">
+      <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{label}</span>
+      <p className="text-lg font-black text-gray-800 mt-1">{value}</p>
     </div>
   );
 }
