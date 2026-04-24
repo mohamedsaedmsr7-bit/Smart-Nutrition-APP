@@ -84,7 +84,7 @@ const FOOD_DATABASE = [
 
   // --- FAT SOURCES ---
   { id: 301, name: "Olive Oil - زيت زيتون", category: "Fat", state: "Raw", carbs: 0, protein: 0, fat: 100, calories: 884 },
-  { id: 302, name: "Butter - زبدة", category: "Fat", state: "Raw", carbs: 0, protein: 1, fat: 81, calories: 717 },
+  { id: 302, name: "Butter - حبدة", category: "Fat", state: "Raw", carbs: 0, protein: 1, fat: 81, calories: 717 },
   { id: 303, name: "Tahini - طحينة", category: "Fat", state: "Raw", carbs: 21, protein: 17, fat: 54, calories: 595 },
   { id: 304, name: "Almonds - لوز", category: "Fat/Nut", state: "Raw", carbs: 22, protein: 21, fat: 50, calories: 579 },
   { id: 305, name: "Peanuts - سوداني", category: "Fat/Nut", state: "Raw", carbs: 16, protein: 26, fat: 49, calories: 567 },
@@ -306,6 +306,17 @@ export default function NutritionPro() {
     setMeals(meals.filter(m => m.id !== id));
   };
 
+  // وظيفة حذف الصنف من الوجبة
+  const removeItemFromMeal = (mealId: string, itemInstId: string) => {
+    setMeals(meals.map(m => {
+      if (m.id !== mealId) return m;
+      return {
+        ...m,
+        items: m.items.filter(it => it.instId !== itemInstId)
+      };
+    }));
+  };
+
   const toggleFoodSelection = (id: number) => {
     const next = new Set(selectedFoods);
     next.has(id) ? next.delete(id) : next.add(id);
@@ -503,6 +514,7 @@ export default function NutritionPro() {
                     onRemove={() => removeMeal(meal.id)}
                     onDuplicate={() => duplicateMeal(meal)}
                     onUpdateMeal={(updated: Meal) => setMeals(meals.map(m => m.id === meal.id ? updated : m))}
+                    onRemoveItem={(itemInstId) => removeItemFromMeal(meal.id, itemInstId)}
                     moveItem={(itemInstId, dir) => moveItem(meal.id, itemInstId, dir)}
                   />
                 ))}
@@ -603,13 +615,14 @@ export default function NutritionPro() {
   );
 }
 
-function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal, moveItem }: { 
+function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal, onRemoveItem, moveItem }: { 
   meal: Meal, 
   theme: 'dark' | 'light', 
   onAddItems: () => void, 
   onRemove: () => void, 
   onDuplicate: () => void, 
   onUpdateMeal: (updated: Meal) => void, 
+  onRemoveItem: (itemInstId: string) => void,
   moveItem: (itemInstId: string, direction: 'up' | 'down') => void 
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: meal.id });
@@ -674,6 +687,8 @@ function MealCard({ meal, theme, onAddItems, onRemove, onDuplicate, onUpdateMeal
                     <div className="flex items-center justify-center gap-1">
                       <button onClick={() => moveItem(it.instId, 'up')} className="p-1 text-neutral-600 hover:text-blue-500"><ArrowUp size={14}/></button>
                       <button onClick={() => moveItem(it.instId, 'down')} className="p-1 text-neutral-600 hover:text-blue-500"><ArrowDown size={14}/></button>
+                      {/* زر الحذف الجديد */}
+                      <button onClick={() => onRemoveItem(it.instId)} className="p-1 text-neutral-600 hover:text-red-500 ml-1 transition-colors"><Trash2 size={14}/></button>
                     </div>
                   </td>
                 </tr>
