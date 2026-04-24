@@ -68,9 +68,9 @@ const FOOD_DATABASE = [
   { id: 212, name: "Boiled Eggs - بيض مسلوق", category: "Protein", state: "Boiled", carbs: 1, protein: 13, fat: 11, calories: 155 },
   { id: 213, name: "Egg White - بياض بيض", category: "Protein", state: "Raw", carbs: 0, protein: 11, fat: 0.5, calories: 52 },
   { id: 214, name: "Canned Tuna (Water) - تونة معلبة (ماء)", category: "Protein", state: "Canned", carbs: 0, protein: 25, fat: 1, calories: 116 },
-  { id: 215, name: "Cottage Cheese - جبنة قريش", category: "Protein", state: "Low Fat", carbs: 3, protein: 11, fat: 4, calories: 98 },
-  { id: 216, name: "Cooked Fava Beans - فول مدمس", category: "Protein/Legume", state: "Cooked", carbs: 19, protein: 9, fat: 0.4, calories: 110 },
-  // --- RED MEAT (لحم أحمر) ---
+  { id: 217, name: "Large Egg (1 Piece) - بيضة كبيرة (واحدة)", category: "Protein", state: "Raw/Boiled", carbs: 0.6, protein: 6.3, fat: 5.0, calories: 72 },
+  { id: 218, name: "Egg White (1 Piece) - بياض بيضة (واحدة)", category: "Protein", state: "Raw", carbs: 0.2, protein: 3.6, fat: 0.1, calories: 17 },
+ 
   { id: 250, name: "Raw Beef (Lean) - لحم بقري أحمر نئ", category: "Protein", state: "Raw", carbs: 0, protein: 22, fat: 5, calories: 133 },
   { id: 251, name: "Grilled Beef (Lean) - لحم بقري مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 28, fat: 7, calories: 175 },
   { id: 252, name: "Boiled Beef - لحم بقري مسلوق", category: "Protein", state: "Boiled", carbs: 0, protein: 26, fat: 8, calories: 176 },
@@ -124,6 +124,10 @@ const FOOD_DATABASE = [
   { id: 409, name: "Light Creamy Cheese - جبنة كريمي لايت", category: "Dairy", state: "Ready", carbs: 6, protein: 9, fat: 15, calories: 195 },
   { id: 410, name: "Halloumi - حلوم (خليجي)", category: "Dairy", state: "Ready", carbs: 2, protein: 21, fat: 26, calories: 320 },
   { id: 411, name: "Labneh - لبنة (خليجي)", category: "Dairy", state: "Ready", carbs: 4, protein: 6, fat: 12, calories: 150 },
+  { id: 412, name: "Full Cream Milk - لبن كامل الدسم (كوب 200مل)", category: "Dairy", state: "Liquid", carbs: 9.6, protein: 6.4, fat: 6.5, calories: 120 },
+  { id: 413, name: "Half-Skimmed Milk - لبن نصف دسم (كوب 200مل)", category: "Dairy", state: "Liquid", carbs: 9.8, protein: 6.6, fat: 3.0, calories: 95 },
+  { id: 414, name: "Skimmed Milk - لبن خالي الدسم (كوب 200مل)", category: "Dairy", state: "Liquid", carbs: 10, protein: 6.8, fat: 0.4, calories: 70 },
+  
 
 // --- ADDITIONAL FRUITS (فواكه إضافية - مصر والخليج) ---
   { id: 312, name: "Prickly Pear - تين شوكي", category: "Fruit", state: "Raw", carbs: 9.6, protein: 0.7, fat: 0.5, calories: 41 },
