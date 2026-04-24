@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useMemo } from 'react';
 import { 
-  Plus, Trash2, Search, Printer, ArrowUp, ArrowDown, X, Check, Save, Copy, User, 
+  Plus, Trash2, Search, Printer, ArrowUp, ArrowDown, X, Check, Copy, User, 
   Settings, ChevronDown, ChevronUp, Sun, Moon, Info, Layout, GripVertical, Lock
 } from 'lucide-react';
 import {
@@ -37,7 +37,7 @@ const FOOD_DATABASE = [
   { id: 104, name: "Cooked Brown Rice - أرز بني مطبوخ", category: "Carb", state: "Cooked", carbs: 23.0, protein: 2.6, fat: 0.9, calories: 112.0 },
   { id: 105, name: "White Pasta - مكرونة بيضاء", category: "Carb", state: "Raw", carbs: 75.0, protein: 13.0, fat: 1.5, calories: 370.0 },
   { id: 106, name: "Boiled White Pasta - مكرونة مسلوقة", category: "Carb", state: "Cooked", carbs: 25.0, protein: 5.0, fat: 1.0, calories: 130.0 },
-  { id: 107, name: "Macaroni Béchamel - مكرونة بالبشاميل", category: "Carb", state: "Cooked", carbs: 20.0, protein: 6.0, fat: 8.0, calories: 230.0 },
+  { id: 107, name: "Macaroni Béchamel - مكرونة بالبشاميل", category: "Carb", state: "Cooked", carbs: 20.0, protein: 6.0, fat: 8.0, calories: 180.0 },
   { id: 108, name: "Baladi Bread - خبز بلدي", category: "Carb", state: "Ready", carbs: 55.0, protein: 9.0, fat: 1.0, calories: 280.0 },
   { id: 109, name: "Shami Bread - خبز شامي", category: "Carb", state: "Ready", carbs: 56.0, protein: 8.0, fat: 1.0, calories: 275.0 },
   { id: 110, name: "White Toast - توست أبيض", category: "Carb", state: "Ready", carbs: 49.0, protein: 8.0, fat: 4.0, calories: 265.0 },
@@ -80,7 +80,6 @@ const FOOD_DATABASE = [
   { id: 251, name: "Grilled Beef (Lean) - لحم بقري مشوي", category: "Protein", state: "Grilled", carbs: 0, protein: 28, fat: 7, calories: 175 },
   { id: 252, name: "Boiled Beef - لحم بقري مسلوق", category: "Protein", state: "Boiled", carbs: 0, protein: 26, fat: 8, calories: 176 },
   { id: 253, name: "Raw Lamb - لحم ضأن نئ", category: "Protein", state: "Raw", carbs: 0, protein: 17, fat: 20, calories: 250 },
-  { id: 254, name: "Grilled Kofta - كفتة مشوية", category: "Protein", state: "Grilled", carbs: 2, protein: 18, fat: 18, calories: 240 },
 
   // --- FAT SOURCES ---
   { id: 301, name: "Olive Oil - زيت زيتون", category: "Fat", state: "Raw", carbs: 0, protein: 0, fat: 100, calories: 884 },
@@ -88,38 +87,29 @@ const FOOD_DATABASE = [
   { id: 303, name: "Tahini - طحينة", category: "Fat", state: "Raw", carbs: 21, protein: 17, fat: 54, calories: 595 },
   { id: 304, name: "Almonds - لوز", category: "Fat/Nut", state: "Raw", carbs: 22, protein: 21, fat: 50, calories: 579 },
   { id: 305, name: "Peanuts - سوداني", category: "Fat/Nut", state: "Raw", carbs: 16, protein: 26, fat: 49, calories: 567 },
-  { id: 306, name: "Avocado - أفوكادو", category: "Fruit/Fat", state: "Raw", carbs: 9, protein: 2, fat: 15, calories: 160 }, 
-  { id: 317, name: "Ghee (Ghi) - سمنة بلدي", category: "Fat", state: "Raw", carbs: 0, protein: 0, fat: 100.0, calories: 900.0 },
- 
+  { id: 306, name: "Avocado - أفوكادو", category: "Fruit/Fat", state: "Raw", carbs: 9, protein: 2, fat: 15, calories: 160 },  
   // --- NUTS & SEEDS (المكسرات والبذور) ---
-  { id: 307, name: "Walnuts - عين جمل", category: "Fat/Nut", state: "Raw", carbs: 14.0, protein: 15.0, fat: 65.0, calories: 654.0 },
-  { id: 308, name: "Cashews - كاجو", category: "Fat/Nut", state: "Raw", carbs: 30.0, protein: 18.0, fat: 44.0, calories: 553.0 },
-  { id: 309, name: "Pistachios - فستق", category: "Fat/Nut", state: "Raw", carbs: 27.0, protein: 20.0, fat: 45.0, calories: 562.0 },
-  { id: 310, name: "Hazelnuts - بندق", category: "Fat/Nut", state: "Raw", carbs: 17.0, protein: 15.0, fat: 61.0, calories: 628.0 },
-  { id: 311, name: "Pecans - بيكان", category: "Fat/Nut", state: "Raw", carbs: 14.0, protein: 9.0, fat: 72.0, calories: 691.0 },
-  { id: 312, name: "Brazil Nuts - جوز برازيلي", category: "Fat/Nut", state: "Raw", carbs: 12.0, protein: 14.0, fat: 66.0, calories: 656.0 },
-  { id: 313, name: "Macadamia - ماكاديميا", category: "Fat/Nut", state: "Raw", carbs: 14.0, protein: 8.0, fat: 76.0, calories: 718.0 },
-  { id: 314, name: "Pumpkin Seeds - لب قرع (خشب)", category: "Fat/Nut", state: "Raw", carbs: 10.0, protein: 30.0, fat: 49.0, calories: 559.0 },
-  { id: 315, name: "Sunflower Seeds - لب عباد شمس (سوري)", category: "Fat/Nut", state: "Raw", carbs: 20.0, protein: 21.0, fat: 51.0, calories: 584.0 },
-  { id: 316, name: "Watermelon Seeds - لب سوبر (أسمر)", category: "Fat/Nut", state: "Raw", carbs: 15.0, protein: 28.0, fat: 47.0, calories: 557.0 },
+{ id: 307, name: "Walnuts - عين جمل", category: "Fat/Nut", state: "Raw", carbs: 14.0, protein: 15.0, fat: 65.0, calories: 654.0 },
+{ id: 308, name: "Cashews - كاجو", category: "Fat/Nut", state: "Raw", carbs: 30.0, protein: 18.0, fat: 44.0, calories: 553.0 },
+{ id: 309, name: "Pistachios - فستق", category: "Fat/Nut", state: "Raw", carbs: 27.0, protein: 20.0, fat: 45.0, calories: 562.0 },
+{ id: 310, name: "Hazelnuts - بندق", category: "Fat/Nut", state: "Raw", carbs: 17.0, protein: 15.0, fat: 61.0, calories: 628.0 },
+{ id: 311, name: "Pecans - بيكان", category: "Fat/Nut", state: "Raw", carbs: 14.0, protein: 9.0, fat: 72.0, calories: 691.0 },
+{ id: 312, name: "Brazil Nuts - جوز برازيلي", category: "Fat/Nut", state: "Raw", carbs: 12.0, protein: 14.0, fat: 66.0, calories: 656.0 },
+{ id: 313, name: "Macadamia - ماكاديميا", category: "Fat/Nut", state: "Raw", carbs: 14.0, protein: 8.0, fat: 76.0, calories: 718.0 },
+{ id: 314, name: "Pumpkin Seeds - لب قرع (خشب)", category: "Fat/Nut", state: "Raw", carbs: 10.0, protein: 30.0, fat: 49.0, calories: 559.0 },
+{ id: 315, name: "Sunflower Seeds - لب عباد شمس (سوري)", category: "Fat/Nut", state: "Raw", carbs: 20.0, protein: 21.0, fat: 51.0, calories: 584.0 },
+{ id: 316, name: "Watermelon Seeds - لب سوبر (أسمر)", category: "Fat/Nut", state: "Raw", carbs: 15.0, protein: 28.0, fat: 47.0, calories: 557.0 },
 
   // --- VEGETABLES ---
   { id: 601, name: "Green Salad - سلطة خضراء", category: "Vegetable", state: "Ready", carbs: 4, protein: 1, fat: 0.2, calories: 20 },
   { id: 602, name: "Tomato - طماطم", category: "Vegetable", state: "Raw", carbs: 4, protein: 0.9, fat: 0.2, calories: 18 },
   { id: 603, name: "Cucumber - خيار", category: "Vegetable", state: "Raw", carbs: 3.6, protein: 0.7, fat: 0.1, calories: 16 },
   { id: 610, name: "Molokhia - ملوخية مطبوخة", category: "Vegetable", state: "Cooked", carbs: 6.0, protein: 3.0, fat: 2.0, calories: 55.0 },
-  
-  // --- COOKED VEGETABLES (خضار مطبوخ بالصلصة) ---
-  { id: 611, name: "Cooked Green Beans - فاصوليا خضراء (مطبوخة)", category: "Vegetable", state: "Cooked", carbs: 9.0, protein: 2.0, fat: 2.5, calories: 65.0 },
-  { id: 612, name: "Cooked Peas & Carrots - بسلة بالجزر (مطبوخة)", category: "Vegetable", state: "Cooked", carbs: 14.0, protein: 4.0, fat: 2.5, calories: 95.0 },
-  { id: 613, name: "Cooked Zucchini - كوسة مطبوخة", category: "Vegetable", state: "Cooked", carbs: 5.0, protein: 1.5, fat: 2.0, calories: 45.0 },
-  { id: 614, name: "Cooked Okra - بامية مطبوخة", category: "Vegetable", state: "Cooked", carbs: 8.5, protein: 2.0, fat: 2.5, calories: 65.0 },
-
-  // --- SAUCES (الصلصات) ---
+// --- SAUCES (الصلصات) ---
   { id: 701, name: "Tomato Sauce (Homemade) - صلصة طماطم (منزلية)", category: "Vegetable", state: "Cooked", carbs: 4.5, protein: 1.5, fat: 0.2, calories: 25 },
   { id: 702, name: "Tomato Paste - معجون طماطم (صلصة معلبة)", category: "Vegetable", state: "Ready", carbs: 18, protein: 4.3, fat: 0.5, calories: 82 },
 
-  // --- LEGUMES (البقوليات) ---
+// --- LEGUMES (البقوليات) ---
   { id: 501, name: "Dry Fava Beans - فول تدميس (نيء)", category: "Legumes", state: "Raw", carbs: 58, protein: 26, fat: 1.5, calories: 340 },
   { id: 502, name: "Cooked Fava Beans - فول مدمس (مسلوق سادة)", category: "Legumes", state: "Cooked", carbs: 18, protein: 8, fat: 0.5, calories: 110 },
   { id: 503, name: "Dry Lentils - عدس (نيء)", category: "Legumes", state: "Raw", carbs: 60, protein: 24, fat: 1, calories: 350 },
@@ -139,7 +129,9 @@ const FOOD_DATABASE = [
   { id: 519, name: "Cooked Red Kidney Beans - فاصوليا حمراء مسلوقة", category: "Legumes", state: "Cooked", carbs: 22.8, protein: 8.7, fat: 0.5, calories: 127 },
   { id: 520, name: "Baked Falafel - طعمية مشوية (قلاية هوائية)", category: "Legumes", state: "Cooked", carbs: 22.0, protein: 13.0, fat: 4.5, calories: 180.0 },
 
-  // --- CHEESE & DAIRY (الأجبان والألبان) ---
+
+
+// --- CHEESE & DAIRY (الأجبان والألبان) ---
   { id: 401, name: "Full Fat Mozzarella - موتزاريلّا كامل الدسم", category: "Dairy", state: "Ready", carbs: 2.2, protein: 22, fat: 22, calories: 280 },
   { id: 402, name: "Light Mozzarella - موتزاريلّا لايت", category: "Dairy", state: "Ready", carbs: 2.5, protein: 24, fat: 8, calories: 160 },
   { id: 403, name: "Old Roumy Cheese - جبنة رومي قديم", category: "Dairy", state: "Ready", carbs: 1.5, protein: 25, fat: 28, calories: 350 },
@@ -155,59 +147,59 @@ const FOOD_DATABASE = [
   { id: 413, name: "Half-Skimmed Milk - لبن نصف دسم (كوب 200مل)", category: "Dairy", state: "Liquid", carbs: 9.8, protein: 6.6, fat: 3.0, calories: 95 },
   { id: 414, name: "Skimmed Milk - لبن خالي الدسم (كوب 200مل)", category: "Dairy", state: "Liquid", carbs: 10, protein: 6.8, fat: 0.4, calories: 70 },
   
-  // --- ADDITIONAL FRUITS (فواكه إضافية - مصر والخليج) ---
-  { id: 318, name: "Prickly Pear - تين شوكي", category: "Fruit", state: "Raw", carbs: 9.6, protein: 0.7, fat: 0.5, calories: 41 },
-  { id: 319, name: "Peach - خوخ", category: "Fruit", state: "Raw", carbs: 9.5, protein: 0.9, fat: 0.3, calories: 39 },
-  { id: 320, name: "Apricot - مشمش", category: "Fruit", state: "Raw", carbs: 11, protein: 1.4, fat: 0.4, calories: 48 },
-  { id: 321, name: "Plum - برقوق", category: "Fruit", state: "Raw", carbs: 11.4, protein: 0.7, fat: 0.3, calories: 46 },
-  { id: 322, name: "Pear - كمثرى", category: "Fruit", state: "Raw", carbs: 15, protein: 0.4, fat: 0.1, calories: 57 },
-  { id: 323, name: "Persimmon - كاكا", category: "Fruit", state: "Raw", carbs: 18.6, protein: 0.6, fat: 0.2, calories: 70 },
-  { id: 324, name: "Cantaloupe - كانتلوب / شمام", category: "Fruit", state: "Raw", carbs: 8, protein: 0.8, fat: 0.2, calories: 34 },
-  { id: 325, name: "Sweet Melon - شمام أصفر (خربز)", category: "Fruit", state: "Raw", carbs: 9, protein: 0.5, fat: 0.1, calories: 36 },
-  { id: 326, name: "Kiwi - كيوي", category: "Fruit", state: "Raw", carbs: 15, protein: 1.1, fat: 0.5, calories: 61 },
-  { id: 327, name: "Pineapple - أناناس", category: "Fruit", state: "Raw", carbs: 13, protein: 0.5, fat: 0.1, calories: 50 },
-  { id: 328, name: "Papaya - بابايا", category: "Fruit", state: "Raw", carbs: 11, protein: 0.5, fat: 0.3, calories: 43 },
-  { id: 329, name: "Dragon Fruit - دراجون فروت (فاكهة التنين)", category: "Fruit", state: "Raw", carbs: 13, protein: 1.2, fat: 1.5, calories: 60 },
-  { id: 330, name: "Blueberries - توت أزرق", category: "Fruit", state: "Raw", carbs: 14.5, protein: 0.7, fat: 0.3, calories: 57 },
-  { id: 331, name: "Raspberries - توت أحمر", category: "Fruit", state: "Raw", carbs: 12, protein: 1.2, fat: 0.7, calories: 52 },
-  { id: 332, name: "Sukkari Dates (Dry) - تمر سكري (مكبوس)", category: "Fruit", state: "Raw", carbs: 75, protein: 2.5, fat: 0.5, calories: 290 },
-  { id: 333, name: "Ajwa Dates - تمر عجوة", category: "Fruit", state: "Raw", carbs: 68, protein: 2.2, fat: 0.4, calories: 275 },
-  { id: 334, name: "Coconut (Meat) - جوز هند (ثمرة)", category: "Fruit", state: "Raw", carbs: 15, protein: 3.3, fat: 33, calories: 354 },
-  { id: 335, name: "Cherry - كرز", category: "Fruit", state: "Raw", carbs: 16, protein: 1.1, fat: 0.2, calories: 50 },
-  { id: 336, name: "Pomelo - بوملي", category: "Fruit", state: "Raw", carbs: 9.6, protein: 0.8, fat: 0, calories: 38 },
 
-  // --- ADDITIONAL FRUITS & VARIANTS (فواكه إضافية وأنواع الموز) ---
-  { id: 337, name: "Imported Banana - موز مستورد (كافيندش)", category: "Fruit", state: "Raw", carbs: 23, protein: 1.1, fat: 0.3, calories: 89 },
-  { id: 338, name: "Egyptian Banana - موز بلدي صغير", category: "Fruit", state: "Raw", carbs: 21, protein: 1.2, fat: 0.2, calories: 85 },
-  { id: 339, name: "Avocado - أفوكادو", category: "Fruit", state: "Raw", carbs: 8.5, protein: 2, fat: 14.7, calories: 160 },
-  { id: 340, name: "Mandarin / Clementine - يوسفي", category: "Fruit", state: "Raw", carbs: 13.3, protein: 0.8, fat: 0.3, calories: 53 },
-  { id: 341, name: "Grapefruit - جريب فروت", category: "Fruit", state: "Raw", carbs: 11, protein: 0.8, fat: 0.1, calories: 42 },
-  { id: 342, name: "Custard Apple - قشطة", category: "Fruit", state: "Raw", carbs: 23.6, protein: 2.1, fat: 0.3, calories: 94 },
-  { id: 343, name: "Mulberry (Local) - توت بلدي / شامي", category: "Fruit", state: "Raw", carbs: 9.8, protein: 1.4, fat: 0.4, calories: 43 },
-  { id: 344, name: "Blackberry - توت أسود (عليق)", category: "Fruit", state: "Raw", carbs: 9.6, protein: 1.4, fat: 0.5, calories: 43 },
-  { id: 345, name: "Passion Fruit - باشن فروت", category: "Fruit", state: "Raw", carbs: 23.4, protein: 2.2, fat: 0.7, calories: 97 },
-  { id: 346, name: "Lychee - ليتشي", category: "Fruit", state: "Raw", carbs: 16.5, protein: 0.8, fat: 0.4, calories: 66 },
-  { id: 347, name: "Nectarine - نكتارين", category: "Fruit", state: "Raw", carbs: 10.5, protein: 1.1, fat: 0.3, calories: 44 },
-  { id: 348, name: "Quince - سفرجل", category: "Fruit", state: "Raw", carbs: 15.3, protein: 0.4, fat: 0.1, calories: 57 },
-  { id: 349, name: "Starfruit - فاكهة النجمة (كارامبولا)", category: "Fruit", state: "Raw", carbs: 6.7, protein: 1, fat: 0.3, calories: 31 },
-  { id: 350, name: "Kumquat - كمكوات (موالح صغيرة)", category: "Fruit", state: "Raw", carbs: 15.9, protein: 1.9, fat: 0.9, calories: 71 },
-  { id: 351, name: "Fresh Lemon - ليمون طازج", category: "Fruit", state: "Raw", carbs: 9, protein: 1.1, fat: 0.3, calories: 29 },
-  { id: 352, name: "Lime - ليمون بنزهير / أخضر", category: "Fruit", state: "Raw", carbs: 10.5, protein: 0.7, fat: 0.2, calories: 30 },
+// --- ADDITIONAL FRUITS (فواكه إضافية - مصر والخليج) ---
+  { id: 312, name: "Prickly Pear - تين شوكي", category: "Fruit", state: "Raw", carbs: 9.6, protein: 0.7, fat: 0.5, calories: 41 },
+  { id: 313, name: "Peach - خوخ", category: "Fruit", state: "Raw", carbs: 9.5, protein: 0.9, fat: 0.3, calories: 39 },
+  { id: 314, name: "Apricot - مشمش", category: "Fruit", state: "Raw", carbs: 11, protein: 1.4, fat: 0.4, calories: 48 },
+  { id: 315, name: "Plum - برقوق", category: "Fruit", state: "Raw", carbs: 11.4, protein: 0.7, fat: 0.3, calories: 46 },
+  { id: 316, name: "Pear - كمثرى", category: "Fruit", state: "Raw", carbs: 15, protein: 0.4, fat: 0.1, calories: 57 },
+  { id: 317, name: "Persimmon - كاكا", category: "Fruit", state: "Raw", carbs: 18.6, protein: 0.6, fat: 0.2, calories: 70 },
+  { id: 318, name: "Cantaloupe - كانتلوب / شمام", category: "Fruit", state: "Raw", carbs: 8, protein: 0.8, fat: 0.2, calories: 34 },
+  { id: 319, name: "Sweet Melon - شمام أصفر (خربز)", category: "Fruit", state: "Raw", carbs: 9, protein: 0.5, fat: 0.1, calories: 36 },
+  { id: 320, name: "Kiwi - كيوي", category: "Fruit", state: "Raw", carbs: 15, protein: 1.1, fat: 0.5, calories: 61 },
+  { id: 321, name: "Pineapple - أناناس", category: "Fruit", state: "Raw", carbs: 13, protein: 0.5, fat: 0.1, calories: 50 },
+  { id: 322, name: "Papaya - بابايا", category: "Fruit", state: "Raw", carbs: 11, protein: 0.5, fat: 0.3, calories: 43 },
+  { id: 323, name: "Dragon Fruit - دراجون فروت (فاكهة التنين)", category: "Fruit", state: "Raw", carbs: 13, protein: 1.2, fat: 1.5, calories: 60 },
+  { id: 324, name: "Blueberries - توت أزرق", category: "Fruit", state: "Raw", carbs: 14.5, protein: 0.7, fat: 0.3, calories: 57 },
+  { id: 325, name: "Raspberries - توت أحمر", category: "Fruit", state: "Raw", carbs: 12, protein: 1.2, fat: 0.7, calories: 52 },
+  { id: 326, name: "Sukkari Dates (Dry) - تمر سكري (مكبوس)", category: "Fruit", state: "Raw", carbs: 75, protein: 2.5, fat: 0.5, calories: 290 },
+  { id: 327, name: "Ajwa Dates - تمر عجوة", category: "Fruit", state: "Raw", carbs: 68, protein: 2.2, fat: 0.4, calories: 275 },
+  { id: 328, name: "Coconut (Meat) - جوز هند (ثمرة)", category: "Fruit", state: "Raw", carbs: 15, protein: 3.3, fat: 33, calories: 354 },
+  { id: 329, name: "Cherry - كرز", category: "Fruit", state: "Raw", carbs: 16, protein: 1.1, fat: 0.2, calories: 50 },
+  { id: 330, name: "Pomelo - بوملي", category: "Fruit", state: "Raw", carbs: 9.6, protein: 0.8, fat: 0, calories: 38 },
 
-  // --- ORANGES VARIANTS (أنواع البرتقال) ---
-  { id: 353, name: "Navel Orange - برتقال أبو سرة", category: "Fruit", state: "Raw", carbs: 12.5, protein: 0.9, fat: 0.1, calories: 52 },
-  { id: 354, name: "Valencia Orange (Summer) - برتقال صيفي", category: "Fruit", state: "Raw", carbs: 11, protein: 0.8, fat: 0.2, calories: 46 },
-  { id: 355, name: "Baladi Orange - برتقال بلدي", category: "Fruit", state: "Raw", carbs: 10.5, protein: 0.7, fat: 0.2, calories: 44 },
-  { id: 356, name: "Blood Orange - برتقال بدمه", category: "Fruit", state: "Raw", carbs: 12, protein: 1, fat: 0.1, calories: 50 },
-  { id: 357, name: "Bitter Orange (Naranj) - نارنج", category: "Fruit", state: "Raw", carbs: 9, protein: 0.6, fat: 0.1, calories: 37 },
-  { id: 358, name: "Fresh Orange Juice - عصير برتقال فريش (بدون سكر)", category: "Fruit", state: "Liquid", carbs: 10, protein: 0.7, fat: 0.2, calories: 45 },
+// --- ADDITIONAL FRUITS & VARIANTS (فواكه إضافية وأنواع الموز) ---
+  { id: 331, name: "Imported Banana - موز مستورد (كافيندش)", category: "Fruit", state: "Raw", carbs: 23, protein: 1.1, fat: 0.3, calories: 89 },
+  { id: 332, name: "Egyptian Banana - موز بلدي صغير", category: "Fruit", state: "Raw", carbs: 21, protein: 1.2, fat: 0.2, calories: 85 },
+  { id: 333, name: "Avocado - أفوكادو", category: "Fruit", state: "Raw", carbs: 8.5, protein: 2, fat: 14.7, calories: 160 },
+  { id: 334, name: "Mandarin / Clementine - يوسفي", category: "Fruit", state: "Raw", carbs: 13.3, protein: 0.8, fat: 0.3, calories: 53 },
+  { id: 335, name: "Grapefruit - جريب فروت", category: "Fruit", state: "Raw", carbs: 11, protein: 0.8, fat: 0.1, calories: 42 },
+  { id: 336, name: "Custard Apple - قشطة", category: "Fruit", state: "Raw", carbs: 23.6, protein: 2.1, fat: 0.3, calories: 94 },
+  { id: 337, name: "Mulberry (Local) - توت بلدي / شامي", category: "Fruit", state: "Raw", carbs: 9.8, protein: 1.4, fat: 0.4, calories: 43 },
+  { id: 338, name: "Blackberry - توت أسود (عليق)", category: "Fruit", state: "Raw", carbs: 9.6, protein: 1.4, fat: 0.5, calories: 43 },
+  { id: 339, name: "Passion Fruit - باشن فروت", category: "Fruit", state: "Raw", carbs: 23.4, protein: 2.2, fat: 0.7, calories: 97 },
+  { id: 340, name: "Lychee - ليتشي", category: "Fruit", state: "Raw", carbs: 16.5, protein: 0.8, fat: 0.4, calories: 66 },
+  { id: 341, name: "Nectarine - نكتارين", category: "Fruit", state: "Raw", carbs: 10.5, protein: 1.1, fat: 0.3, calories: 44 },
+  { id: 342, name: "Quince - سفرجل", category: "Fruit", state: "Raw", carbs: 15.3, protein: 0.4, fat: 0.1, calories: 57 },
+  { id: 343, name: "Starfruit - فاكهة النجمة (كارامبولا)", category: "Fruit", state: "Raw", carbs: 6.7, protein: 1, fat: 0.3, calories: 31 },
+  { id: 344, name: "Kumquat - كمكوات (موالح صغيرة)", category: "Fruit", state: "Raw", carbs: 15.9, protein: 1.9, fat: 0.9, calories: 71 },
+  { id: 345, name: "Fresh Lemon - ليمون طازج", category: "Fruit", state: "Raw", carbs: 9, protein: 1.1, fat: 0.3, calories: 29 },
+  { id: 346, name: "Lime - ليمون بنزهير / أخضر", category: "Fruit", state: "Raw", carbs: 10.5, protein: 0.7, fat: 0.2, calories: 30 },
+
+// --- ORANGES VARIANTS (أنواع البرتقال) ---
+  { id: 347, name: "Navel Orange - برتقال أبو سرة", category: "Fruit", state: "Raw", carbs: 12.5, protein: 0.9, fat: 0.1, calories: 52 },
+  { id: 348, name: "Valencia Orange (Summer) - برتقال صيفي", category: "Fruit", state: "Raw", carbs: 11, protein: 0.8, fat: 0.2, calories: 46 },
+  { id: 349, name: "Baladi Orange - برتقال بلدي", category: "Fruit", state: "Raw", carbs: 10.5, protein: 0.7, fat: 0.2, calories: 44 },
+  { id: 350, name: "Blood Orange - برتقال بدمه", category: "Fruit", state: "Raw", carbs: 12, protein: 1, fat: 0.1, calories: 50 },
+  { id: 351, name: "Bitter Orange (Naranj) - نارنج", category: "Fruit", state: "Raw", carbs: 9, protein: 0.6, fat: 0.1, calories: 37 },
+  { id: 352, name: "Fresh Orange Juice - عصير برتقال فريش (بدون سكر)", category: "Fruit", state: "Liquid", carbs: 10, protein: 0.7, fat: 0.2, calories: 45 },
 
   // --- LIGHT SAUCES (الصوصات اللايت) ---
   { id: 703, name: "Light Mayonnaise - مايونيز لايت", category: "Fat", state: "Ready", carbs: 6.0, protein: 1.0, fat: 28.0, calories: 280.0 },
   { id: 704, name: "Zero Treat/Sugar Sauce - صوص زيرو (مثل الكاتشب)", category: "Carb", state: "Ready", carbs: 2.0, protein: 0.1, fat: 0.1, calories: 15.0 },
   { id: 705, name: "Light Ketchup - كاتشب لايت", category: "Carb", state: "Ready", carbs: 15.0, protein: 1.0, fat: 0.1, calories: 65.0 },
-  
-  // --- SUPPLEMENTS (المكملات الغذائية) ---
+   // --- SUPPLEMENTS (المكملات الغذائية) ---
   { id: 901, name: "Whey Protein (1 Scoop) - واي بروتين (سكوب)", category: "Protein", state: "Powder", carbs: 3.0, protein: 24.0, fat: 1.5, calories: 120.0 },
   { id: 902, name: "Isolate Protein (1 Scoop) - أيزوليت بروتين (سكوب)", category: "Protein", state: "Powder", carbs: 1.0, protein: 25.0, fat: 0.5, calories: 110.0 },
   { id: 903, name: "Casein Protein (1 Scoop) - كازين بروتين (سكوب)", category: "Protein", state: "Powder", carbs: 3.0, protein: 24.0, fat: 1.0, calories: 120.0 },
@@ -221,6 +213,7 @@ const FOOD_DATABASE = [
   { id: 911, name: "Multivitamins (1 Tablet) - مالتي فيتامين", category: "Supplements", state: "Ready", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 912, name: "Omega-3 (1 Capsule) - أوميجا 3", category: "Supplements", state: "Ready", carbs: 0, protein: 0, fat: 0.9, calories: 9.0 },
 ];
+
 // --- Types ---
 interface FoodItem {
   id: number;
@@ -323,7 +316,7 @@ export default function NutritionPro() {
     return list;
   }, [searchTerm, selectedCategory]);
 
-  const categories = ["All", "Carb", "Protein", "Fat", "Fruit", "Vegetable", "Legumes", "Dairy"];
+  const categories = ["All", "Carb", "Protein", "Fat", "Fruit", "Vegetable", "Legumes", "Dairy", "Supplements"];
 
   const calculateTotals = () => {
     return meals.reduce((acc, meal) => {
@@ -403,14 +396,28 @@ export default function NutritionPro() {
     }));
   };
 
-  const saveTemplate = () => {
-    const name = prompt("اسم القالب:");
-    if (!name) return;
-    const newTemp = { id: Date.now(), name, meals, targetMacros };
-    const updated = [...templates, newTemp];
-    setTemplates(updated);
-    localStorage.setItem('pro_nutrition_templates', JSON.stringify(updated));
+  const copyToClipboard = () => {
+    const summary = meals.map(meal => {
+      const itemsText = meal.items.map(it => 
+        `🔸 ${it.name}: ${it.grams} جم (${((it.calories * it.grams) / 100).toFixed(0)} سعرة)`
+      ).join('\n');
+      return `[ ${meal.name} ] 🍽️\n${itemsText}${meal.notes ? `\n📝 ملاحظة: ${meal.notes}` : ''}`;
+    }).join('\n\n');
+
+    const totalsText = `------------------------------------\n📊 إجمالي الماكروز لليوم:\n🔥 السعرات: ${totals.calories.toFixed(0)} kcal\n💪 البروتين: ${totals.protein.toFixed(1)}g\n🍞 الكارب: ${totals.carbs.toFixed(1)}g\n🥑 الدهون: ${totals.fat.toFixed(1)}g\n------------------------------------`;
+    
+    const clientInfo = `🌟 نظامك الغذائي المخصص - PRO Nutrition 🌟\n\n👤 العميل: ${clientData.name || 'غير محدد'}\n🎯 الهدف: ${clientData.goal || 'غير محدد'}\n📅 التاريخ: ${clientData.date}\n\n`;
+    const footerText = `\n💪 مع تحيات: ${clientData.coach}\n📞 للتواصل: ${clientData.phone}`;
+    
+    const fullText = `${clientInfo}${summary}\n\n${totalsText}${footerText}`;
+    
+    navigator.clipboard.writeText(fullText);
+    alert("✅ تم نسخ النظام بالكامل بنجاح!");
   };
+
+
+
+
 
   const loadTemplate = (temp: any) => {
     if (confirm("تحميل القالب؟ سيتم مسح البيانات الحالية.")) {
@@ -496,9 +503,6 @@ export default function NutritionPro() {
               {theme === 'dark' ? <Sun size={20} className="text-yellow-400"/> : <Moon size={20} className="text-blue-400"/>}
             </button>
             <div className="w-px h-6 bg-neutral-800 mx-1" />
-            <button onClick={saveTemplate} className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-neutral-800 hover:bg-neutral-700 text-xs font-bold transition-all">
-              <Save size={16}/> حفظ كقالب
-            </button>
             <button onClick={() => window.print()} className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-black transition-all shadow-lg shadow-blue-600/20">
               <Printer size={16}/> استخراج PDF
             </button>
@@ -569,6 +573,39 @@ export default function NutritionPro() {
           </aside>
 
           <main className="lg:col-span-8 space-y-8">
+            <div className="flex flex-wrap gap-3 mb-6 print:hidden">
+              {/* زر النسخ */}
+              <button 
+                onClick={copyToClipboard}
+                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-500 text-white px-6 py-3.5 rounded-2xl font-bold transition-all shadow-lg shadow-blue-600/20"
+              >
+                <Copy size={18} />
+                نسخ النظام بالكامل
+              </button>
+
+              {/* قائمة القوالب المحفوظة */}
+              {templates.length > 0 && (
+                <div className="relative group">
+                  <button className="flex items-center gap-2 bg-neutral-800 text-white px-6 py-3.5 rounded-2xl font-bold border border-neutral-700">
+                    <Layout size={18} />
+                    أنظمتي المحفوظة ({templates.length})
+                  </button>
+                  <div className="absolute top-full right-0 mt-2 w-64 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-2xl hidden group-hover:block z-50 overflow-hidden">
+                    {templates.map(temp => (
+                      <div 
+                        key={temp.id}
+                        onClick={() => loadTemplate(temp)}
+                        className="p-4 hover:bg-neutral-800 cursor-pointer border-b border-neutral-800 last:border-0 flex justify-between items-center"
+                      >
+                        <span className="text-sm font-bold truncate">{temp.name}</span>
+                        <ChevronDown size={14} className="text-neutral-500" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
               <SortableContext items={meals.map(m => m.id)} strategy={verticalListSortingStrategy}>
                 {meals.map((meal) => (
