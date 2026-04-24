@@ -1,7 +1,7 @@
 cd my-nutrition-app
 cd meal-calculator
 git add .
-git commit -m " منتجات البان كصنف
+git commit -m " لبن و بيض
 git push origin main
 
 
