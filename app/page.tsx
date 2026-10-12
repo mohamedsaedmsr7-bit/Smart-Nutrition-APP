@@ -23,34 +23,35 @@ function cn(...inputs: Parameters<typeof clsx>) { return twMerge(clsx(inputs)); 
 interface FoodEntry {
   id: number; name: string; category: string; state: string;
   carbs: number; protein: number; fat: number; calories: number;
+  micros?: Partial<Record<string, number>>; // per 100g (or per piece for per-piece items)
 }
 
 const FOOD_DATABASE: FoodEntry[] = [
   // ── PROTEINS ──────────────────────────────────────────────────────────────
-  { id: 101, name: "Chicken Breast - صدر دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 31, fat: 3.6, calories: 165 },
-  { id: 102, name: "Chicken Thigh - فخذ دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 10.9, calories: 209 },
-  { id: 103, name: "Ground Beef (lean) - لحم مفروم", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 7, calories: 172 },
-  { id: 104, name: "Beef Steak - ستيك لحم", category: "Protein", state: "per 100g", carbs: 0, protein: 27, fat: 8, calories: 180 },
-  { id: 105, name: "Lamb - لحم ضاني", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 14, calories: 218 },
-  { id: 106, name: "Tuna (canned in water) - تونة", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 1, calories: 116 },
-  { id: 107, name: "Salmon - سلمون", category: "Protein", state: "per 100g", carbs: 0, protein: 20, fat: 13, calories: 208 },
-  { id: 108, name: "Tilapia - بلطي", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 2.7, calories: 128 },
-  { id: 109, name: "Shrimp - جمبري", category: "Protein", state: "per 100g", carbs: 0.9, protein: 24, fat: 0.3, calories: 99 },
-  { id: 110, name: "Turkey Breast - ديك رومي", category: "Protein", state: "per 100g", carbs: 0, protein: 29, fat: 1, calories: 135 },
-  { id: 111, name: "Sardines - سردين", category: "Protein", state: "per 100g", carbs: 0, protein: 21, fat: 11, calories: 185 },
+  { id: 101, name: "Chicken Breast - صدر دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 31, fat: 3.6, calories: 165, micros: { vitB3: 13.4, vitB6: 1.0, vitB12: 0.3, vitB5: 1.5, phosphorus: 220, selenium: 22, zinc: 1.0, potassium: 340, iron: 0.7, magnesium: 29 } },
+  { id: 102, name: "Chicken Thigh - فخذ دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 10.9, calories: 209, micros: { vitB3: 6.3, vitB6: 0.6, vitB12: 0.3, phosphorus: 180, selenium: 18, zinc: 1.5, potassium: 280, iron: 1.2, magnesium: 24 } },
+  { id: 103, name: "Ground Beef (lean) - لحم مفروم", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 7, calories: 172, micros: { vitB12: 2.5, vitB3: 5.5, vitB6: 0.4, iron: 2.5, zinc: 5.4, phosphorus: 200, selenium: 18, potassium: 320 } },
+  { id: 104, name: "Beef Steak - ستيك لحم", category: "Protein", state: "per 100g", carbs: 0, protein: 27, fat: 8, calories: 180, micros: { vitB12: 2.5, vitB3: 6.2, vitB6: 0.5, iron: 2.2, zinc: 5.0, phosphorus: 210, selenium: 20, potassium: 330 } },
+  { id: 105, name: "Lamb - لحم ضاني", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 14, calories: 218, micros: { vitB12: 2.7, vitB3: 5.7, vitB6: 0.4, iron: 1.9, zinc: 4.2, phosphorus: 195, selenium: 15, potassium: 310 } },
+  { id: 106, name: "Tuna (canned in water) - تونة", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 1, calories: 116, micros: { vitB12: 2.5, vitB3: 13.3, vitB6: 0.9, vitD: 4.0, selenium: 80, phosphorus: 195, potassium: 290, magnesium: 31, iron: 1.3 } },
+  { id: 107, name: "Salmon - سلمون", category: "Protein", state: "per 100g", carbs: 0, protein: 20, fat: 13, calories: 208, micros: { vitB12: 3.2, vitB3: 8.9, vitB6: 0.8, vitD: 11.1, selenium: 36, phosphorus: 240, potassium: 490, magnesium: 29, iron: 0.8 } },
+  { id: 108, name: "Tilapia - بلطي", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 2.7, calories: 128, micros: { vitB12: 1.6, vitB3: 3.9, vitB6: 0.2, vitD: 1.2, selenium: 40, phosphorus: 185, potassium: 380, magnesium: 28 } },
+  { id: 109, name: "Shrimp - جمبري", category: "Protein", state: "per 100g", carbs: 0.9, protein: 24, fat: 0.3, calories: 99, micros: { vitB12: 1.1, vitB3: 2.6, selenium: 38, phosphorus: 205, iodine: 35, zinc: 1.3, iron: 2.4, potassium: 259 } },
+  { id: 110, name: "Turkey Breast - ديك رومي", category: "Protein", state: "per 100g", carbs: 0, protein: 29, fat: 1, calories: 135, micros: { vitB12: 1.1, vitB3: 11.8, vitB6: 0.9, selenium: 32, phosphorus: 240, potassium: 330, zinc: 2.0, magnesium: 28 } },
+  { id: 111, name: "Sardines - سردين", category: "Protein", state: "per 100g", carbs: 0, protein: 21, fat: 11, calories: 185, micros: { vitB12: 8.9, vitD: 4.8, vitB3: 5.2, calcium: 382, phosphorus: 490, selenium: 53, iron: 2.9, zinc: 1.3, potassium: 397 } },
   // ── EGGS ─────────────────────────────────────────────────────────────────
-  { id: 120, name: "Whole Egg - بيضة كاملة", category: "Eggs", state: "per 100g", carbs: 1.1, protein: 13, fat: 10, calories: 143 },
-  { id: 121, name: "Egg White - بياض البيض", category: "Eggs", state: "per 100g", carbs: 0.7, protein: 11, fat: 0.2, calories: 52 },
-  { id: 122, name: "Egg Yolk - صفار البيض", category: "Eggs", state: "per 100g", carbs: 3.6, protein: 16, fat: 27, calories: 322 },
-  { id: 123, name: "Boiled Egg - بيضة مسلوقة", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6.3, fat: 5, calories: 72 },
-  { id: 124, name: "Fried Egg - بيضة مقلية", category: "Eggs", state: "per piece", carbs: 0.4, protein: 6.3, fat: 7, calories: 90 },
-  { id: 125, name: "Scrambled Egg - بيض مخفوق", category: "Eggs", state: "per piece", carbs: 1.4, protein: 6.8, fat: 7.5, calories: 102 },
-  { id: 126, name: "Egg White only - بياض بيضة", category: "Eggs", state: "per piece", carbs: 0.2, protein: 3.6, fat: 0.1, calories: 17 },
-  { id: 127, name: "Raw Whole Egg - بيضة كاملة نية", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6, fat: 5, calories: 70 },
+  { id: 120, name: "Whole Egg - بيضة كاملة", category: "Eggs", state: "per 100g", carbs: 1.1, protein: 13, fat: 10, calories: 143, micros: { vitA: 149, vitD: 2.0, vitB12: 1.1, vitB2: 0.46, vitB7: 20, vitK: 0.3, selenium: 30, phosphorus: 198, zinc: 1.3, iron: 1.8, choline: 294 } },
+  { id: 121, name: "Egg White - بياض البيض", category: "Eggs", state: "per 100g", carbs: 0.7, protein: 11, fat: 0.2, calories: 52, micros: { vitB2: 0.44, selenium: 20, potassium: 163, magnesium: 11 } },
+  { id: 122, name: "Egg Yolk - صفار البيض", category: "Eggs", state: "per 100g", carbs: 3.6, protein: 16, fat: 27, calories: 322, micros: { vitA: 381, vitD: 5.4, vitB12: 2.5, vitB7: 53, vitK: 0.7, selenium: 56, phosphorus: 390, zinc: 2.5, iron: 2.7 } },
+  { id: 123, name: "Boiled Egg - بيضة مسلوقة", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6.3, fat: 5, calories: 72, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, vitB2: 0.23, vitB7: 10, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8 } },
+  { id: 124, name: "Fried Egg - بيضة مقلية", category: "Eggs", state: "per piece", carbs: 0.4, protein: 6.3, fat: 7, calories: 90, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8 } },
+  { id: 125, name: "Scrambled Egg - بيض مخفوق", category: "Eggs", state: "per piece", carbs: 1.4, protein: 6.8, fat: 7.5, calories: 102, micros: { vitA: 75, vitD: 1.0, vitB12: 0.6, selenium: 15, phosphorus: 100, zinc: 0.6, iron: 0.8 } },
+  { id: 126, name: "Egg White only - بياض بيضة", category: "Eggs", state: "per piece", carbs: 0.2, protein: 3.6, fat: 0.1, calories: 17, micros: { vitB2: 0.15, selenium: 7, potassium: 54 } },
+  { id: 127, name: "Raw Whole Egg - بيضة كاملة نية", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6, fat: 5, calories: 70, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, vitB2: 0.23, vitB7: 10, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8 } },
   // ── DAIRY ────────────────────────────────────────────────────────────────
-  { id: 201, name: "Low-Fat Yogurt - زبادي قليل الدسم", category: "Dairy", state: "per 100g", carbs: 7, protein: 5, fat: 1.5, calories: 61 },
-  { id: 202, name: "Full-Fat Yogurt - زبادي كامل الدسم", category: "Dairy", state: "per 100g", carbs: 4.7, protein: 3.5, fat: 3.3, calories: 61 },
-  { id: 203, name: "Cottage Cheese - جبن قريش", category: "Dairy", state: "per 100g", carbs: 3.4, protein: 11, fat: 4, calories: 98 },
+  { id: 201, name: "Low-Fat Yogurt - زبادي قليل الدسم", category: "Dairy", state: "per 100g", carbs: 7, protein: 5, fat: 1.5, calories: 61, micros: { calcium: 183, vitB12: 0.75, vitB2: 0.23, phosphorus: 144, potassium: 255, iodine: 25, selenium: 3, magnesium: 17 } },
+  { id: 202, name: "Full-Fat Yogurt - زبادي كامل الدسم", category: "Dairy", state: "per 100g", carbs: 4.7, protein: 3.5, fat: 3.3, calories: 61, micros: { calcium: 121, vitB12: 0.4, vitB2: 0.14, phosphorus: 94, potassium: 141, iodine: 20, magnesium: 11 } },
+  { id: 203, name: "Cottage Cheese - جبن قريش", category: "Dairy", state: "per 100g", carbs: 3.4, protein: 11, fat: 4, calories: 98, micros: { calcium: 83, vitB12: 0.43, vitB2: 0.16, phosphorus: 159, selenium: 10, sodium: 364, potassium: 104 } },
   { id: 204, name: "Feta Cheese - جبن فيتا", category: "Dairy", state: "per 100g", carbs: 4, protein: 14, fat: 21, calories: 264 },
   { id: 205, name: "Cheddar Cheese - جبن شيدر", category: "Dairy", state: "per 100g", carbs: 1.3, protein: 25, fat: 33, calories: 402 },
   { id: 206, name: "Mozzarella - موزاريلا", category: "Dairy", state: "per 100g", carbs: 2.2, protein: 22, fat: 17, calories: 254 },
@@ -214,6 +215,137 @@ interface DietPlanSnapshot { id: number; date: string; label: string; meals: Mea
 interface Client {
   id: number; name: string; goal: string; phone: string; coach: string; createdAt: string;
   checkIns: ClientCheckIn[]; dietPlans: DietPlanSnapshot[];
+  // health profile
+  gender: "male" | "female";
+  age: number;
+  isTraining: boolean;
+  isPregnant: boolean;
+  pregnancyMonth: number; // 1-9
+  isLactating: boolean;
+  diseases: string;      // free text, comma-separated
+  allergies: string;     // free text
+  foodDislikes: string;  // free text
+}
+
+// ─── MICRONUTRIENT TYPES ──────────────────────────────────────────────────────
+interface MicroNutrient {
+  key: string; name: string; unit: string; category: "Vitamins" | "Minerals";
+}
+
+const MICROS: MicroNutrient[] = [
+  // Vitamins
+  { key: "vitA",  name: "Vitamin A",          unit: "μg RAE", category: "Vitamins" },
+  { key: "vitC",  name: "Vitamin C",          unit: "mg",     category: "Vitamins" },
+  { key: "vitD",  name: "Vitamin D",          unit: "μg",     category: "Vitamins" },
+  { key: "vitE",  name: "Vitamin E",          unit: "mg",     category: "Vitamins" },
+  { key: "vitK",  name: "Vitamin K",          unit: "μg",     category: "Vitamins" },
+  { key: "vitB1", name: "Vitamin B1 (Thiamine)", unit: "mg",  category: "Vitamins" },
+  { key: "vitB2", name: "Vitamin B2 (Riboflavin)", unit: "mg",category: "Vitamins" },
+  { key: "vitB3", name: "Vitamin B3 (Niacin)", unit: "mg",   category: "Vitamins" },
+  { key: "vitB5", name: "Vitamin B5 (Pantothenic)", unit: "mg", category: "Vitamins" },
+  { key: "vitB6", name: "Vitamin B6",         unit: "mg",     category: "Vitamins" },
+  { key: "vitB7", name: "Vitamin B7 (Biotin)", unit: "μg",   category: "Vitamins" },
+  { key: "vitB9", name: "Folate (B9)",        unit: "μg DFE", category: "Vitamins" },
+  { key: "vitB12",name: "Vitamin B12",        unit: "μg",     category: "Vitamins" },
+  // Minerals
+  { key: "calcium",  name: "Calcium",         unit: "mg",     category: "Minerals" },
+  { key: "iron",     name: "Iron",            unit: "mg",     category: "Minerals" },
+  { key: "magnesium",name: "Magnesium",       unit: "mg",     category: "Minerals" },
+  { key: "zinc",     name: "Zinc",            unit: "mg",     category: "Minerals" },
+  { key: "potassium",name: "Potassium",       unit: "mg",     category: "Minerals" },
+  { key: "sodium",   name: "Sodium",          unit: "mg",     category: "Minerals" },
+  { key: "phosphorus",name:"Phosphorus",      unit: "mg",     category: "Minerals" },
+  { key: "selenium", name: "Selenium",        unit: "μg",     category: "Minerals" },
+  { key: "iodine",   name: "Iodine",          unit: "μg",     category: "Minerals" },
+  { key: "zinc",     name: "Zinc",            unit: "mg",     category: "Minerals" },
+  { key: "copper",   name: "Copper",          unit: "μg",     category: "Minerals" },
+  { key: "manganese",name: "Manganese",       unit: "mg",     category: "Minerals" },
+  { key: "chromium", name: "Chromium",        unit: "μg",     category: "Minerals" },
+];
+// dedupe
+const MICROS_LIST = MICROS.filter((m, i) => MICROS.findIndex(x => x.key === m.key) === i);
+
+/**
+ * getRDI — returns daily recommended intake based on client profile.
+ * Sources: NIH DRI (2020), ISSA CPT/CSCS, NASM CPT, American Dietetic Assoc.
+ * Training multipliers: ISSA ch.12, NASM ch.9 "Nutrition for Performance"
+ */
+function getRDI(profile: { gender: "male"|"female"; age: number; isTraining: boolean; isPregnant: boolean; pregnancyMonth: number; isLactating: boolean }) {
+  const { gender, age, isTraining, isPregnant, pregnancyMonth, isLactating } = profile;
+  const m = gender === "male";
+  const tri = pregnancyMonth <= 3 ? 1 : pregnancyMonth <= 6 ? 2 : 3;
+  const train = isTraining ? 1 : 0;
+
+  // Base values (non-pregnant adult, NIH DRI 2020)
+  // Format: [male_19_30, male_31_50, male_51+, female_19_30, female_31_50, female_51+]
+  const ageIdx = age < 31 ? 0 : age < 51 ? 1 : 2;
+  const base = (mVals: number[], fVals: number[]) => (m ? mVals : fVals)[ageIdx];
+
+  const rdi: Record<string, number> = {
+    vitA:   base([900,900,900],[700,700,700]),
+    vitC:   base([90,90,90],[75,75,75]) + (train ? 35 : 0), // ISSA: +35mg for athletes
+    vitD:   base([15,15,20],[15,15,20]),   // μg; NIH 2020 (600-800 IU)
+    vitE:   15,
+    vitK:   base([120,120,120],[90,90,90]),
+    vitB1:  base([1.2,1.2,1.2],[1.1,1.1,1.1]) + (train ? 0.1 : 0),
+    vitB2:  base([1.3,1.3,1.3],[1.1,1.1,1.1]) + (train ? 0.15 : 0),
+    vitB3:  base([16,16,16],[14,14,14])   + (train ? 2 : 0),
+    vitB5:  5,
+    vitB6:  base([1.3,1.3,1.7],[1.3,1.3,1.5]),
+    vitB7:  30,
+    vitB9:  400,
+    vitB12: 2.4,
+    calcium: base([1000,1000,1200],[1000,1000,1200]),
+    iron:    base([8,8,8],[18,18,8])      * (isTraining && !m ? 1.3 : 1), // ISSA: female athletes +30%
+    magnesium: base([400,420,420],[310,320,320]) * (train ? 1.2 : 1), // NASM/ISSA: athletes ~20% more
+    zinc:    base([11,11,11],[8,8,8])     + (train ? 1.5 : 0),
+    potassium: 3400,
+    sodium:  2300,
+    phosphorus: 700,
+    selenium: 55,
+    iodine:  150,
+    copper:  900,
+    manganese: base([2.3,2.3,2.3],[1.8,1.8,1.8]),
+    chromium: base([35,35,30],[25,25,20]),
+  };
+
+  // Pregnancy adjustments (NIH DRI, ACOG guidelines)
+  if (isPregnant) {
+    rdi.vitA   = tri === 3 ? 770 : 770;
+    rdi.vitC   = 85;
+    rdi.vitD   = 15;
+    rdi.vitB1  = 1.4;
+    rdi.vitB2  = 1.4;
+    rdi.vitB3  = 18;
+    rdi.vitB6  = 1.9;
+    rdi.vitB9  = 600; // CRITICAL for neural tube
+    rdi.vitB12 = 2.6;
+    rdi.calcium = 1000;
+    rdi.iron    = 27; // ACOG
+    rdi.magnesium = tri === 1 ? 350 : 360;
+    rdi.zinc    = 11;
+    rdi.iodine  = 220;
+    rdi.selenium = 60;
+    rdi.chromium = 30;
+  }
+
+  // Lactating adjustments
+  if (isLactating) {
+    rdi.vitA   = 1300;
+    rdi.vitC   = 120;
+    rdi.vitB1  = 1.4;
+    rdi.vitB2  = 1.6;
+    rdi.vitB3  = 17;
+    rdi.vitB6  = 2.0;
+    rdi.vitB9  = 500;
+    rdi.vitB12 = 2.8;
+    rdi.iron   = 9;
+    rdi.iodine = 290;
+    rdi.selenium = 70;
+    rdi.zinc   = 12;
+  }
+
+  return rdi;
 }
 
 interface CustomRecipe {
@@ -376,9 +508,9 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
 }
 
 // ─── MEAL CARD ─────────────────────────────────────────────────────────────────
-function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods }: {
+function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dragHandleProps }: {
   meal: Meal; onUpdate: (m: Meal) => void; onDelete: () => void; onDuplicate: () => void;
-  lang: "ar" | "en" | "both"; extraFoods: FoodEntry[];
+  lang: "ar" | "en" | "both"; extraFoods: FoodEntry[]; dragHandleProps?: React.HTMLAttributes<HTMLElement>;
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [search, setSearch] = useState("");
@@ -455,18 +587,20 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods }: {
     <div className="border border-gray-200 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-900 overflow-hidden print:border-gray-300">
       {/* header */}
       <div className="flex items-center gap-2 p-3 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 print:bg-white">
-        <GripVertical size={16} className="text-gray-400 cursor-grab" />
+        <span {...dragHandleProps} className="text-gray-400 hover:text-gray-600 cursor-grab touch-none select-none print:hidden" title="Drag to reorder">
+          <GripVertical size={16} />
+        </span>
         <input
           value={meal.name}
           onChange={e => onUpdate({ ...meal, name: e.target.value })}
           className="flex-1 font-semibold bg-transparent border-none outline-none text-sm"
           placeholder="Meal name..."
         />
-        <div className="flex gap-1 text-xs text-gray-500 print:hidden">
-          <span className="text-yellow-600">{totals.carbs.toFixed(0)}C</span>
-          <span className="text-blue-600">{totals.protein.toFixed(0)}P</span>
-          <span className="text-red-600">{totals.fat.toFixed(0)}F</span>
-          <span className="font-semibold">{totals.calories.toFixed(0)}</span>
+        <div className="flex gap-3 text-xs text-gray-500 print:hidden">
+          <span className="text-yellow-600 font-medium">{totals.carbs.toFixed(0)}<span className="opacity-60 ml-0.5">C</span></span>
+          <span className="text-blue-600 font-medium">{totals.protein.toFixed(0)}<span className="opacity-60 ml-0.5">P</span></span>
+          <span className="text-red-500 font-medium">{totals.fat.toFixed(0)}<span className="opacity-60 ml-0.5">F</span></span>
+          <span className="font-bold text-gray-700 dark:text-gray-200">{totals.calories.toFixed(0)}<span className="opacity-60 ml-0.5 font-normal">kcal</span></span>
         </div>
         <button title="Duplicate meal" onClick={onDuplicate} className="text-gray-400 hover:text-blue-500 print:hidden"><Copy size={14} /></button>
         <button title="Clear all items" onClick={() => onUpdate({ ...meal, items: [] })} className="text-gray-400 hover:text-orange-500 print:hidden"><Minus size={14} /></button>
@@ -613,6 +747,8 @@ export default function MealPlanner() {
     try { const s = localStorage.getItem("custom_recipes_v1"); return s ? JSON.parse(s) : []; } catch { return []; }
   });
   const [showRecipeBuilder, setShowRecipeBuilder] = useState(false);
+  // Micronutrient manual overrides: clientId → { key → value }
+  const [microOverrides, setMicroOverrides] = useState<Record<number, Record<string, number>>>({});
   // Calculator state
   const [calcData, setCalcData] = useState({ age: 25, weight: 70, height: 170, gender: "male", activity: "1.55", goal: "maintain" });
   const [calcResult, setCalcResult] = useState<{ bmr: number; tdee: number; target: number } | null>(null);
@@ -751,7 +887,11 @@ export default function MealPlanner() {
   // Client helpers
   function addClient() {
     if (!newClient.name.trim()) return;
-    const c: Client = { id: Date.now(), ...newClient, createdAt: new Date().toISOString(), checkIns: [], dietPlans: [] };
+    const c: Client = {
+      id: Date.now(), ...newClient, createdAt: new Date().toISOString(), checkIns: [], dietPlans: [],
+      gender: "male", age: 30, isTraining: true, isPregnant: false, pregnancyMonth: 0, isLactating: false,
+      diseases: "", allergies: "", foodDislikes: "",
+    };
     setClients(prev => [...prev, c]);
     setNewClient({ name: "", goal: "cut", phone: "", coach: "" });
   }
@@ -810,18 +950,108 @@ export default function MealPlanner() {
 
   return (
     <div dir="rtl" className={cn("min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 font-sans transition-colors")}>
-      {/* Print styles */}
+      {/* Print styles — MSR Nutrition Planner brand, inspired by FlexCoach layout */}
       <style>{`
         @media print {
-          .print\\:hidden { display: none !important; }
-          .print\\:block { display: block !important; }
-          body { background: white !important; color: #111 !important; font-family: 'Segoe UI', Arial, sans-serif !important; }
-          @page { margin: 1.5cm; }
-          .meal-print-header { background: linear-gradient(135deg, #1d4ed8, #7c3aed) !important; color: white !important; padding: 6px 12px !important; border-radius: 6px !important; font-weight: bold !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .meal-print-item { border-bottom: 1px solid #e5e7eb !important; padding: 3px 8px !important; }
-          .plan-print-header { background: linear-gradient(135deg, #1d4ed8, #7c3aed) !important; color: white !important; padding: 12px 20px !important; border-radius: 10px !important; margin-bottom: 12px !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .notes-print { background: #fffbeb !important; border-right: 4px solid #f59e0b !important; padding: 6px 10px !important; font-style: italic !important; white-space: pre-wrap !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-          .macro-badge { display: inline-block !important; padding: 2px 6px !important; border-radius: 4px !important; font-size: 10px !important; font-weight: bold !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          body { background: white !important; color: #111 !important; font-family: 'Segoe UI', 'Arial', sans-serif !important; margin: 0 !important; }
+          @page { margin: 0; size: A4; }
+          @page :first { margin: 0; }
+
+          /* ── COVER PAGE ─────────────────────────────────────────── */
+          .pdf-cover {
+            display: flex !important; flex-direction: column !important;
+            min-height: 100vh !important; background: #0b1f38 !important;
+            color: white !important; padding: 40px 50px !important;
+            page-break-after: always !important; position: relative !important;
+            overflow: hidden !important;
+          }
+          .pdf-cover-accent {
+            position: absolute !important; bottom: 0 !important; right: 0 !important;
+            width: 220px !important; height: 220px !important;
+            background: linear-gradient(135deg, #0d7a5f 0%, #0ea5e9 100%) !important;
+            clip-path: polygon(100% 0, 100% 100%, 0 100%) !important;
+          }
+          .pdf-cover-logo {
+            width: 52px !important; height: 52px !important;
+            background: #0d7a5f !important; border-radius: 8px !important;
+            display: flex !important; align-items: center !important;
+            justify-content: center !important; font-size: 22px !important;
+            font-weight: 900 !important; color: white !important;
+          }
+          .pdf-cover-issued { text-align: right !important; font-size: 11px !important; letter-spacing: 2px !important; opacity: 0.7 !important; text-transform: uppercase !important; }
+          .pdf-cover-spacer { flex: 1 !important; }
+          .pdf-cover-brand { font-size: 11px !important; letter-spacing: 3px !important; text-transform: uppercase !important; color: #0d7a5f !important; margin-bottom: 8px !important; display: flex !important; align-items: center !important; gap: 10px !important; }
+          .pdf-cover-brand::before { content: '' !important; display: inline-block !important; width: 40px !important; height: 2px !important; background: #0d7a5f !important; }
+          .pdf-cover-title { font-size: 52px !important; font-weight: 900 !important; line-height: 1.05 !important; margin-bottom: 30px !important; text-transform: uppercase !important; letter-spacing: -1px !important; }
+          .pdf-cover-prepared { font-size: 10px !important; letter-spacing: 2px !important; text-transform: uppercase !important; opacity: 0.6 !important; }
+          .pdf-cover-client { font-size: 26px !important; font-weight: 700 !important; margin-top: 4px !important; margin-bottom: 28px !important; }
+          .pdf-cover-stats { display: flex !important; gap: 0 !important; border-top: 1px solid rgba(255,255,255,0.2) !important; padding-top: 18px !important; }
+          .pdf-cover-stat { flex: 1 !important; padding-right: 20px !important; border-right: 1px solid rgba(255,255,255,0.15) !important; margin-right: 20px !important; }
+          .pdf-cover-stat:last-child { border-right: none !important; }
+          .pdf-cover-stat-val { font-size: 32px !important; font-weight: 900 !important; }
+          .pdf-cover-stat-lbl { font-size: 9px !important; letter-spacing: 2px !important; text-transform: uppercase !important; opacity: 0.6 !important; }
+          .pdf-cover-powered { font-size: 9px !important; opacity: 0.4 !important; margin-top: 20px !important; letter-spacing: 1px !important; }
+
+          /* ── PAGE HEADER (all pages except cover) ──────────────── */
+          .pdf-page-header {
+            display: flex !important; align-items: center !important;
+            justify-content: space-between !important;
+            padding: 14px 40px !important; border-bottom: 1px solid #e5e7eb !important;
+            margin-bottom: 30px !important;
+          }
+          .pdf-page-header-logo { display: flex !important; align-items: center !important; gap: 10px !important; }
+          .pdf-page-header-logo-icon { width: 28px !important; height: 28px !important; background: #0d7a5f !important; border-radius: 5px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 13px !important; font-weight: 900 !important; color: white !important; }
+          .pdf-page-header-name { font-weight: 700 !important; font-size: 13px !important; }
+          .pdf-page-header-right { font-size: 11px !important; color: #6b7280 !important; }
+          .pdf-page-header-right span { color: #0b1f38 !important; font-weight: 600 !important; }
+
+          /* ── SUMMARY PAGE ───────────────────────────────────────── */
+          .pdf-summary { padding: 0 40px 40px !important; page-break-after: always !important; }
+          .pdf-section-label { font-size: 10px !important; letter-spacing: 3px !important; text-transform: uppercase !important; color: #0d7a5f !important; font-weight: 700 !important; margin-bottom: 6px !important; }
+          .pdf-section-title { font-size: 30px !important; font-weight: 900 !important; text-transform: uppercase !important; color: #0b1f38 !important; margin-bottom: 14px !important; }
+          .pdf-subtitle-text { font-size: 12px !important; color: #6b7280 !important; line-height: 1.6 !important; max-width: 420px !important; margin-bottom: 28px !important; }
+          .pdf-macro-row { display: flex !important; align-items: center !important; padding: 12px 0 !important; border-bottom: 1px solid #f3f4f6 !important; gap: 12px !important; }
+          .pdf-macro-dot { width: 10px !important; height: 10px !important; border-radius: 50% !important; flex-shrink: 0 !important; }
+          .pdf-macro-label { flex: 1 !important; font-size: 13px !important; color: #374151 !important; }
+          .pdf-macro-val { font-weight: 700 !important; font-size: 14px !important; margin-right: 12px !important; }
+          .pdf-macro-pct { font-size: 12px !important; color: #9ca3af !important; min-width: 36px !important; text-align: right !important; }
+          .pdf-coach-box { background: #f0fdf9 !important; border-left: 4px solid #0d7a5f !important; padding: 16px 20px !important; border-radius: 6px !important; margin-top: 28px !important; }
+          .pdf-coach-box-label { font-size: 10px !important; letter-spacing: 2px !important; text-transform: uppercase !important; color: #0d7a5f !important; font-weight: 700 !important; margin-bottom: 8px !important; }
+          .pdf-coach-box-text { font-size: 12px !important; color: #374151 !important; line-height: 1.7 !important; white-space: pre-wrap !important; }
+
+          /* ── MEALS PAGES ────────────────────────────────────────── */
+          .pdf-meals-header { background: #0b1f38 !important; color: white !important; padding: 16px 40px !important; margin: 0 0 32px !important; display: flex !important; align-items: center !important; justify-content: space-between !important; }
+          .pdf-meals-header-left .lbl { font-size: 9px !important; letter-spacing: 3px !important; text-transform: uppercase !important; color: #0d7a5f !important; font-weight: 700 !important; }
+          .pdf-meals-header-left .ttl { font-size: 22px !important; font-weight: 900 !important; text-transform: uppercase !important; }
+          .pdf-meals-header-stats { display: flex !important; gap: 24px !important; }
+          .pdf-meals-header-stat { text-align: center !important; }
+          .pdf-meals-header-stat .val { font-size: 20px !important; font-weight: 900 !important; }
+          .pdf-meals-header-stat .lbl { font-size: 8px !important; letter-spacing: 2px !important; text-transform: uppercase !important; opacity: 0.7 !important; }
+          .pdf-meal-block { padding: 0 40px !important; margin-bottom: 28px !important; }
+          .pdf-meal-title-row { display: flex !important; align-items: center !important; margin-bottom: 14px !important; gap: 14px !important; }
+          .pdf-meal-num { width: 32px !important; height: 32px !important; border-radius: 50% !important; background: #0d7a5f !important; color: white !important; display: flex !important; align-items: center !important; justify-content: center !important; font-weight: 900 !important; font-size: 14px !important; flex-shrink: 0 !important; }
+          .pdf-meal-name { font-size: 18px !important; font-weight: 700 !important; flex: 1 !important; }
+          .pdf-meal-kcal { font-size: 13px !important; font-weight: 700 !important; color: #0d7a5f !important; }
+          .pdf-food-item { display: flex !important; justify-content: space-between !important; padding: 9px 0 9px 46px !important; border-bottom: 1px dashed #e5e7eb !important; }
+          .pdf-food-item:last-of-type { border-bottom: none !important; }
+          .pdf-food-en { font-size: 13px !important; font-weight: 500 !important; color: #111827 !important; }
+          .pdf-food-ar { font-size: 11px !important; color: #9ca3af !important; margin-top: 2px !important; }
+          .pdf-food-amt { font-size: 13px !important; font-weight: 700 !important; color: #374151 !important; white-space: nowrap !important; }
+          .pdf-meal-macros { display: flex !important; gap: 16px !important; padding: 10px 0 0 46px !important; }
+          .pdf-meal-macro-pill { display: flex !important; align-items: center !important; gap: 5px !important; font-size: 12px !important; }
+          .pdf-meal-macro-dot { width: 8px !important; height: 8px !important; border-radius: 50% !important; }
+          .pdf-meal-notes { margin: 8px 0 0 46px !important; background: #fefce8 !important; border-left: 3px solid #eab308 !important; padding: 8px 12px !important; font-size: 11px !important; font-style: italic !important; color: #92400e !important; white-space: pre-wrap !important; border-radius: 0 4px 4px 0 !important; }
+
+          /* ── HEALTH INFO PAGE ───────────────────────────────────── */
+          .pdf-health { padding: 0 40px 40px !important; page-break-before: always !important; }
+          .pdf-health-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 20px !important; margin-top: 20px !important; }
+          .pdf-health-card { border: 1px solid #e5e7eb !important; border-radius: 8px !important; padding: 16px !important; }
+          .pdf-health-card-title { font-size: 10px !important; letter-spacing: 2px !important; text-transform: uppercase !important; color: #0d7a5f !important; font-weight: 700 !important; margin-bottom: 8px !important; }
+          .pdf-health-card-text { font-size: 13px !important; color: #374151 !important; line-height: 1.6 !important; }
+
+          /* ── FOOTER ─────────────────────────────────────────────── */
+          .pdf-footer { position: fixed !important; bottom: 16px !important; left: 40px !important; right: 40px !important; display: flex !important; justify-content: space-between !important; font-size: 9px !important; color: #9ca3af !important; border-top: 1px solid #f3f4f6 !important; padding-top: 8px !important; }
         }
       `}</style>
 
@@ -848,14 +1078,184 @@ export default function MealPlanner() {
         {/* ── PLANNER TAB ── */}
         {tab === "planner" && (
           <div className="space-y-4">
+            {/* ── PDF COVER PAGE (print only) ─────────────────────────────── */}
+            {(() => {
+              const gt = grandTotals(meals);
+              const dateFormatted = new Date(planDate).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }).toUpperCase();
+              const calPct = gt.calories > 0 ? { p: Math.round(gt.protein*4/gt.calories*100), c: Math.round(gt.carbs*4/gt.calories*100), f: Math.round(gt.fat*9/gt.calories*100) } : { p:0,c:0,f:0 };
+              return (
+                <>
+                  {/* COVER */}
+                  <div className="pdf-cover hidden print:flex">
+                    <div className="pdf-cover-accent" />
+                    <div className="flex justify-between items-start">
+                      <div className="pdf-cover-logo">M</div>
+                      <div className="pdf-cover-issued"><div>ISSUED</div><div>{dateFormatted}</div></div>
+                    </div>
+                    <div className="pdf-cover-spacer" />
+                    <div>
+                      <div className="pdf-cover-brand">MSR Coach Mohamed Saed</div>
+                      <div className="pdf-cover-title">Nutrition<br/>Plan</div>
+                      {planClientName && <><div className="pdf-cover-prepared">Prepared for</div><div className="pdf-cover-client">{planClientName}</div></>}
+                      <div className="pdf-cover-stats">
+                        <div className="pdf-cover-stat"><div className="pdf-cover-stat-val">{gt.calories.toFixed(0)}</div><div className="pdf-cover-stat-lbl">KCAL</div></div>
+                        <div className="pdf-cover-stat"><div className="pdf-cover-stat-val">{gt.protein.toFixed(0)}g</div><div className="pdf-cover-stat-lbl">PROTEIN</div></div>
+                        <div className="pdf-cover-stat"><div className="pdf-cover-stat-val">{meals.length}</div><div className="pdf-cover-stat-lbl">MEALS</div></div>
+                        {planGoal && <div className="pdf-cover-stat"><div className="pdf-cover-stat-val" style={{fontSize:"18px"}}>{planGoal}</div><div className="pdf-cover-stat-lbl">GOAL</div></div>}
+                      </div>
+                      <div className="pdf-cover-powered">MSR Nutrition Planner · {coachPhone}</div>
+                    </div>
+                  </div>
+
+                  {/* SUMMARY PAGE */}
+                  <div className="hidden print:block">
+                    <div className="pdf-page-header">
+                      <div className="pdf-page-header-logo">
+                        <div className="pdf-page-header-logo-icon">M</div>
+                        <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
+                      </div>
+                      <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                    </div>
+                    <div className="pdf-summary">
+                      <div className="pdf-section-label">Daily Targets</div>
+                      <div className="pdf-section-title">Nutrition Plan</div>
+                      <div className="pdf-subtitle-text">Your meals are built around your goal and your lifestyle. Follow the portions as closely as you can, and message your coach whenever something doesn't fit your day.</div>
+                      <div style={{display:"flex", gap:"40px", alignItems:"flex-start"}}>
+                        <div style={{flex:"0 0 auto"}}>
+                          <MacroPieChart carbs={gt.carbs} protein={gt.protein} fat={gt.fat} />
+                          <div style={{textAlign:"center", marginTop:"4px", fontWeight:"900", fontSize:"20px"}}>{gt.calories.toFixed(0)}</div>
+                          <div style={{textAlign:"center", fontSize:"10px", letterSpacing:"2px", color:"#9ca3af"}}>KCAL</div>
+                        </div>
+                        <div style={{flex:1}}>
+                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#3b82f6"}} /><div className="pdf-macro-label">Protein</div><div className="pdf-macro-val">{gt.protein.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.p}%</div></div>
+                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#0d7a5f"}} /><div className="pdf-macro-label">Carbs</div><div className="pdf-macro-val">{gt.carbs.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.c}%</div></div>
+                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#6b7280"}} /><div className="pdf-macro-label">Fat</div><div className="pdf-macro-val">{gt.fat.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.f}%</div></div>
+                          <div style={{fontSize:"10px", color:"#9ca3af", marginTop:"10px"}}>Daily total · {planWaterGoal}L water daily</div>
+                        </div>
+                      </div>
+                      {planNotes && (
+                        <div className="pdf-coach-box">
+                          <div className="pdf-coach-box-label">From Your Coach</div>
+                          <div className="pdf-coach-box-text">{planNotes}</div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* MEALS PAGES */}
+                  <div className="hidden print:block" style={{pageBreakBefore:"always"}}>
+                    <div className="pdf-page-header">
+                      <div className="pdf-page-header-logo">
+                        <div className="pdf-page-header-logo-icon">M</div>
+                        <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
+                      </div>
+                      <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                    </div>
+                    <div className="pdf-meals-header">
+                      <div className="pdf-meals-header-left"><div className="lbl">Meals</div><div className="ttl">Nutrition Plan</div></div>
+                      <div className="pdf-meals-header-stats">
+                        <div className="pdf-meals-header-stat"><div className="val">{gt.calories.toFixed(0)}</div><div className="lbl">KCAL</div></div>
+                        <div className="pdf-meals-header-stat"><div className="val">{gt.protein.toFixed(0)}g</div><div className="lbl">PROTEIN</div></div>
+                        <div className="pdf-meals-header-stat"><div className="val">{gt.carbs.toFixed(0)}g</div><div className="lbl">CARBS</div></div>
+                        <div className="pdf-meals-header-stat"><div className="val">{gt.fat.toFixed(0)}g</div><div className="lbl">FAT</div></div>
+                      </div>
+                    </div>
+                    {meals.map((meal, mi) => {
+                      const mt = mealTotals(meal);
+                      return (
+                        <div key={meal.id} className="pdf-meal-block">
+                          <div className="pdf-meal-title-row">
+                            <div className="pdf-meal-num">{mi + 1}</div>
+                            <div className="pdf-meal-name">{displayName(meal.name, printLang)}</div>
+                            <div className="pdf-meal-kcal">{mt.calories.toFixed(0)} kcal</div>
+                          </div>
+                          {meal.items.map(item => {
+                            const nameParts = item.name.split(" - ");
+                            const enName = nameParts[0];
+                            const arName = nameParts[1] || "";
+                            const amt = isPerPiece(item.state) ? `${item.grams} ${item.grams === 1 ? "pc" : "pcs"}` : `${item.grams} g`;
+                            return (
+                              <div key={item.instId} className="pdf-food-item">
+                                <div><div className="pdf-food-en">{enName}</div>{arName && <div className="pdf-food-ar">{arName}</div>}</div>
+                                <div className="pdf-food-amt">{amt}</div>
+                              </div>
+                            );
+                          })}
+                          {meal.notes && <div className="pdf-meal-notes">📝 {meal.notes}</div>}
+                          <div className="pdf-meal-macros">
+                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#3b82f6"}} /><span>Protein {mt.protein.toFixed(0)}g</span></div>
+                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#0d7a5f"}} /><span>Carbs {mt.carbs.toFixed(0)}g</span></div>
+                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#6b7280"}} /><span>Fat {mt.fat.toFixed(0)}g</span></div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                    <div style={{padding:"0 40px", fontSize:"9px", color:"#9ca3af", borderTop:"1px solid #f3f4f6", paddingTop:"12px", marginTop:"20px"}}>
+                      MSR Coach Mohamed Saed · {coachPhone} · Prepared exclusively for {planClientName}
+                    </div>
+                  </div>
+
+                  {/* HEALTH INFO PAGE — only renders when client data exists */}
+                  {(() => {
+                    const c = clients.find(cl => cl.name === planClientName);
+                    const hasHealth = c && (c.diseases || c.allergies || c.foodDislikes);
+                    if (!hasHealth) return null;
+                    return (
+                      <div className="pdf-health hidden print:block">
+                        <div className="pdf-page-header">
+                          <div className="pdf-page-header-logo">
+                            <div className="pdf-page-header-logo-icon">M</div>
+                            <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
+                          </div>
+                          <div className="pdf-page-header-right">Health Profile &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                        </div>
+                        <div style={{padding:"30px 40px 0"}}>
+                          <div style={{fontSize:"22px", fontWeight:800, color:"#0b1f38", marginBottom:"6px"}}>Client Health Profile</div>
+                          <div style={{fontSize:"12px", color:"#6b7280", marginBottom:"24px"}}>Important medical information to consider when preparing and following this nutrition plan.</div>
+                          <div className="pdf-health-grid">
+                            {c.diseases && (
+                              <div className="pdf-health-card">
+                                <div className="pdf-health-card-title">⚕️ Medical Conditions / الأمراض</div>
+                                <div className="pdf-health-card-text">{c.diseases}</div>
+                              </div>
+                            )}
+                            {c.allergies && (
+                              <div className="pdf-health-card" style={{borderColor:"#fca5a5"}}>
+                                <div className="pdf-health-card-title" style={{color:"#dc2626"}}>⚠️ Allergies / الحساسية</div>
+                                <div className="pdf-health-card-text">{c.allergies}</div>
+                              </div>
+                            )}
+                            {c.foodDislikes && (
+                              <div className="pdf-health-card">
+                                <div className="pdf-health-card-title">🚫 Food Dislikes / أطعمة غير مفضلة</div>
+                                <div className="pdf-health-card-text">{c.foodDislikes}</div>
+                              </div>
+                            )}
+                            <div className="pdf-health-card" style={{borderColor:"#0d7a5f", background:"#f0fdf4"}}>
+                              <div className="pdf-health-card-title">👤 Profile</div>
+                              <div className="pdf-health-card-text">
+                                {c.gender === "male" ? "Male" : "Female"} · Age {c.age}
+                                {c.isTraining && " · Athlete"}
+                                {c.isPregnant && ` · Pregnant (Month ${c.pregnancyMonth})`}
+                                {c.isLactating && " · Lactating"}
+                              </div>
+                            </div>
+                          </div>
+                          <div style={{marginTop:"24px", padding:"16px", background:"#fff7ed", border:"1px solid #fed7aa", borderRadius:"8px", fontSize:"12px", color:"#92400e"}}>
+                            ⚠️ This information is confidential and intended solely for the client and their healthcare provider. Always consult a physician before making changes to diet or supplementation, especially with existing medical conditions or pregnancy.
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </>
+              );
+            })()}
+
             {/* plan info */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3 print:shadow-none">
-              <div className="plan-print-header hidden print:block">
-                <div className="text-xl font-bold">🥗 MSR Nutrition Planner</div>
-                {planClientName && <div className="mt-1 text-sm opacity-90">👤 {planClientName} · 🎯 {planGoal} · 📅 {planDate}</div>}
-              </div>
-              <h2 className="font-bold text-sm text-gray-500 uppercase print:hidden">معلومات الخطة</h2>
-              <div className="grid grid-cols-2 gap-2 print:hidden">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3 print:hidden">
+              <h2 className="font-bold text-sm text-gray-500 uppercase">معلومات الخطة</h2>
+              <div className="grid grid-cols-2 gap-2">
                 <div><label className="text-xs text-gray-500">اسم العميل</label><input value={planClientName} onChange={e => setPlanClientName(e.target.value)} placeholder="سارة عماد..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div><label className="text-xs text-gray-500">الهدف</label><input value={planGoal} onChange={e => setPlanGoal(e.target.value)} placeholder="تنشيف..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div><label className="text-xs text-gray-500">التاريخ</label><input type="date" value={planDate} onChange={e => setPlanDate(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
@@ -895,7 +1295,19 @@ export default function MealPlanner() {
                 <div className="space-y-3">
                   {meals.map(meal => (
                     <SortableMealWrapper key={meal.id} mealId={meal.id}>
-                      <MealCard meal={meal} lang={lang} onUpdate={u => updateMeal(meal.id, u)} onDelete={() => deleteMeal(meal.id)} />
+                      {dragHandleProps => (
+                        <MealCard
+                          meal={meal} lang={lang}
+                          onUpdate={u => updateMeal(meal.id, u)}
+                          onDelete={() => deleteMeal(meal.id)}
+                          onDuplicate={() => {
+                            const copy = { ...JSON.parse(JSON.stringify(meal)), id: `m${Date.now()}`, name: meal.name + " (copy)" };
+                            setMeals(prev => { const i = prev.findIndex(m => m.id === meal.id); const next = [...prev]; next.splice(i + 1, 0, copy); return next; });
+                          }}
+                          extraFoods={customFoods}
+                          dragHandleProps={dragHandleProps}
+                        />
+                      )}
                     </SortableMealWrapper>
                   ))}
                 </div>
@@ -1064,6 +1476,68 @@ export default function MealPlanner() {
                   <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">{selectedClient.goal}</span>
                 </div>
 
+                {/* health profile */}
+                <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3">
+                  <h3 className="font-semibold text-sm flex items-center gap-2">🏥 Health Profile</h3>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div>
+                      <label className="text-xs text-gray-500">Gender</label>
+                      <select value={selectedClient.gender || "male"} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, gender: e.target.value as "male"|"female" } : c))}
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1">
+                        <option value="male">Male - ذكر</option>
+                        <option value="female">Female - أنثى</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="text-xs text-gray-500">Age</label>
+                      <input type="number" min="1" max="120" value={selectedClient.age || 30} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, age: +e.target.value } : c))}
+                        className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
+                    </div>
+                    <div className="flex items-center gap-2 col-span-2 flex-wrap">
+                      <label className="flex items-center gap-1 text-xs cursor-pointer select-none">
+                        <input type="checkbox" checked={!!selectedClient.isTraining} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, isTraining: e.target.checked } : c))} className="accent-teal-600" />
+                        <span>Training / رياضي</span>
+                      </label>
+                      {selectedClient.gender === "female" && (
+                        <>
+                          <label className="flex items-center gap-1 text-xs cursor-pointer select-none">
+                            <input type="checkbox" checked={!!selectedClient.isPregnant} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, isPregnant: e.target.checked, pregnancyMonth: e.target.checked ? (c.pregnancyMonth || 1) : 0 } : c))} className="accent-teal-600" />
+                            <span>Pregnant / حامل</span>
+                          </label>
+                          {selectedClient.isPregnant && (
+                            <div className="flex items-center gap-1">
+                              <label className="text-xs text-gray-500">Month:</label>
+                              <select value={selectedClient.pregnancyMonth || 1} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, pregnancyMonth: +e.target.value } : c))}
+                                className="border border-gray-300 dark:border-gray-600 rounded px-2 py-1 text-xs bg-white dark:bg-gray-800">
+                                {[1,2,3,4,5,6,7,8,9].map(m => <option key={m} value={m}>{m}</option>)}
+                              </select>
+                            </div>
+                          )}
+                          <label className="flex items-center gap-1 text-xs cursor-pointer select-none">
+                            <input type="checkbox" checked={!!selectedClient.isLactating} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, isLactating: e.target.checked } : c))} className="accent-teal-600" />
+                            <span>Lactating / مرضع</span>
+                          </label>
+                        </>
+                      )}
+                    </div>
+                    <div className="col-span-2">
+                      <label className="text-xs text-gray-500">Diseases / الأمراض</label>
+                      <input value={selectedClient.diseases || ""} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, diseases: e.target.value } : c))}
+                        placeholder="e.g. Diabetes, Hypertension..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="text-xs text-gray-500">Allergies / الحساسية</label>
+                      <input value={selectedClient.allergies || ""} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, allergies: e.target.value } : c))}
+                        placeholder="e.g. Lactose, Gluten, Shellfish..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="text-xs text-gray-500">Food Dislikes / أطعمة غير مفضلة</label>
+                      <input value={selectedClient.foodDislikes || ""} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, foodDislikes: e.target.value } : c))}
+                        placeholder="e.g. Broccoli, Fish..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
+                    </div>
+                  </div>
+                </div>
+
                 {/* check-in history */}
                 <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-2">
                   <div className="flex items-center justify-between">
@@ -1136,6 +1610,118 @@ export default function MealPlanner() {
                     </div>
                   ))}
                 </div>
+
+                {/* ── MICRONUTRIENT TRACKER ───────────────────────────── */}
+                {(() => {
+                  const rdi = getRDI({
+                    gender: selectedClient.gender || "male",
+                    age: selectedClient.age || 30,
+                    isTraining: !!selectedClient.isTraining,
+                    isPregnant: !!selectedClient.isPregnant,
+                    pregnancyMonth: selectedClient.pregnancyMonth || 0,
+                    isLactating: !!selectedClient.isLactating,
+                  });
+                  // Calculate micros from current plan meals
+                  const planMicros: Record<string, number> = {};
+                  const allFoods = [...FOOD_DATABASE, ...customFoods];
+                  meals.forEach(meal => {
+                    meal.items.forEach(item => {
+                      const fd = allFoods.find(f => f.id === item.id);
+                      if (!fd?.micros) return;
+                      const mult = isPerPiece(fd.state) ? item.grams : item.grams / 100;
+                      Object.entries(fd.micros).forEach(([k, v]) => {
+                        planMicros[k] = (planMicros[k] || 0) + (v as number) * mult;
+                      });
+                    });
+                  });
+                  // Merge with manual overrides
+                  const clientOverrides = microOverrides[selectedClient.id] || {};
+                  const totalMicros: Record<string, number> = { ...planMicros };
+                  Object.entries(clientOverrides).forEach(([k, v]) => {
+                    totalMicros[k] = (totalMicros[k] || 0) + v;
+                  });
+
+                  return (
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-sm flex-1">🔬 Micronutrient Tracker</h3>
+                        <span className="text-xs text-gray-400">vs RDI ({selectedClient.isTraining ? "Athlete" : "Sedentary"}{selectedClient.isPregnant ? " · Pregnant" : ""}{selectedClient.isLactating ? " · Lactating" : ""})</span>
+                      </div>
+                      <p className="text-xs text-gray-400">Based on current plan meals + any manual additions below. Green = met, Yellow = &gt;50%, Red = below 50%.</p>
+
+                      {/* VITAMINS */}
+                      <div>
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2">Vitamins</div>
+                        <div className="space-y-2">
+                          {MICROS_LIST.filter(m => m.category === "Vitamins").map(micro => {
+                            const got = totalMicros[micro.key] || 0;
+                            const target = rdi[micro.key] || 0;
+                            const pct = target > 0 ? Math.min((got / target) * 100, 100) : 0;
+                            const color = pct >= 100 ? "#0d7a5f" : pct >= 50 ? "#f59e0b" : "#ef4444";
+                            const manualVal = clientOverrides[micro.key] || "";
+                            return (
+                              <div key={micro.key} className="flex items-center gap-2">
+                                <div className="w-28 text-xs text-gray-600 dark:text-gray-300 shrink-0 truncate" title={micro.name}>{micro.name}</div>
+                                <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                  <div className="h-2 rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
+                                </div>
+                                <div className="text-xs w-20 text-right shrink-0" style={{ color }}>
+                                  {got.toFixed(1)} / {target} {micro.unit}
+                                </div>
+                                <input
+                                  type="number" min="0" step="any"
+                                  value={manualVal}
+                                  placeholder="+add"
+                                  onChange={e => setMicroOverrides(prev => ({
+                                    ...prev,
+                                    [selectedClient.id]: { ...(prev[selectedClient.id] || {}), [micro.key]: +e.target.value || 0 }
+                                  }))}
+                                  className="w-16 text-xs border border-gray-200 dark:border-gray-600 rounded px-1.5 py-0.5 bg-white dark:bg-gray-800 text-center"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* MINERALS */}
+                      <div>
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-2 mt-3">Minerals</div>
+                        <div className="space-y-2">
+                          {MICROS_LIST.filter(m => m.category === "Minerals").map(micro => {
+                            const got = totalMicros[micro.key] || 0;
+                            const target = rdi[micro.key] || 0;
+                            const pct = target > 0 ? Math.min((got / target) * 100, 100) : 0;
+                            const color = pct >= 100 ? "#0d7a5f" : pct >= 50 ? "#f59e0b" : "#ef4444";
+                            const manualVal = clientOverrides[micro.key] || "";
+                            return (
+                              <div key={micro.key} className="flex items-center gap-2">
+                                <div className="w-28 text-xs text-gray-600 dark:text-gray-300 shrink-0 truncate" title={micro.name}>{micro.name}</div>
+                                <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                  <div className="h-2 rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
+                                </div>
+                                <div className="text-xs w-20 text-right shrink-0" style={{ color }}>
+                                  {got.toFixed(1)} / {target} {micro.unit}
+                                </div>
+                                <input
+                                  type="number" min="0" step="any"
+                                  value={manualVal}
+                                  placeholder="+add"
+                                  onChange={e => setMicroOverrides(prev => ({
+                                    ...prev,
+                                    [selectedClient.id]: { ...(prev[selectedClient.id] || {}), [micro.key]: +e.target.value || 0 }
+                                  }))}
+                                  className="w-16 text-xs border border-gray-200 dark:border-gray-600 rounded px-1.5 py-0.5 bg-white dark:bg-gray-800 text-center"
+                                />
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-2">💡 "+add" column: manually enter extra intake (supplements, unlisted foods) in {" "}{"{unit}"} per nutrient.</p>
+                    </div>
+                  );
+                })()}
               </div>
             )}
 
@@ -1189,12 +1775,12 @@ export default function MealPlanner() {
 }
 
 // ─── SORTABLE MEAL WRAPPER ──────────────────────────────────────────────────────
-function SortableMealWrapper({ mealId, children }: { mealId: string; children: React.ReactNode }) {
+function SortableMealWrapper({ mealId, children }: { mealId: string; children: (dragHandleProps: React.HTMLAttributes<HTMLElement>) => React.ReactNode }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: mealId });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      {children}
+      {children({ ...listeners })}
     </div>
   );
 }
