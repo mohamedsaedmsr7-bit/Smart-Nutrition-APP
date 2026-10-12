@@ -46,6 +46,7 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 124, name: "Fried Egg - بيضة مقلية", category: "Eggs", state: "per piece", carbs: 0.4, protein: 6.3, fat: 7, calories: 90 },
   { id: 125, name: "Scrambled Egg - بيض مخفوق", category: "Eggs", state: "per piece", carbs: 1.4, protein: 6.8, fat: 7.5, calories: 102 },
   { id: 126, name: "Egg White only - بياض بيضة", category: "Eggs", state: "per piece", carbs: 0.2, protein: 3.6, fat: 0.1, calories: 17 },
+  { id: 127, name: "Raw Whole Egg - بيضة كاملة نية", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6, fat: 5, calories: 70 },
   // ── DAIRY ────────────────────────────────────────────────────────────────
   { id: 201, name: "Low-Fat Yogurt - زبادي قليل الدسم", category: "Dairy", state: "per 100g", carbs: 7, protein: 5, fat: 1.5, calories: 61 },
   { id: 202, name: "Full-Fat Yogurt - زبادي كامل الدسم", category: "Dairy", state: "per 100g", carbs: 4.7, protein: 3.5, fat: 3.3, calories: 61 },
@@ -215,6 +216,12 @@ interface Client {
   checkIns: ClientCheckIn[]; dietPlans: DietPlanSnapshot[];
 }
 
+interface CustomRecipe {
+  id: number; name: string; category: string; notes: string;
+  serves: number;
+  ingredients: { foodId: number; isCustom?: boolean; grams: number }[];
+}
+
 const EMPTY_MEASUREMENTS: BodyMeasurements = { weight: 0, height: 0, bodyFat: 0, arms: 0, thighs: 0, waist: 0, hip: 0, highHip: 0, neck: 0 };
 
 function displayName(fullName: string, lang: "ar" | "en" | "both"): string {
@@ -369,33 +376,42 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
 }
 
 // ─── MEAL CARD ─────────────────────────────────────────────────────────────────
-function MealCard({ meal, onUpdate, onDelete, lang }: {
-  meal: Meal; onUpdate: (m: Meal) => void; onDelete: () => void; lang: "ar" | "en" | "both";
+function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods }: {
+  meal: Meal; onUpdate: (m: Meal) => void; onDelete: () => void; onDuplicate: () => void;
+  lang: "ar" | "en" | "both"; extraFoods: FoodEntry[];
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCat, setSelectedCat] = useState("All");
   const [selectedFoodIds, setSelectedFoodIds] = useState<Set<number>>(new Set());
+  const [showCustomForm, setShowCustomForm] = useState(false);
+  const [customForm, setCustomForm] = useState({ name: "", calories: 0, protein: 0, carbs: 0, fat: 0, grams: 100 });
+  const allFoods = [...FOOD_DATABASE, ...extraFoods];
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
   const totals = mealTotals(meal);
 
-  const filtered = FOOD_DATABASE.filter(f => {
+  const allCategories = Array.from(new Set(allFoods.map(f => f.category)));
+  const filtered = allFoods.filter(f => {
     const q = normalizeAr(search);
     const matchQ = !q || normalizeAr(f.name).includes(q);
     const matchC = selectedCat === "All" || f.category === selectedCat;
     return matchQ && matchC;
   });
+  // recent foods: last 8 unique food ids added to this meal
+  const recentIds = meal.items.slice(-8).map(i => i.id).filter((v, i, a) => a.indexOf(v) === i).reverse();
+  const recentFoods = recentIds.map(id => allFoods.find(f => f.id === id)).filter(Boolean) as FoodEntry[];
 
   function addItem(food: FoodEntry) {
     const defaultGrams = isPerPiece(food.state) ? 1 : 100;
     const newItem: FoodItem = { ...food, grams: defaultGrams, instId: `${food.id}-${Date.now()}-${Math.random()}` };
     onUpdate({ ...meal, items: [...meal.items, newItem] });
+    setSearch("");
   }
   function addSelectedItems() {
-    const toAdd = FOOD_DATABASE.filter(f => selectedFoodIds.has(f.id));
+    const toAdd = allFoods.filter(f => selectedFoodIds.has(f.id));
     const newItems: FoodItem[] = toAdd.map(food => ({
       ...food, grams: isPerPiece(food.state) ? 1 : 100,
       instId: `${food.id}-${Date.now()}-${Math.random()}`
@@ -406,6 +422,19 @@ function MealCard({ meal, onUpdate, onDelete, lang }: {
   }
   function toggleFoodSelect(id: number) {
     setSelectedFoodIds(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
+  }
+  function addCustomFoodToMeal() {
+    if (!customForm.name.trim()) return;
+    const tempId = 90000 + Date.now() % 10000;
+    const newItem: FoodItem = {
+      id: tempId, name: customForm.name, category: "Custom", state: "custom",
+      carbs: customForm.carbs, protein: customForm.protein, fat: customForm.fat,
+      calories: customForm.calories || Math.round(customForm.protein * 4 + customForm.carbs * 4 + customForm.fat * 9),
+      grams: customForm.grams, instId: `custom-${Date.now()}-${Math.random()}`
+    };
+    onUpdate({ ...meal, items: [...meal.items, newItem] });
+    setCustomForm({ name: "", calories: 0, protein: 0, carbs: 0, fat: 0, grams: 100 });
+    setShowCustomForm(false);
   }
   function removeItem(instId: string) {
     onUpdate({ ...meal, items: meal.items.filter(i => i.instId !== instId) });
@@ -439,6 +468,8 @@ function MealCard({ meal, onUpdate, onDelete, lang }: {
           <span className="text-red-600">{totals.fat.toFixed(0)}F</span>
           <span className="font-semibold">{totals.calories.toFixed(0)}</span>
         </div>
+        <button title="Duplicate meal" onClick={onDuplicate} className="text-gray-400 hover:text-blue-500 print:hidden"><Copy size={14} /></button>
+        <button title="Clear all items" onClick={() => onUpdate({ ...meal, items: [] })} className="text-gray-400 hover:text-orange-500 print:hidden"><Minus size={14} /></button>
         <button onClick={() => setCollapsed(!collapsed)} className="text-gray-400 print:hidden">{collapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}</button>
         <button onClick={onDelete} className="text-red-400 hover:text-red-600 print:hidden"><Trash2 size={16} /></button>
       </div>
@@ -472,32 +503,68 @@ function MealCard({ meal, onUpdate, onDelete, lang }: {
             </SortableContext>
           </DndContext>
           {/* add food - multi select */}
-          <div className="print:hidden space-y-1">
+          <div className="print:hidden space-y-2">
+            {/* recent foods chips */}
+            {!search && recentFoods.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                <span className="text-xs text-gray-400 self-center">أخيراً:</span>
+                {recentFoods.slice(0, 5).map(f => (
+                  <button key={f.id} onClick={() => addItem(f)}
+                    className="text-xs bg-gray-100 dark:bg-gray-700 hover:bg-blue-100 dark:hover:bg-blue-900/40 px-2 py-0.5 rounded-full border border-gray-200 dark:border-gray-600 truncate max-w-[120px]">
+                    {displayName(f.name, lang)}
+                  </button>
+                ))}
+              </div>
+            )}
             <div className="flex gap-1">
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 ابحث عن أكل..." className="flex-1 text-xs border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 bg-white dark:bg-gray-800" />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 ابحث عن أكل..." className="flex-1 text-xs border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800" />
               <select value={selectedCat} onChange={e => setSelectedCat(e.target.value)} className="text-xs border border-gray-300 dark:border-gray-600 rounded-lg px-1 py-1 bg-white dark:bg-gray-800">
                 <option value="All">الكل</option>
-                {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                {allCategories.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
+              <button onClick={() => setShowCustomForm(!showCustomForm)} title="Add custom food"
+                className={cn("text-xs px-2 py-1 rounded-lg border font-bold transition-colors", showCustomForm ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 text-purple-600 hover:bg-purple-50 dark:hover:bg-purple-900/30")}>
+                ✚
+              </button>
             </div>
+            {/* custom food inline form */}
+            {showCustomForm && (
+              <div className="border border-purple-200 dark:border-purple-800 rounded-xl bg-purple-50 dark:bg-purple-900/20 p-3 space-y-2">
+                <p className="text-xs font-semibold text-purple-700 dark:text-purple-300">➕ إضافة أكل مخصص</p>
+                <input value={customForm.name} onChange={e => setCustomForm(p => ({ ...p, name: e.target.value }))} placeholder="اسم الأكل..." className="w-full text-xs border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800" />
+                <div className="grid grid-cols-3 gap-1">
+                  {(["calories","protein","carbs","fat","grams"] as const).map(k => (
+                    <div key={k}>
+                      <label className="text-xs text-gray-500 capitalize">{k === "grams" ? "الوزن (g)" : k}</label>
+                      <input type="number" value={customForm[k] || ""} onChange={e => setCustomForm(p => ({ ...p, [k]: +e.target.value }))} className="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800" />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex gap-1 justify-end">
+                  <button onClick={() => setShowCustomForm(false)} className="text-xs text-gray-500 px-3 py-1 hover:text-gray-700">إلغاء</button>
+                  <button onClick={addCustomFoodToMeal} className="text-xs bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700 font-semibold">إضافة ✓</button>
+                </div>
+              </div>
+            )}
             {(search || selectedCat !== "All") && (
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 overflow-hidden">
                 <div className="max-h-48 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                  {filtered.length === 0 && <p className="text-xs text-gray-400 text-center py-3">لا توجد نتائج</p>}
                   {filtered.slice(0, 25).map(f => (
                     <label key={f.id} className={cn("flex items-center gap-2 px-2 py-1.5 text-xs cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30", selectedFoodIds.has(f.id) && "bg-blue-50 dark:bg-blue-900/30")}>
                       <input type="checkbox" checked={selectedFoodIds.has(f.id)} onChange={() => toggleFoodSelect(f.id)} className="accent-blue-600" />
                       <span className="flex-1">{displayName(f.name, lang)}</span>
                       <span className="text-gray-400 text-xs">{f.state}</span>
-                      <button onClick={e => { e.preventDefault(); addItem(f); }} className="text-blue-500 hover:text-blue-700 font-bold px-1">+</button>
+                      <button onClick={e => { e.preventDefault(); addItem(f); }} className="text-blue-500 hover:text-blue-700 font-bold px-1 text-base leading-none">+</button>
                     </label>
                   ))}
                 </div>
                 {selectedFoodIds.size > 0 && (
                   <div className="border-t border-gray-200 dark:border-gray-700 p-2 bg-blue-50 dark:bg-blue-900/20 flex items-center justify-between">
-                    <span className="text-xs text-blue-700 dark:text-blue-300">{selectedFoodIds.size} items selected</span>
+                    <span className="text-xs text-blue-700 dark:text-blue-300">{selectedFoodIds.size} محدد</span>
                     <div className="flex gap-1">
-                      <button onClick={() => setSelectedFoodIds(new Set())} className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1">Clear</button>
-                      <button onClick={addSelectedItems} className="text-xs bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 font-semibold">Add All ✓</button>
+                      <button onClick={() => setSelectedFoodIds(new Set())} className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1">مسح</button>
+                      <button onClick={addSelectedItems} className="text-xs bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 font-semibold">إضافة الكل ✓</button>
                     </div>
                   </div>
                 )}
@@ -538,6 +605,14 @@ export default function MealPlanner() {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [authError, setAuthError] = useState("");
+  // Custom foods & recipes
+  const [customFoods, setCustomFoods] = useState<FoodEntry[]>(() => {
+    try { const s = localStorage.getItem("custom_foods_v1"); return s ? JSON.parse(s) : []; } catch { return []; }
+  });
+  const [customRecipes, setCustomRecipes] = useState<CustomRecipe[]>(() => {
+    try { const s = localStorage.getItem("custom_recipes_v1"); return s ? JSON.parse(s) : []; } catch { return []; }
+  });
+  const [showRecipeBuilder, setShowRecipeBuilder] = useState(false);
   // Calculator state
   const [calcData, setCalcData] = useState({ age: 25, weight: 70, height: 170, gender: "male", activity: "1.55", goal: "maintain" });
   const [calcResult, setCalcResult] = useState<{ bmr: number; tdee: number; target: number } | null>(null);
