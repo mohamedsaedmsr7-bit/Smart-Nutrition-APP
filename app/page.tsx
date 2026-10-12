@@ -42,10 +42,10 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 120, name: "Whole Egg - بيضة كاملة", category: "Eggs", state: "per 100g", carbs: 1.1, protein: 13, fat: 10, calories: 143 },
   { id: 121, name: "Egg White - بياض البيض", category: "Eggs", state: "per 100g", carbs: 0.7, protein: 11, fat: 0.2, calories: 52 },
   { id: 122, name: "Egg Yolk - صفار البيض", category: "Eggs", state: "per 100g", carbs: 3.6, protein: 16, fat: 27, calories: 322 },
-  { id: 123, name: "Boiled Egg (1 large) - بيضة مسلوقة", category: "Eggs", state: "per piece (50g)", carbs: 0.6, protein: 6.3, fat: 5, calories: 72 },
-  { id: 124, name: "Fried Egg (1 large) - بيضة مقلية", category: "Eggs", state: "per piece (46g)", carbs: 0.4, protein: 6.3, fat: 7, calories: 90 },
-  { id: 125, name: "Scrambled Egg (1 large) - بيض مخفوق", category: "Eggs", state: "per piece (61g)", carbs: 1.4, protein: 6.8, fat: 7.5, calories: 102 },
-  { id: 126, name: "Egg White only (1 large) - بياض بيضة", category: "Eggs", state: "per piece (33g)", carbs: 0.2, protein: 3.6, fat: 0.1, calories: 17 },
+  { id: 123, name: "Boiled Egg - بيضة مسلوقة", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6.3, fat: 5, calories: 72 },
+  { id: 124, name: "Fried Egg - بيضة مقلية", category: "Eggs", state: "per piece", carbs: 0.4, protein: 6.3, fat: 7, calories: 90 },
+  { id: 125, name: "Scrambled Egg - بيض مخفوق", category: "Eggs", state: "per piece", carbs: 1.4, protein: 6.8, fat: 7.5, calories: 102 },
+  { id: 126, name: "Egg White only - بياض بيضة", category: "Eggs", state: "per piece", carbs: 0.2, protein: 3.6, fat: 0.1, calories: 17 },
   // ── DAIRY ────────────────────────────────────────────────────────────────
   { id: 201, name: "Low-Fat Yogurt - زبادي قليل الدسم", category: "Dairy", state: "per 100g", carbs: 7, protein: 5, fat: 1.5, calories: 61 },
   { id: 202, name: "Full-Fat Yogurt - زبادي كامل الدسم", category: "Dairy", state: "per 100g", carbs: 4.7, protein: 3.5, fat: 3.3, calories: 61 },
@@ -166,6 +166,32 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 962, name: "Diet Sugar / Splenda - سكر دايت", category: "Sweeteners", state: "per packet (1g)", carbs: 1, protein: 0, fat: 0, calories: 0 },
   { id: 963, name: "Erythritol - إيريثريتول", category: "Sweeteners", state: "per 100g", carbs: 100, protein: 0, fat: 0, calories: 20 },
   { id: 964, name: "White Sugar - سكر أبيض", category: "Sweeteners", state: "per 100g", carbs: 100, protein: 0, fat: 0, calories: 387 },
+  // ── SOFT DRINKS ───────────────────────────────────────────────────────────
+  { id: 971, name: "Diet Pepsi - بيبسي دايت", category: "Beverages", state: "per 330ml can", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 972, name: "Diet Coke - كوكا كولا زيرو", category: "Beverages", state: "per 330ml can", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 973, name: "Water - مياه", category: "Beverages", state: "per 250ml glass", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  // ── RAW / UNCOOKED ────────────────────────────────────────────────────────
+  { id: 1001, name: "Raw Chicken Breast (uncooked) - صدر دجاج نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 23, fat: 2.6, calories: 120 },
+  { id: 1002, name: "Raw Chicken Thigh (uncooked) - فخذ دجاج نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 19, fat: 8, calories: 153 },
+  { id: 1003, name: "Raw Ground Beef (uncooked) - لحم مفروم نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 20, fat: 10, calories: 176 },
+  { id: 1004, name: "Raw White Rice (dry) - أرز أبيض جاف", category: "Raw", state: "per 100g dry", carbs: 78, protein: 6.5, fat: 0.5, calories: 350 },
+  { id: 1005, name: "Raw Brown Rice (dry) - أرز بني جاف", category: "Raw", state: "per 100g dry", carbs: 76, protein: 7.5, fat: 2.5, calories: 370 },
+  { id: 1006, name: "Raw Oats (dry) - شوفان جاف", category: "Raw", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389 },
+  { id: 1007, name: "Raw Potato (uncooked) - بطاطس نية", category: "Raw", state: "per 100g raw", carbs: 17, protein: 2, fat: 0.1, calories: 77 },
+  { id: 1008, name: "Raw Sweet Potato - بطاطا حلوة نية", category: "Raw", state: "per 100g raw", carbs: 20, protein: 1.6, fat: 0.1, calories: 86 },
+  { id: 1009, name: "Raw Pasta (dry) - مكرونة جافة", category: "Raw", state: "per 100g dry", carbs: 74, protein: 13, fat: 1.5, calories: 357 },
+  { id: 1010, name: "Raw Lentils (dry) - عدس جاف", category: "Raw", state: "per 100g dry", carbs: 63, protein: 26, fat: 1, calories: 353 },
+  // ── EGYPTIAN DISHES ───────────────────────────────────────────────────────
+  { id: 1101, name: "Egyptian Lentil Soup - شوربة عدس مصرية", category: "Egyptian", state: "per 100g", carbs: 11, protein: 4, fat: 1.5, calories: 76 },
+  { id: 1102, name: "Baked Falafel - فلافل بالفرن", category: "Egyptian", state: "per piece (~30g)", carbs: 6, protein: 2.5, fat: 1.5, calories: 48 },
+  { id: 1103, name: "Ful Medames - فول مدمس", category: "Egyptian", state: "per 100g", carbs: 26, protein: 8, fat: 0.5, calories: 110 },
+  { id: 1104, name: "Koshari - كشري", category: "Egyptian", state: "per 100g", carbs: 23, protein: 4, fat: 2, calories: 126 },
+  { id: 1105, name: "Hawawshi (lean) - حواوشي هش", category: "Egyptian", state: "per 100g", carbs: 18, protein: 14, fat: 8, calories: 200 },
+  { id: 1106, name: "Molokhia with Chicken - ملوخية بالدجاج", category: "Egyptian", state: "per 100g", carbs: 4, protein: 8, fat: 3, calories: 75 },
+  { id: 1107, name: "Grilled Kofta - كفتة مشوية", category: "Egyptian", state: "per 100g", carbs: 5, protein: 18, fat: 8, calories: 164 },
+  { id: 1108, name: "Mahshi Kousa - محشي كوسة", category: "Egyptian", state: "per 100g", carbs: 14, protein: 5, fat: 3, calories: 103 },
+  { id: 1109, name: "Baladi Bread (Large) - عيش بلدي كبير", category: "Egyptian", state: "per piece (~120g)", carbs: 62, protein: 10, fat: 1.8, calories: 304 },
+  { id: 1110, name: "Taamiya (falafel) fried - طعمية مقلية", category: "Egyptian", state: "per piece (~20g)", carbs: 7, protein: 2, fat: 3, calories: 63 },
 ];
 
 // ─── INTERFACES ────────────────────────────────────────────────────────────────
@@ -204,8 +230,10 @@ function normalizeAr(s: string) {
   return s.replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").toLowerCase();
 }
 
+function isPerPiece(state: string) { return state === "per piece" || state.startsWith("per piece"); }
+
 function calcMacros(item: FoodItem) {
-  const r = item.grams / 100;
+  const r = isPerPiece(item.state) ? item.grams : item.grams / 100;
   return {
     carbs: +(item.carbs * r).toFixed(1),
     protein: +(item.protein * r).toFixed(1),
@@ -328,12 +356,12 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
       </div>
       <div className="flex items-center gap-1">
         <input
-          type="number" min="0" step="1"
+          type="number" min="0" step={isPerPiece(item.state) ? "1" : "5"}
           value={item.grams}
           onChange={e => onGramsChange(+e.target.value)}
           className="w-16 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 px-1 py-0.5 text-xs"
         />
-        <span className="text-xs text-gray-500">g</span>
+        <span className="text-xs text-gray-500">{isPerPiece(item.state) ? "pcs" : "g"}</span>
       </div>
       <button onClick={onRemove} className="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
     </div>
@@ -347,6 +375,7 @@ function MealCard({ meal, onUpdate, onDelete, lang }: {
   const [collapsed, setCollapsed] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCat, setSelectedCat] = useState("All");
+  const [selectedFoodIds, setSelectedFoodIds] = useState<Set<number>>(new Set());
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -361,8 +390,22 @@ function MealCard({ meal, onUpdate, onDelete, lang }: {
   });
 
   function addItem(food: FoodEntry) {
-    const newItem: FoodItem = { ...food, grams: 100, instId: `${food.id}-${Date.now()}-${Math.random()}` };
+    const defaultGrams = isPerPiece(food.state) ? 1 : 100;
+    const newItem: FoodItem = { ...food, grams: defaultGrams, instId: `${food.id}-${Date.now()}-${Math.random()}` };
     onUpdate({ ...meal, items: [...meal.items, newItem] });
+  }
+  function addSelectedItems() {
+    const toAdd = FOOD_DATABASE.filter(f => selectedFoodIds.has(f.id));
+    const newItems: FoodItem[] = toAdd.map(food => ({
+      ...food, grams: isPerPiece(food.state) ? 1 : 100,
+      instId: `${food.id}-${Date.now()}-${Math.random()}`
+    }));
+    onUpdate({ ...meal, items: [...meal.items, ...newItems] });
+    setSelectedFoodIds(new Set());
+    setSearch("");
+  }
+  function toggleFoodSelect(id: number) {
+    setSelectedFoodIds(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
   }
   function removeItem(instId: string) {
     onUpdate({ ...meal, items: meal.items.filter(i => i.instId !== instId) });
@@ -408,8 +451,13 @@ function MealCard({ meal, onUpdate, onDelete, lang }: {
             onChange={e => onUpdate({ ...meal, notes: e.target.value })}
             rows={2}
             placeholder="Notes / instructions..."
-            className="w-full text-xs border border-gray-200 dark:border-gray-700 rounded-lg p-2 bg-white dark:bg-gray-800 resize-none print:border-none print:p-0 print:bg-transparent print:whitespace-pre-wrap print:overflow-visible"
+            className="w-full text-xs border border-gray-200 dark:border-gray-700 rounded-lg p-2 bg-white dark:bg-gray-800 resize-none print:hidden"
           />
+          {meal.notes && (
+            <div className="hidden print:block text-xs text-gray-700 bg-amber-50 border-r-4 border-amber-400 px-3 py-2 whitespace-pre-wrap" style={{ fontStyle: "italic" }}>
+              📝 {meal.notes}
+            </div>
+          )}
           {/* items */}
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={meal.items.map(i => i.instId)} strategy={verticalListSortingStrategy}>
@@ -423,23 +471,36 @@ function MealCard({ meal, onUpdate, onDelete, lang }: {
               </div>
             </SortableContext>
           </DndContext>
-          {/* add food */}
+          {/* add food - multi select */}
           <div className="print:hidden space-y-1">
             <div className="flex gap-1">
-              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search food..." className="flex-1 text-xs border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 bg-white dark:bg-gray-800" />
+              <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 ابحث عن أكل..." className="flex-1 text-xs border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 bg-white dark:bg-gray-800" />
               <select value={selectedCat} onChange={e => setSelectedCat(e.target.value)} className="text-xs border border-gray-300 dark:border-gray-600 rounded-lg px-1 py-1 bg-white dark:bg-gray-800">
-                <option value="All">All</option>
+                <option value="All">الكل</option>
                 {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </div>
-            {search && (
-              <div className="max-h-40 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 divide-y divide-gray-100 dark:divide-gray-700">
-                {filtered.slice(0, 15).map(f => (
-                  <button key={f.id} onClick={() => addItem(f)} className="w-full text-left px-2 py-1 text-xs hover:bg-blue-50 dark:hover:bg-blue-900/30 flex justify-between">
-                    <span>{displayName(f.name, lang)}</span>
-                    <span className="text-gray-400">{f.state}</span>
-                  </button>
-                ))}
+            {(search || selectedCat !== "All") && (
+              <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 overflow-hidden">
+                <div className="max-h-48 overflow-y-auto divide-y divide-gray-100 dark:divide-gray-700">
+                  {filtered.slice(0, 25).map(f => (
+                    <label key={f.id} className={cn("flex items-center gap-2 px-2 py-1.5 text-xs cursor-pointer hover:bg-blue-50 dark:hover:bg-blue-900/30", selectedFoodIds.has(f.id) && "bg-blue-50 dark:bg-blue-900/30")}>
+                      <input type="checkbox" checked={selectedFoodIds.has(f.id)} onChange={() => toggleFoodSelect(f.id)} className="accent-blue-600" />
+                      <span className="flex-1">{displayName(f.name, lang)}</span>
+                      <span className="text-gray-400 text-xs">{f.state}</span>
+                      <button onClick={e => { e.preventDefault(); addItem(f); }} className="text-blue-500 hover:text-blue-700 font-bold px-1">+</button>
+                    </label>
+                  ))}
+                </div>
+                {selectedFoodIds.size > 0 && (
+                  <div className="border-t border-gray-200 dark:border-gray-700 p-2 bg-blue-50 dark:bg-blue-900/20 flex items-center justify-between">
+                    <span className="text-xs text-blue-700 dark:text-blue-300">{selectedFoodIds.size} items selected</span>
+                    <div className="flex gap-1">
+                      <button onClick={() => setSelectedFoodIds(new Set())} className="text-xs text-gray-500 hover:text-gray-700 px-2 py-1">Clear</button>
+                      <button onClick={addSelectedItems} className="text-xs bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700 font-semibold">Add All ✓</button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -459,6 +520,12 @@ export default function MealPlanner() {
   const [meals, setMeals] = useState<Meal[]>([{ id: "m1", name: "Meal 1 - وجبة 1", notes: "", items: [] }]);
   const [targetMacros, setTargetMacros] = useState<TargetMacros>({ calories: 2000, protein: 150, carbs: 200, fat: 65 });
   const [planNotes, setPlanNotes] = useState("");
+  const [planClientName, setPlanClientName] = useState("");
+  const [planGoal, setPlanGoal] = useState("تنشيف");
+  const [planDate, setPlanDate] = useState(new Date().toISOString().slice(0, 10));
+  const [planWaterGoal, setPlanWaterGoal] = useState(2);
+  const [coachName, setCoachName] = useState("C/ Mohamed Saed");
+  const [coachPhone, setCoachPhone] = useState("01022816320");
   const [templates, setTemplates] = useState<Template[]>([]);
   const [templateName, setTemplateName] = useState("");
   const [waterGlasses, setWaterGlasses] = useState(0);
@@ -548,22 +615,39 @@ export default function MealPlanner() {
 
   function buildPlanText(l: "ar" | "en" | "both") {
     const totals = grandTotals(meals);
+    const isAr = l !== "en";
     let txt = "";
-    txt += `${l === "ar" ? "خطة التغذية" : l === "en" ? "Nutrition Plan" : "Nutrition Plan - خطة التغذية"}\n`;
-    txt += `${"─".repeat(40)}\n`;
-    txt += `${l === "ar" ? "الهدف" : "Target"}: ${targetMacros.calories} kcal | P: ${targetMacros.protein}g | C: ${targetMacros.carbs}g | F: ${targetMacros.fat}g\n\n`;
+    // Header
+    txt += `🌟 *${isAr ? "نظامك الغذائي المخصص - MSR Nutrition" : "Your Custom Nutrition Plan - MSR Nutrition"}* 🌟\n\n`;
+    if (planClientName) txt += `👤 ${isAr ? "العميل" : "Client"}: ${planClientName}\n`;
+    if (planGoal) txt += `🎯 ${isAr ? "الهدف" : "Goal"}: ${planGoal}\n`;
+    txt += `📅 ${isAr ? "التاريخ" : "Date"}: ${planDate}\n\n`;
+    // Meals
+    const mealEmojis = ["🍳","🥗","🍽️","🥙","🥘","🫕","🍱","🥣"];
     meals.forEach((meal, i) => {
-      txt += `${i + 1}. ${displayName(meal.name, l)}\n`;
+      txt += `*${mealEmojis[i % mealEmojis.length]} ${displayName(meal.name, l)}*\n`;
       meal.items.forEach(item => {
-        const m = calcMacros(item);
-        txt += `   • ${displayName(item.name, l)} — ${item.grams}g → ${m.calories} kcal (P:${m.protein}g C:${m.carbs}g F:${m.fat}g)\n`;
+        const unit = isPerPiece(item.state) ? (item.grams === 1 ? "حبة" : `${item.grams} حبات`) : `${item.grams}g`;
+        txt += `🔸 ${displayName(item.name, l)}: ${unit}\n`;
       });
-      if (meal.notes) txt += `   📝 ${meal.notes}\n`;
+      if (meal.notes) txt += `📝 _${isAr ? "ملاحظة" : "Note"}: ${meal.notes}_\n`;
       const t = mealTotals(meal);
-      txt += `   ${l === "ar" ? "المجموع" : "Total"}: ${t.calories.toFixed(0)} kcal\n\n`;
+      txt += `⚡ ${isAr ? "سعرات الوجبة" : "Meal kcal"}: ${t.calories.toFixed(0)} kcal\n\n`;
     });
-    txt += `${"─".repeat(40)}\n${l === "ar" ? "المجموع الكلي" : "Grand Total"}: ${totals.calories.toFixed(0)} kcal | P:${totals.protein.toFixed(1)}g C:${totals.carbs.toFixed(1)}g F:${totals.fat.toFixed(1)}g\n`;
-    if (planNotes) txt += `\n${l === "ar" ? "ملاحظات" : "Notes"}:\n${planNotes}\n`;
+    // Totals
+    txt += `*📊 ${isAr ? "إجمالي الماكروز لليوم" : "Daily Macro Totals"}:*\n`;
+    txt += `🔥 ${isAr ? "السعرات" : "Calories"}: ${totals.calories.toFixed(0)} kcal\n`;
+    txt += `💪 ${isAr ? "البروتين" : "Protein"}: ${totals.protein.toFixed(1)}g\n`;
+    txt += `🍞 ${isAr ? "الكارب" : "Carbs"}: ${totals.carbs.toFixed(1)}g\n`;
+    txt += `🥑 ${isAr ? "الدهون" : "Fats"}: ${totals.fat.toFixed(1)}g\n`;
+    txt += `💧 ${isAr ? "هدف الماء" : "Water Goal"}: ${planWaterGoal}L\n\n`;
+    // Notes
+    if (planNotes) {
+      txt += `*💡 ${isAr ? "تعليمات هامة" : "Important Notes"}:*\n${planNotes}\n\n`;
+    }
+    // Footer
+    txt += `💪 ${isAr ? "مع تحيات" : "Best regards"}: ${coachName}\n`;
+    txt += `📞 ${isAr ? "للتواصل" : "Contact"}: ${coachPhone}`;
     return txt;
   }
 
@@ -634,8 +718,8 @@ export default function MealPlanner() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-xl w-80 space-y-4">
-          <h1 className="text-2xl font-bold text-center">🏋️ Fit Station</h1>
-          <p className="text-center text-gray-500 text-sm">Pro Diet Planner</p>
+          <h1 className="text-2xl font-bold text-center">🥗 MSR Nutrition</h1>
+          <p className="text-center text-gray-500 text-sm">Pro Nutrition Planner</p>
           <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}
             onKeyDown={e => { if (e.key === "Enter") { if (password === "admin123") setAuthenticated(true); else setAuthError("Wrong password"); } }}
             className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm outline-none" />
@@ -656,16 +740,21 @@ export default function MealPlanner() {
         @media print {
           .print\\:hidden { display: none !important; }
           .print\\:block { display: block !important; }
-          textarea { white-space: pre-wrap !important; overflow: visible !important; max-height: none !important; height: auto !important; border: none !important; padding: 0 !important; }
-          body { background: white !important; color: black !important; }
+          body { background: white !important; color: #111 !important; font-family: 'Segoe UI', Arial, sans-serif !important; }
+          @page { margin: 1.5cm; }
+          .meal-print-header { background: linear-gradient(135deg, #1d4ed8, #7c3aed) !important; color: white !important; padding: 6px 12px !important; border-radius: 6px !important; font-weight: bold !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .meal-print-item { border-bottom: 1px solid #e5e7eb !important; padding: 3px 8px !important; }
+          .plan-print-header { background: linear-gradient(135deg, #1d4ed8, #7c3aed) !important; color: white !important; padding: 12px 20px !important; border-radius: 10px !important; margin-bottom: 12px !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .notes-print { background: #fffbeb !important; border-right: 4px solid #f59e0b !important; padding: 6px 10px !important; font-style: italic !important; white-space: pre-wrap !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+          .macro-badge { display: inline-block !important; padding: 2px 6px !important; border-radius: 4px !important; font-size: 10px !important; font-weight: bold !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
       `}</style>
 
       {/* Header */}
       <header className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-2 flex items-center justify-between print:hidden">
         <div className="flex items-center gap-2">
-          <span className="text-xl">🏋️</span>
-          <span className="font-bold text-lg">Fit Station Pro</span>
+          <span className="text-xl">🥗</span>
+          <span className="font-bold text-lg">MSR Nutrition Planner</span>
         </div>
         <div className="flex gap-1">
           {([["planner", <UtensilsCrossed size={16} />, "Planner"], ["calculator", <Calculator size={16} />, "Calc"], ["clients", <Users size={16} />, "Clients"]] as const).map(([t, icon, label]) => (
@@ -684,6 +773,23 @@ export default function MealPlanner() {
         {/* ── PLANNER TAB ── */}
         {tab === "planner" && (
           <div className="space-y-4">
+            {/* plan info */}
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3 print:shadow-none">
+              <div className="plan-print-header hidden print:block">
+                <div className="text-xl font-bold">🥗 MSR Nutrition Planner</div>
+                {planClientName && <div className="mt-1 text-sm opacity-90">👤 {planClientName} · 🎯 {planGoal} · 📅 {planDate}</div>}
+              </div>
+              <h2 className="font-bold text-sm text-gray-500 uppercase print:hidden">معلومات الخطة</h2>
+              <div className="grid grid-cols-2 gap-2 print:hidden">
+                <div><label className="text-xs text-gray-500">اسم العميل</label><input value={planClientName} onChange={e => setPlanClientName(e.target.value)} placeholder="سارة عماد..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+                <div><label className="text-xs text-gray-500">الهدف</label><input value={planGoal} onChange={e => setPlanGoal(e.target.value)} placeholder="تنشيف..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+                <div><label className="text-xs text-gray-500">التاريخ</label><input type="date" value={planDate} onChange={e => setPlanDate(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+                <div><label className="text-xs text-gray-500">هدف الماء (لتر)</label><input type="number" step="0.5" value={planWaterGoal} onChange={e => setPlanWaterGoal(+e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+                <div><label className="text-xs text-gray-500">اسم الكوتش</label><input value={coachName} onChange={e => setCoachName(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+                <div><label className="text-xs text-gray-500">رقم التواصل</label><input value={coachPhone} onChange={e => setCoachPhone(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+              </div>
+            </div>
+
             {/* target macros */}
             <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3 print:shadow-none">
               <div className="flex items-center justify-between print:hidden">
