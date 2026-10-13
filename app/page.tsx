@@ -70,68 +70,68 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 416, name: "Oat Milk - حليب الشوفان", category: "Milk", state: "per 1L", carbs: 70, protein: 10, fat: 15, calories: 450 },
   { id: 417, name: "Almond Milk (unsweetened) - حليب اللوز", category: "Milk", state: "per 1L", carbs: 12, protein: 4, fat: 15, calories: 200 },
   // ── CARBS ─────────────────────────────────────────────────────────────────
-  { id: 301, name: "White Rice - أرز أبيض", category: "Carbs", state: "per 100g cooked", carbs: 28, protein: 2.7, fat: 0.3, calories: 130 },
-  { id: 302, name: "Brown Rice - أرز بني", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 2.6, fat: 0.9, calories: 112 },
-  { id: 303, name: "Oats - شوفان", category: "Carbs", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389 },
-  { id: 304, name: "Whole Wheat Bread - خبز قمح كامل", category: "Carbs", state: "per 100g", carbs: 43, protein: 9, fat: 3.4, calories: 247 },
-  { id: 305, name: "White Bread - خبز أبيض", category: "Carbs", state: "per 100g", carbs: 49, protein: 9, fat: 3.2, calories: 265 },
-  { id: 306, name: "Pasta - مكرونة", category: "Carbs", state: "per 100g cooked", carbs: 25, protein: 5, fat: 0.9, calories: 131 },
-  { id: 307, name: "Whole Wheat Pasta - مكرونة قمح كامل", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 5.5, fat: 0.8, calories: 124 },
-  { id: 308, name: "Sweet Potato - بطاطا حلوة", category: "Carbs", state: "per 100g", carbs: 20, protein: 1.6, fat: 0.1, calories: 86 },
-  { id: 309, name: "White Potato - بطاطس", category: "Carbs", state: "per 100g", carbs: 17, protein: 2, fat: 0.1, calories: 77 },
-  { id: 310, name: "Bread (Baladi) - خبز بلدي", category: "Carbs", state: "per 100g", carbs: 52, protein: 8, fat: 1.5, calories: 253 },
-  { id: 311, name: "Quinoa - كينوا", category: "Carbs", state: "per 100g cooked", carbs: 22, protein: 4, fat: 1.9, calories: 120 },
-  { id: 312, name: "Lentils (cooked) - عدس", category: "Carbs", state: "per 100g", carbs: 20, protein: 9, fat: 0.4, calories: 116 },
-  { id: 313, name: "Chickpeas (cooked) - حمص", category: "Carbs", state: "per 100g", carbs: 27, protein: 9, fat: 2.6, calories: 164 },
-  { id: 314, name: "Fava Beans (Ful) - فول مدمس", category: "Carbs", state: "per 100g", carbs: 26, protein: 8, fat: 0.5, calories: 110 },
-  { id: 315, name: "Corn - ذرة", category: "Carbs", state: "per 100g", carbs: 19, protein: 3.2, fat: 1.2, calories: 96 },
+  { id: 301, name: "White Rice - أرز أبيض", category: "Carbs", state: "per 100g cooked", carbs: 28, protein: 2.7, fat: 0.3, calories: 130, micros: { vitB1: 0.02, vitB3: 0.4, vitB9: 3, iron: 0.2, magnesium: 12, phosphorus: 43, potassium: 35, selenium: 7.5 } },
+  { id: 302, name: "Brown Rice - أرز بني", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 2.6, fat: 0.9, calories: 112, micros: { vitB1: 0.1, vitB3: 1.5, vitB6: 0.15, vitE: 0.1, magnesium: 44, phosphorus: 83, potassium: 79, selenium: 9.8, manganese: 0.9, zinc: 0.6 } },
+  { id: 303, name: "Oats - شوفان", category: "Carbs", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389, micros: { vitB1: 0.76, vitB5: 1.35, vitB9: 56, iron: 4.72, magnesium: 177, phosphorus: 523, potassium: 429, zinc: 3.97, manganese: 4.91, selenium: 28.9, copper: 626 } },
+  { id: 304, name: "Whole Wheat Bread - خبز قمح كامل", category: "Carbs", state: "per 100g", carbs: 43, protein: 9, fat: 3.4, calories: 247, micros: { vitB1: 0.4, vitB3: 4.2, vitB9: 44, iron: 2.8, magnesium: 76, phosphorus: 212, potassium: 248, zinc: 1.8, selenium: 26, manganese: 2.7 } },
+  { id: 305, name: "White Bread - خبز أبيض", category: "Carbs", state: "per 100g", carbs: 49, protein: 9, fat: 3.2, calories: 265, micros: { vitB1: 0.5, vitB3: 4.5, vitB9: 100, iron: 3.6, calcium: 260, selenium: 22, phosphorus: 108 } },
+  { id: 306, name: "Pasta - مكرونة", category: "Carbs", state: "per 100g cooked", carbs: 25, protein: 5, fat: 0.9, calories: 131, micros: { vitB1: 0.09, vitB3: 1.0, vitB9: 7, iron: 0.5, magnesium: 15, phosphorus: 56, selenium: 18.4 } },
+  { id: 307, name: "Whole Wheat Pasta - مكرونة قمح كامل", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 5.5, fat: 0.8, calories: 124, micros: { vitB1: 0.15, vitB3: 1.6, vitB9: 13, iron: 1.4, magnesium: 45, phosphorus: 125, zinc: 1.1, manganese: 1.3, selenium: 20 } },
+  { id: 308, name: "Sweet Potato - بطاطا حلوة", category: "Carbs", state: "per 100g", carbs: 20, protein: 1.6, fat: 0.1, calories: 86, micros: { vitA: 961, vitC: 2.4, vitB5: 0.8, vitB6: 0.29, vitE: 0.26, vitB9: 11, potassium: 337, magnesium: 25, phosphorus: 47, manganese: 0.26, calcium: 30 } },
+  { id: 309, name: "White Potato - بطاطس", category: "Carbs", state: "per 100g", carbs: 17, protein: 2, fat: 0.1, calories: 77, micros: { vitC: 19.7, vitB6: 0.3, vitB9: 16, vitB3: 1.44, potassium: 421, magnesium: 23, phosphorus: 57, iron: 0.78 } },
+  { id: 310, name: "Bread (Baladi) - خبز بلدي", category: "Carbs", state: "per 100g", carbs: 52, protein: 8, fat: 1.5, calories: 253, micros: { vitB1: 0.35, vitB3: 3.8, vitB9: 80, iron: 3.2, calcium: 200, selenium: 20, phosphorus: 100 } },
+  { id: 311, name: "Quinoa - كينوا", category: "Carbs", state: "per 100g cooked", carbs: 22, protein: 4, fat: 1.9, calories: 120, micros: { vitB1: 0.1, vitB2: 0.11, vitB9: 42, vitE: 0.6, iron: 1.49, magnesium: 64, phosphorus: 152, zinc: 1.09, potassium: 172, manganese: 0.63, copper: 199 } },
+  { id: 312, name: "Lentils (cooked) - عدس", category: "Carbs", state: "per 100g", carbs: 20, protein: 9, fat: 0.4, calories: 116, micros: { vitB1: 0.17, vitB6: 0.18, vitB9: 181, iron: 3.33, magnesium: 36, phosphorus: 180, potassium: 369, zinc: 1.27, manganese: 0.49, copper: 251, selenium: 2.8 } },
+  { id: 313, name: "Chickpeas (cooked) - حمص", category: "Carbs", state: "per 100g", carbs: 27, protein: 9, fat: 2.6, calories: 164, micros: { vitB6: 0.14, vitB9: 172, vitB5: 0.29, iron: 2.89, magnesium: 48, phosphorus: 168, potassium: 291, zinc: 1.53, manganese: 1.03, copper: 352, selenium: 3.7 } },
+  { id: 314, name: "Fava Beans (Ful) - فول مدمس", category: "Carbs", state: "per 100g", carbs: 26, protein: 8, fat: 0.5, calories: 110, micros: { vitB1: 0.15, vitB9: 148, vitC: 1.4, iron: 1.9, magnesium: 43, phosphorus: 125, potassium: 332, zinc: 1.0, copper: 180, manganese: 0.54 } },
+  { id: 315, name: "Corn - ذرة", category: "Carbs", state: "per 100g", carbs: 19, protein: 3.2, fat: 1.2, calories: 96, micros: { vitC: 6.8, vitB1: 0.2, vitB3: 1.77, vitB9: 42, vitB5: 0.72, magnesium: 37, phosphorus: 89, potassium: 270, zinc: 0.45, manganese: 0.16 } },
   // ── VEGETABLES ────────────────────────────────────────────────────────────
-  { id: 501, name: "Broccoli - بروكلي", category: "Vegetables", state: "per 100g", carbs: 7, protein: 2.8, fat: 0.4, calories: 34 },
-  { id: 502, name: "Spinach - سبانخ", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23 },
-  { id: 503, name: "Cucumber - خيار", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 0.7, fat: 0.1, calories: 16 },
-  { id: 504, name: "Tomato - طماطم", category: "Vegetables", state: "per 100g", carbs: 3.9, protein: 0.9, fat: 0.2, calories: 18 },
-  { id: 505, name: "Lettuce - خس", category: "Vegetables", state: "per 100g", carbs: 2.9, protein: 1.4, fat: 0.2, calories: 15 },
-  { id: 506, name: "Bell Pepper - فلفل رومي", category: "Vegetables", state: "per 100g", carbs: 6, protein: 1, fat: 0.3, calories: 31 },
-  { id: 507, name: "Cauliflower - قرنبيط", category: "Vegetables", state: "per 100g", carbs: 5, protein: 1.9, fat: 0.3, calories: 25 },
-  { id: 508, name: "Green Beans - فاصوليا خضراء", category: "Vegetables", state: "per 100g", carbs: 7, protein: 1.8, fat: 0.1, calories: 31 },
-  { id: 509, name: "Zucchini - كوسة", category: "Vegetables", state: "per 100g", carbs: 3.1, protein: 1.2, fat: 0.3, calories: 17 },
-  { id: 510, name: "Eggplant - باذنجان", category: "Vegetables", state: "per 100g", carbs: 5.9, protein: 1, fat: 0.2, calories: 25 },
-  { id: 511, name: "Carrots - جزر", category: "Vegetables", state: "per 100g", carbs: 10, protein: 0.9, fat: 0.2, calories: 41 },
-  { id: 512, name: "Onion - بصل", category: "Vegetables", state: "per 100g", carbs: 9.3, protein: 1.1, fat: 0.1, calories: 40 },
-  { id: 513, name: "Garlic - ثوم", category: "Vegetables", state: "per 100g", carbs: 33, protein: 6.4, fat: 0.5, calories: 149 },
-  { id: 514, name: "Mushrooms - فطر", category: "Vegetables", state: "per 100g", carbs: 3.3, protein: 3.1, fat: 0.3, calories: 22 },
-  { id: 515, name: "Peas - بازلاء", category: "Vegetables", state: "per 100g", carbs: 14, protein: 5.4, fat: 0.4, calories: 81 },
-  { id: 516, name: "Molokhia - ملوخية", category: "Vegetables", state: "per 100g", carbs: 7, protein: 4.5, fat: 0.7, calories: 43 },
-  { id: 517, name: "Arugula (Rocket) - جرجير", category: "Vegetables", state: "per 100g", carbs: 3.7, protein: 2.6, fat: 0.7, calories: 25 },
-  { id: 518, name: "Parsley - بقدونس", category: "Vegetables", state: "per 100g", carbs: 6.3, protein: 3, fat: 0.8, calories: 36 },
+  { id: 501, name: "Broccoli - بروكلي", category: "Vegetables", state: "per 100g", carbs: 7, protein: 2.8, fat: 0.4, calories: 34, micros: { vitC: 89.2, vitK: 101.6, vitA: 31, vitB9: 63, vitB6: 0.18, calcium: 47, potassium: 316, magnesium: 21, iron: 0.73, phosphorus: 66, manganese: 0.21 } },
+  { id: 502, name: "Spinach - سبانخ", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23, micros: { vitK: 482.9, vitA: 469, vitC: 28.1, vitB9: 194, vitE: 2.0, iron: 2.71, calcium: 99, magnesium: 79, potassium: 558, manganese: 0.9 } },
+  { id: 503, name: "Cucumber - خيار", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 0.7, fat: 0.1, calories: 16, micros: { vitK: 16.4, vitC: 2.8, potassium: 147, magnesium: 13, vitB5: 0.26 } },
+  { id: 504, name: "Tomato - طماطم", category: "Vegetables", state: "per 100g", carbs: 3.9, protein: 0.9, fat: 0.2, calories: 18, micros: { vitC: 13.7, vitA: 42, vitK: 7.9, vitB9: 15, potassium: 237, magnesium: 11, iron: 0.27 } },
+  { id: 505, name: "Lettuce - خس", category: "Vegetables", state: "per 100g", carbs: 2.9, protein: 1.4, fat: 0.2, calories: 15, micros: { vitK: 102.3, vitA: 166, vitC: 9.2, vitB9: 73, calcium: 36, iron: 0.86 } },
+  { id: 506, name: "Bell Pepper - فلفل رومي", category: "Vegetables", state: "per 100g", carbs: 6, protein: 1, fat: 0.3, calories: 31, micros: { vitC: 127.7, vitA: 157, vitB6: 0.29, vitK: 4.9, vitB9: 46, potassium: 211, magnesium: 12 } },
+  { id: 507, name: "Cauliflower - قرنبيط", category: "Vegetables", state: "per 100g", carbs: 5, protein: 1.9, fat: 0.3, calories: 25, micros: { vitC: 48.2, vitK: 15.5, vitB9: 57, vitB6: 0.18, potassium: 299, magnesium: 15 } },
+  { id: 508, name: "Green Beans - فاصوليا خضراء", category: "Vegetables", state: "per 100g", carbs: 7, protein: 1.8, fat: 0.1, calories: 31, micros: { vitK: 43, vitC: 12.2, vitA: 35, vitB9: 37, calcium: 37, iron: 1.03, magnesium: 25, potassium: 211 } },
+  { id: 509, name: "Zucchini - كوسة", category: "Vegetables", state: "per 100g", carbs: 3.1, protein: 1.2, fat: 0.3, calories: 17, micros: { vitC: 17.9, vitB6: 0.16, vitA: 10, potassium: 261, magnesium: 18, manganese: 0.18 } },
+  { id: 510, name: "Eggplant - باذنجان", category: "Vegetables", state: "per 100g", carbs: 5.9, protein: 1, fat: 0.2, calories: 25, micros: { vitB9: 22, vitK: 3.5, vitC: 2.2, potassium: 229, magnesium: 14, manganese: 0.25 } },
+  { id: 511, name: "Carrots - جزر", category: "Vegetables", state: "per 100g", carbs: 10, protein: 0.9, fat: 0.2, calories: 41, micros: { vitA: 835, vitK: 13.2, vitC: 5.9, vitB9: 19, potassium: 320, magnesium: 12, calcium: 33, iron: 0.30 } },
+  { id: 512, name: "Onion - بصل", category: "Vegetables", state: "per 100g", carbs: 9.3, protein: 1.1, fat: 0.1, calories: 40, micros: { vitC: 7.4, vitB6: 0.12, vitB9: 19, potassium: 146, calcium: 23 } },
+  { id: 513, name: "Garlic - ثوم", category: "Vegetables", state: "per 100g", carbs: 33, protein: 6.4, fat: 0.5, calories: 149, micros: { vitC: 31.2, vitB6: 1.24, vitB1: 0.2, calcium: 181, iron: 1.7, magnesium: 25, phosphorus: 153, potassium: 401, selenium: 14.2, manganese: 1.67 } },
+  { id: 514, name: "Mushrooms - فطر", category: "Vegetables", state: "per 100g", carbs: 3.3, protein: 3.1, fat: 0.3, calories: 22, micros: { vitD: 0.2, vitB2: 0.4, vitB3: 3.6, vitB5: 1.5, vitB9: 17, selenium: 9.3, phosphorus: 86, potassium: 318, copper: 305, iron: 0.5 } },
+  { id: 515, name: "Peas - بازلاء", category: "Vegetables", state: "per 100g", carbs: 14, protein: 5.4, fat: 0.4, calories: 81, micros: { vitC: 40, vitK: 24.8, vitB1: 0.27, vitB9: 65, vitB6: 0.17, iron: 1.47, magnesium: 33, phosphorus: 108, potassium: 244, zinc: 1.24 } },
+  { id: 516, name: "Molokhia - ملوخية", category: "Vegetables", state: "per 100g", carbs: 7, protein: 4.5, fat: 0.7, calories: 43, micros: { vitK: 700, vitA: 467, vitC: 33, vitB9: 102, calcium: 208, iron: 3.0, magnesium: 75, potassium: 525 } },
+  { id: 517, name: "Arugula (Rocket) - جرجير", category: "Vegetables", state: "per 100g", carbs: 3.7, protein: 2.6, fat: 0.7, calories: 25, micros: { vitK: 108.6, vitA: 119, vitC: 15, vitB9: 97, calcium: 160, iron: 1.46, magnesium: 47, potassium: 369 } },
+  { id: 518, name: "Parsley - بقدونس", category: "Vegetables", state: "per 100g", carbs: 6.3, protein: 3, fat: 0.8, calories: 36, micros: { vitK: 1640, vitC: 133, vitA: 421, vitB9: 152, iron: 6.2, calcium: 138, potassium: 554, magnesium: 50 } },
   // ── FATS ──────────────────────────────────────────────────────────────────
   { id: 601, name: "Olive Oil - زيت زيتون", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884 },
   { id: 602, name: "Coconut Oil - زيت جوز الهند", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 892 },
-  { id: 603, name: "Avocado - أفوكادو", category: "Fats", state: "per 100g", carbs: 9, protein: 2, fat: 15, calories: 160 },
-  { id: 604, name: "Almonds - لوز", category: "Fats", state: "per 100g", carbs: 22, protein: 21, fat: 50, calories: 579 },
-  { id: 605, name: "Walnuts - جوز", category: "Fats", state: "per 100g", carbs: 14, protein: 15, fat: 65, calories: 654 },
-  { id: 606, name: "Cashews - كاجو", category: "Fats", state: "per 100g", carbs: 30, protein: 18, fat: 44, calories: 553 },
-  { id: 607, name: "Peanut Butter - زبدة الفول السوداني", category: "Fats", state: "per 100g", carbs: 20, protein: 25, fat: 50, calories: 588 },
-  { id: 608, name: "Peanuts - فول سوداني", category: "Fats", state: "per 100g", carbs: 16, protein: 26, fat: 49, calories: 567 },
-  { id: 609, name: "Sunflower Seeds - بذور عباد الشمس", category: "Fats", state: "per 100g", carbs: 20, protein: 21, fat: 51, calories: 584 },
-  { id: 610, name: "Tahini - طحينة", category: "Fats", state: "per 100g", carbs: 21, protein: 17, fat: 54, calories: 595 },
-  { id: 611, name: "Flaxseeds - بذور الكتان", category: "Fats", state: "per 100g", carbs: 29, protein: 18, fat: 42, calories: 534 },
-  { id: 612, name: "Chia Seeds - بذور الشيا", category: "Fats", state: "per 100g", carbs: 42, protein: 17, fat: 31, calories: 486 },
+  { id: 603, name: "Avocado - أفوكادو", category: "Fats", state: "per 100g", carbs: 9, protein: 2, fat: 15, calories: 160, micros: { vitK: 21, vitE: 2.07, vitC: 10, vitB5: 1.39, vitB6: 0.26, vitB9: 81, potassium: 485, magnesium: 29, copper: 190 } },
+  { id: 604, name: "Almonds - لوز", category: "Fats", state: "per 100g", carbs: 22, protein: 21, fat: 50, calories: 579, micros: { vitE: 25.6, vitB2: 1.14, vitB3: 3.38, magnesium: 270, calcium: 264, phosphorus: 481, iron: 3.71, zinc: 3.12, copper: 996, manganese: 2.18, selenium: 4.1 } },
+  { id: 605, name: "Walnuts - جوز", category: "Fats", state: "per 100g", carbs: 14, protein: 15, fat: 65, calories: 654, micros: { vitB6: 0.54, vitB9: 98, vitE: 0.7, magnesium: 158, phosphorus: 346, iron: 2.91, zinc: 3.09, copper: 1590, manganese: 3.41 } },
+  { id: 606, name: "Cashews - كاجو", category: "Fats", state: "per 100g", carbs: 30, protein: 18, fat: 44, calories: 553, micros: { vitK: 34.1, vitB1: 0.42, vitB6: 0.42, vitB9: 25, magnesium: 292, phosphorus: 593, iron: 6.68, zinc: 5.78, copper: 2195, manganese: 1.66, selenium: 19.9 } },
+  { id: 607, name: "Peanut Butter - زبدة الفول السوداني", category: "Fats", state: "per 100g", carbs: 20, protein: 25, fat: 50, calories: 588, micros: { vitE: 9.1, vitB3: 13.1, vitB6: 0.44, vitB9: 87, magnesium: 168, phosphorus: 335, potassium: 558, iron: 1.74, zinc: 2.9, copper: 440 } },
+  { id: 608, name: "Peanuts - فول سوداني", category: "Fats", state: "per 100g", carbs: 16, protein: 26, fat: 49, calories: 567, micros: { vitE: 8.33, vitB3: 12.07, vitB1: 0.64, vitB9: 240, magnesium: 168, phosphorus: 376, iron: 4.58, zinc: 3.27, copper: 1144, manganese: 1.93, selenium: 7.2 } },
+  { id: 609, name: "Sunflower Seeds - بذور عباد الشمس", category: "Fats", state: "per 100g", carbs: 20, protein: 21, fat: 51, calories: 584, micros: { vitE: 35.17, vitB1: 1.48, vitB6: 1.35, vitB9: 227, vitB5: 6.75, magnesium: 325, phosphorus: 660, iron: 5.25, zinc: 5.0, copper: 1800, manganese: 1.95, selenium: 53 } },
+  { id: 610, name: "Tahini - طحينة", category: "Fats", state: "per 100g", carbs: 21, protein: 17, fat: 54, calories: 595, micros: { vitB1: 1.0, vitB9: 53, calcium: 426, iron: 8.95, magnesium: 95, phosphorus: 732, zinc: 4.62, copper: 1500, manganese: 1.42 } },
+  { id: 611, name: "Flaxseeds - بذور الكتان", category: "Fats", state: "per 100g", carbs: 29, protein: 18, fat: 42, calories: 534, micros: { vitB1: 1.64, vitB9: 87, vitE: 0.31, magnesium: 392, phosphorus: 642, iron: 5.73, zinc: 4.34, copper: 1220, manganese: 2.48, selenium: 25.4 } },
+  { id: 612, name: "Chia Seeds - بذور الشيا", category: "Fats", state: "per 100g", carbs: 42, protein: 17, fat: 31, calories: 486, micros: { vitB1: 0.62, vitB3: 8.83, calcium: 631, iron: 7.72, magnesium: 335, phosphorus: 860, zinc: 4.58, copper: 924, manganese: 2.72, selenium: 55.2 } },
   // ── FRUITS ────────────────────────────────────────────────────────────────
-  { id: 701, name: "Banana - موز", category: "Fruits", state: "per 100g", carbs: 23, protein: 1.1, fat: 0.3, calories: 89 },
-  { id: 702, name: "Apple - تفاح", category: "Fruits", state: "per 100g", carbs: 14, protein: 0.3, fat: 0.2, calories: 52 },
-  { id: 703, name: "Orange - برتقال", category: "Fruits", state: "per 100g", carbs: 12, protein: 0.9, fat: 0.1, calories: 47 },
-  { id: 704, name: "Mango - مانجو", category: "Fruits", state: "per 100g", carbs: 15, protein: 0.8, fat: 0.4, calories: 60 },
-  { id: 705, name: "Strawberry - فراولة", category: "Fruits", state: "per 100g", carbs: 8, protein: 0.7, fat: 0.3, calories: 32 },
-  { id: 706, name: "Watermelon - بطيخ", category: "Fruits", state: "per 100g", carbs: 8, protein: 0.6, fat: 0.2, calories: 30 },
-  { id: 707, name: "Grapes - عنب", category: "Fruits", state: "per 100g", carbs: 18, protein: 0.7, fat: 0.2, calories: 69 },
-  { id: 708, name: "Dates - تمر", category: "Fruits", state: "per 100g", carbs: 75, protein: 1.8, fat: 0.2, calories: 282 },
-  { id: 709, name: "Figs - تين", category: "Fruits", state: "per 100g", carbs: 19, protein: 0.7, fat: 0.3, calories: 74 },
-  { id: 710, name: "Pomegranate - رمان", category: "Fruits", state: "per 100g", carbs: 19, protein: 1.7, fat: 1.2, calories: 83 },
-  { id: 711, name: "Lemon - ليمون", category: "Fruits", state: "per 100g", carbs: 9, protein: 1.1, fat: 0.3, calories: 29 },
-  { id: 712, name: "Pineapple - أناناس", category: "Fruits", state: "per 100g", carbs: 13, protein: 0.5, fat: 0.1, calories: 50 },
-  { id: 713, name: "Peach - خوخ", category: "Fruits", state: "per 100g", carbs: 10, protein: 0.9, fat: 0.3, calories: 39 },
-  { id: 714, name: "Pear - كمثرى", category: "Fruits", state: "per 100g", carbs: 15, protein: 0.4, fat: 0.1, calories: 57 },
+  { id: 701, name: "Banana - موز", category: "Fruits", state: "per 100g", carbs: 23, protein: 1.1, fat: 0.3, calories: 89, micros: { vitB6: 0.37, vitC: 8.7, vitB9: 20, vitB5: 0.33, potassium: 358, magnesium: 27, manganese: 0.27, copper: 78 } },
+  { id: 702, name: "Apple - تفاح", category: "Fruits", state: "per 100g", carbs: 14, protein: 0.3, fat: 0.2, calories: 52, micros: { vitC: 4.6, vitK: 3.2, vitB9: 3, potassium: 107, calcium: 6 } },
+  { id: 703, name: "Orange - برتقال", category: "Fruits", state: "per 100g", carbs: 12, protein: 0.9, fat: 0.1, calories: 47, micros: { vitC: 53.2, vitB9: 30, vitA: 11, vitB1: 0.09, potassium: 181, calcium: 40, magnesium: 10 } },
+  { id: 704, name: "Mango - مانجو", category: "Fruits", state: "per 100g", carbs: 15, protein: 0.8, fat: 0.4, calories: 60, micros: { vitC: 36.4, vitA: 54, vitB6: 0.12, vitK: 4.2, vitB9: 43, vitE: 0.9, potassium: 168, magnesium: 10, copper: 111 } },
+  { id: 705, name: "Strawberry - فراولة", category: "Fruits", state: "per 100g", carbs: 8, protein: 0.7, fat: 0.3, calories: 32, micros: { vitC: 58.8, vitK: 2.2, vitB9: 24, manganese: 0.39, potassium: 153, magnesium: 13 } },
+  { id: 706, name: "Watermelon - بطيخ", category: "Fruits", state: "per 100g", carbs: 8, protein: 0.6, fat: 0.2, calories: 30, micros: { vitC: 8.1, vitA: 28, vitB5: 0.22, potassium: 112, magnesium: 10, copper: 42 } },
+  { id: 707, name: "Grapes - عنب", category: "Fruits", state: "per 100g", carbs: 18, protein: 0.7, fat: 0.2, calories: 69, micros: { vitK: 14.6, vitC: 3.2, vitB6: 0.09, vitB9: 2, potassium: 191, copper: 127 } },
+  { id: 708, name: "Dates - تمر", category: "Fruits", state: "per 100g", carbs: 75, protein: 1.8, fat: 0.2, calories: 282, micros: { vitB5: 0.81, vitB6: 0.25, vitB3: 1.27, vitK: 2.7, vitB9: 15, potassium: 696, magnesium: 54, copper: 362, manganese: 0.3, iron: 0.9 } },
+  { id: 709, name: "Figs - تين", category: "Fruits", state: "per 100g", carbs: 19, protein: 0.7, fat: 0.3, calories: 74, micros: { vitB6: 0.11, vitK: 4.7, vitB9: 6, calcium: 35, potassium: 232, magnesium: 17, manganese: 0.13 } },
+  { id: 710, name: "Pomegranate - رمان", category: "Fruits", state: "per 100g", carbs: 19, protein: 1.7, fat: 1.2, calories: 83, micros: { vitC: 10.2, vitK: 16.4, vitB9: 38, vitB5: 0.38, vitE: 0.6, potassium: 236, magnesium: 12, phosphorus: 36, copper: 158 } },
+  { id: 711, name: "Lemon - ليمون", category: "Fruits", state: "per 100g", carbs: 9, protein: 1.1, fat: 0.3, calories: 29, micros: { vitC: 53, vitB6: 0.08, vitB9: 11, calcium: 26, potassium: 138 } },
+  { id: 712, name: "Pineapple - أناناس", category: "Fruits", state: "per 100g", carbs: 13, protein: 0.5, fat: 0.1, calories: 50, micros: { vitC: 47.8, vitB1: 0.08, vitB6: 0.11, vitB9: 18, manganese: 0.93, potassium: 109, magnesium: 12, copper: 110 } },
+  { id: 713, name: "Peach - خوخ", category: "Fruits", state: "per 100g", carbs: 10, protein: 0.9, fat: 0.3, calories: 39, micros: { vitC: 6.6, vitA: 16, vitK: 2.6, vitE: 0.7, vitB3: 0.81, potassium: 190, magnesium: 9 } },
+  { id: 714, name: "Pear - كمثرى", category: "Fruits", state: "per 100g", carbs: 15, protein: 0.4, fat: 0.1, calories: 57, micros: { vitC: 4.3, vitK: 4.4, vitB9: 7, copper: 82, potassium: 116 } },
   // ── SUPPLEMENTS ───────────────────────────────────────────────────────────
   { id: 901, name: "Whey Protein - بروتين مصل اللبن", category: "Supplements", state: "per 30g scoop", carbs: 3, protein: 24, fat: 1.5, calories: 120 },
   { id: 902, name: "Casein Protein - بروتين كازين", category: "Supplements", state: "per 30g scoop", carbs: 4, protein: 24, fat: 1, calories: 120 },
@@ -493,16 +493,28 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
           <span className="font-semibold">{m.calories} kcal</span>
         </div>
       </div>
-      <div className="flex items-center gap-1">
-        <input
-          type="number" min="0" step={isPerPiece(item.state) ? "1" : "5"}
-          value={item.grams}
-          onChange={e => onGramsChange(+e.target.value)}
-          className="w-16 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 px-1 py-0.5 text-xs"
-        />
-        <span className="text-xs text-gray-500">{isPerPiece(item.state) ? "pcs" : "g"}</span>
+      <div className="flex flex-col items-end gap-1">
+        <div className="flex items-center gap-1">
+          <input
+            type="number" min="0" step={isPerPiece(item.state) ? "1" : "5"}
+            value={item.grams}
+            onChange={e => onGramsChange(+e.target.value)}
+            className="w-14 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 px-1 py-0.5 text-xs"
+          />
+          <span className="text-xs text-gray-500">{isPerPiece(item.state) ? "pcs" : "g"}</span>
+        </div>
+        {!isPerPiece(item.state) && (
+          <div className="flex gap-0.5">
+            {[50, 100, 150, 200].map(g => (
+              <button key={g} onClick={() => onGramsChange(g)}
+                className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${item.grams === g ? "bg-teal-600 text-white border-teal-600" : "border-gray-300 dark:border-gray-600 text-gray-500 hover:border-teal-500 hover:text-teal-600"}`}>
+                {g}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
-      <button onClick={onRemove} className="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+      <button onClick={onRemove} className="text-red-400 hover:text-red-600 self-start mt-1"><Trash2 size={14} /></button>
     </div>
   );
 }
@@ -707,6 +719,203 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── RECIPE BUILDER COMPONENT ────────────────────────────────────────────────
+interface RecipeBuilderProps {
+  allFoods: FoodEntry[];
+  customRecipes: CustomRecipe[];
+  setCustomRecipes: React.Dispatch<React.SetStateAction<CustomRecipe[]>>;
+  onAddAsMeal: (r: CustomRecipe) => void;
+  onClose: () => void;
+}
+function RecipeBuilder({ allFoods, customRecipes, setCustomRecipes, onAddAsMeal, onClose }: RecipeBuilderProps) {
+  const [rbName, setRbName] = useState("");
+  const [rbCategory, setRbCategory] = useState("Meal");
+  const [rbNotes, setRbNotes] = useState("");
+  const [rbServes, setRbServes] = useState(1);
+  const [rbIngredients, setRbIngredients] = useState<{ foodId: number; grams: number }[]>([]);
+  const [rbSearch, setRbSearch] = useState("");
+  const [editId, setEditId] = useState<number | null>(null);
+
+  function loadForEdit(r: CustomRecipe) {
+    setEditId(r.id); setRbName(r.name); setRbCategory(r.category);
+    setRbNotes(r.notes); setRbServes(r.serves);
+    setRbIngredients(r.ingredients.map(i => ({ foodId: i.foodId, grams: i.grams })));
+  }
+  function clearForm() {
+    setEditId(null); setRbName(""); setRbCategory("Meal"); setRbNotes(""); setRbServes(1); setRbIngredients([]);
+  }
+  function saveRecipe() {
+    if (!rbName.trim() || rbIngredients.length === 0) return;
+    const recipe: CustomRecipe = { id: editId || Date.now(), name: rbName, category: rbCategory, notes: rbNotes, serves: rbServes, ingredients: rbIngredients };
+    setCustomRecipes(prev => {
+      const next = editId ? prev.map(r => r.id === editId ? recipe : r) : [...prev, recipe];
+      localStorage.setItem("custom_recipes_v1", JSON.stringify(next));
+      return next;
+    });
+    clearForm();
+  }
+  function deleteRecipe(id: number) {
+    setCustomRecipes(prev => { const next = prev.filter(r => r.id !== id); localStorage.setItem("custom_recipes_v1", JSON.stringify(next)); return next; });
+  }
+
+  const rbTotals = rbIngredients.reduce((acc, ing) => {
+    const fd = allFoods.find(f => f.id === ing.foodId);
+    if (!fd) return acc;
+    const mult = isPerPiece(fd.state) ? ing.grams : ing.grams / 100;
+    return { calories: acc.calories + fd.calories * mult, protein: acc.protein + fd.protein * mult, carbs: acc.carbs + fd.carbs * mult, fat: acc.fat + fd.fat * mult };
+  }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
+
+  const rbSearched = rbSearch.trim().length > 1
+    ? allFoods.filter(f => f.name.toLowerCase().includes(rbSearch.toLowerCase()) || normalizeAr(f.name).includes(normalizeAr(rbSearch)))
+    : [];
+
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-4 border-2 border-purple-100 dark:border-purple-900">
+      <div className="flex items-center justify-between">
+        <h3 className="font-bold text-base flex items-center gap-2">
+          <UtensilsCrossed size={16} className="text-purple-600" />
+          Recipe Builder - منشئ الوصفات
+        </h3>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
+      </div>
+
+      {/* saved recipes list */}
+      {customRecipes.length > 0 && (
+        <div className="space-y-2">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Saved Recipes ({customRecipes.length})</div>
+          {customRecipes.map(r => {
+            const rTotals = r.ingredients.reduce((acc, ing) => {
+              const fd = allFoods.find(f => f.id === ing.foodId);
+              if (!fd) return acc;
+              const mult = isPerPiece(fd.state) ? ing.grams : ing.grams / 100;
+              return { calories: acc.calories + fd.calories * mult, protein: acc.protein + fd.protein * mult };
+            }, { calories: 0, protein: 0 });
+            return (
+              <div key={r.id} className="flex items-center justify-between bg-purple-50 dark:bg-purple-950/30 rounded-xl px-3 py-2">
+                <div className="flex-1 min-w-0">
+                  <div className="font-medium text-sm truncate">{r.name}</div>
+                  <div className="text-xs text-gray-400">
+                    {r.ingredients.length} ingredients · {(rTotals.calories / r.serves).toFixed(0)} kcal · {(rTotals.protein / r.serves).toFixed(0)}g P per serving
+                  </div>
+                </div>
+                <div className="flex gap-1 shrink-0 ml-2">
+                  <button onClick={() => onAddAsMeal(r)} className="text-xs bg-teal-600 text-white px-2 py-1 rounded-lg hover:bg-teal-700">+ Meal</button>
+                  <button onClick={() => loadForEdit(r)} className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-1 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800">Edit</button>
+                  <button onClick={() => deleteRecipe(r.id)} className="text-red-400 hover:text-red-600 p-1"><Trash2 size={14} /></button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* builder form */}
+      <div className="space-y-3 border-t border-gray-100 dark:border-gray-800 pt-3">
+        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          {editId ? "✏️ Editing Recipe" : "New Recipe"}
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          <input value={rbName} onChange={e => setRbName(e.target.value)} placeholder="Recipe name..."
+            className="col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800" />
+          <div>
+            <label className="text-xs text-gray-500">Category</label>
+            <input value={rbCategory} onChange={e => setRbCategory(e.target.value)} placeholder="Meal / Snack / Breakfast..."
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
+          </div>
+          <div>
+            <label className="text-xs text-gray-500">Servings</label>
+            <input type="number" min="1" value={rbServes} onChange={e => setRbServes(Math.max(1, +e.target.value))}
+              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
+          </div>
+          <textarea value={rbNotes} onChange={e => setRbNotes(e.target.value)} placeholder="Prep instructions / notes..." rows={2}
+            className="col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 resize-none" />
+        </div>
+
+        {/* ingredient search */}
+        <div className="relative">
+          <label className="text-xs text-gray-500">Search &amp; add ingredient</label>
+          <input value={rbSearch} onChange={e => setRbSearch(e.target.value)} placeholder="Type food name..."
+            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
+          {rbSearched.length > 0 && (
+            <div className="mt-1 border border-gray-200 dark:border-gray-700 rounded-lg max-h-40 overflow-y-auto bg-white dark:bg-gray-800 shadow z-10">
+              {rbSearched.slice(0, 8).map(f => (
+                <button key={f.id}
+                  onClick={() => {
+                    if (!rbIngredients.find(i => i.foodId === f.id))
+                      setRbIngredients(p => [...p, { foodId: f.id, grams: isPerPiece(f.state) ? 1 : 100 }]);
+                    setRbSearch("");
+                  }}
+                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-purple-50 dark:hover:bg-purple-950/30 border-b border-gray-100 dark:border-gray-700 last:border-0 flex justify-between items-center">
+                  <span className="font-medium">{f.name.split(" - ")[0]}</span>
+                  <span className="text-gray-400 text-[10px]">{f.category} · {f.state}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* ingredient list */}
+        {rbIngredients.length > 0 && (
+          <div className="space-y-1">
+            <div className="text-xs text-gray-500 font-semibold">Ingredients ({rbIngredients.length})</div>
+            {rbIngredients.map((ing, idx) => {
+              const fd = allFoods.find(f => f.id === ing.foodId);
+              if (!fd) return null;
+              const mult = isPerPiece(fd.state) ? ing.grams : ing.grams / 100;
+              const kcal = (fd.calories * mult).toFixed(0);
+              return (
+                <div key={ing.foodId} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-2 py-1.5">
+                  <div className="flex-1 min-w-0">
+                    <div className="text-xs font-medium truncate">{fd.name.split(" - ")[0]}</div>
+                    <div className="text-xs text-gray-400">{kcal} kcal · {(fd.protein * mult).toFixed(1)}g P</div>
+                  </div>
+                  <input type="number" min="0" step={isPerPiece(fd.state) ? "1" : "5"} value={ing.grams}
+                    onChange={e => setRbIngredients(p => p.map((x, i) => i === idx ? { ...x, grams: +e.target.value } : x))}
+                    className="w-14 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 bg-white dark:bg-gray-700" />
+                  <span className="text-xs text-gray-400 w-5">{isPerPiece(fd.state) ? "pcs" : "g"}</span>
+                  {!isPerPiece(fd.state) && (
+                    <div className="flex gap-0.5">
+                      {[50, 100, 150, 200].map(g => (
+                        <button key={g} onClick={() => setRbIngredients(p => p.map((x, i) => i === idx ? { ...x, grams: g } : x))}
+                          className={`text-[10px] px-1 py-0.5 rounded border ${ing.grams === g ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 text-gray-500 hover:border-purple-500 hover:text-purple-600"}`}>
+                          {g}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <button onClick={() => setRbIngredients(p => p.filter((_, i) => i !== idx))} className="text-red-400 hover:text-red-600 shrink-0"><Trash2 size={13} /></button>
+                </div>
+              );
+            })}
+            {/* macro totals */}
+            <div className="flex flex-wrap gap-3 text-xs bg-purple-50 dark:bg-purple-950/30 rounded-lg px-3 py-2 font-medium">
+              <span>Total: <b>{rbTotals.calories.toFixed(0)} kcal</b></span>
+              <span className="text-blue-600">{rbTotals.protein.toFixed(1)}g P</span>
+              <span className="text-yellow-600">{rbTotals.carbs.toFixed(1)}g C</span>
+              <span className="text-red-500">{rbTotals.fat.toFixed(1)}g F</span>
+              {rbServes > 1 && (
+                <span className="text-gray-400">· per serving: <b>{(rbTotals.calories / rbServes).toFixed(0)}</b> kcal / {(rbTotals.protein / rbServes).toFixed(1)}g P</span>
+              )}
+            </div>
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <button onClick={saveRecipe} disabled={!rbName.trim() || rbIngredients.length === 0}
+            className="flex-1 bg-purple-600 text-white rounded-xl py-2 text-sm font-semibold hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+            {editId ? "Update Recipe ✓" : "Save Recipe ✓"}
+          </button>
+          {editId && (
+            <button onClick={clearForm} className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+              Cancel
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -1314,9 +1523,32 @@ export default function MealPlanner() {
               </SortableContext>
             </DndContext>
 
-            <button onClick={addMeal} className="w-full border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl py-3 text-sm text-gray-500 hover:border-blue-400 hover:text-blue-500 flex items-center justify-center gap-2 print:hidden">
-              <Plus size={16} /> Add Meal - إضافة وجبة
-            </button>
+            <div className="flex gap-2 print:hidden">
+              <button onClick={addMeal} className="flex-1 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl py-3 text-sm text-gray-500 hover:border-blue-400 hover:text-blue-500 flex items-center justify-center gap-2">
+                <Plus size={16} /> Add Meal - إضافة وجبة
+              </button>
+              <button onClick={() => setShowRecipeBuilder(p => !p)} className="border-2 border-dashed border-purple-300 dark:border-purple-700 rounded-xl py-3 px-4 text-sm text-purple-500 hover:border-purple-500 flex items-center gap-2">
+                <UtensilsCrossed size={16} /> Recipes
+              </button>
+            </div>
+
+            {/* ── RECIPE BUILDER ───────────────────────────────────────────── */}
+            {showRecipeBuilder && (
+              <RecipeBuilder
+                allFoods={[...FOOD_DATABASE, ...customFoods]}
+                customRecipes={customRecipes}
+                setCustomRecipes={setCustomRecipes}
+                onAddAsMeal={r => {
+                  const items = r.ingredients.flatMap(ing => {
+                    const fd = [...FOOD_DATABASE, ...customFoods].find(f => f.id === ing.foodId);
+                    if (!fd) return [];
+                    return [{ ...fd, grams: ing.grams / r.serves, instId: `ri-${Date.now()}-${Math.random()}` }];
+                  });
+                  setMeals(prev => [...prev, { id: `m${Date.now()}`, name: r.name, items, notes: r.notes, collapsed: false }]);
+                }}
+                onClose={() => setShowRecipeBuilder(false)}
+              />
+            )}
 
             {/* plan notes */}
             <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
