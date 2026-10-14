@@ -726,7 +726,7 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
                   {([["fiber","Fiber (g)"],["saturatedFat","Sat. Fat (g/100g)"],["omega3","Omega-3 (g)"],["omega6","Omega-6 (g)"]] as const).map(([k, lbl]) => (
                     <div key={k}>
                       <label className="text-xs text-gray-400">{lbl}</label>
-                      <input type="number" step="0.01" value={(customForm as Record<string,number>)[k] || ""} onChange={e => setCustomForm(p => ({ ...p, [k]: +e.target.value }))} className="w-full text-xs border border-gray-200 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800" />
+                      <input type="number" step="0.01" value={(customForm as unknown as Record<string,number>)[k] || ""} onChange={e => setCustomForm(p => ({ ...p, [k]: +e.target.value }))} className="w-full text-xs border border-gray-200 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800" />
                     </div>
                   ))}
                 </div>
