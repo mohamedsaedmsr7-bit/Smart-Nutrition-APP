@@ -28,19 +28,19 @@ interface FoodEntry {
 
 const FOOD_DATABASE: FoodEntry[] = [
   // ── PROTEINS ──────────────────────────────────────────────────────────────
-  { id: 101, name: "Chicken Breast - صدر دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 31, fat: 3.6, calories: 165, micros: { vitB3: 13.4, vitB6: 1.0, vitB12: 0.3, vitB5: 1.5, phosphorus: 220, selenium: 22, zinc: 1.0, potassium: 340, iron: 0.7, magnesium: 29 } },
+  { id: 101, name: "Chicken Breast - صدر دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 31, fat: 3.6, calories: 165, micros: { vitB3: 13.4, vitB6: 1.0, vitB12: 0.3, vitB5: 1.5, phosphorus: 220, selenium: 22, zinc: 1.0, potassium: 340, iron: 0.7, magnesium: 29, saturatedFat: 1.0 } },
   { id: 102, name: "Chicken Thigh - فخذ دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 10.9, calories: 209, micros: { vitB3: 6.3, vitB6: 0.6, vitB12: 0.3, phosphorus: 180, selenium: 18, zinc: 1.5, potassium: 280, iron: 1.2, magnesium: 24 } },
   { id: 103, name: "Ground Beef (lean) - لحم مفروم", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 7, calories: 172, micros: { vitB12: 2.5, vitB3: 5.5, vitB6: 0.4, iron: 2.5, zinc: 5.4, phosphorus: 200, selenium: 18, potassium: 320 } },
   { id: 104, name: "Beef Steak - ستيك لحم", category: "Protein", state: "per 100g", carbs: 0, protein: 27, fat: 8, calories: 180, micros: { vitB12: 2.5, vitB3: 6.2, vitB6: 0.5, iron: 2.2, zinc: 5.0, phosphorus: 210, selenium: 20, potassium: 330 } },
   { id: 105, name: "Lamb - لحم ضاني", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 14, calories: 218, micros: { vitB12: 2.7, vitB3: 5.7, vitB6: 0.4, iron: 1.9, zinc: 4.2, phosphorus: 195, selenium: 15, potassium: 310 } },
   { id: 106, name: "Tuna (canned in water) - تونة", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 1, calories: 116, micros: { vitB12: 2.5, vitB3: 13.3, vitB6: 0.9, vitD: 4.0, selenium: 80, phosphorus: 195, potassium: 290, magnesium: 31, iron: 1.3 } },
-  { id: 107, name: "Salmon - سلمون", category: "Protein", state: "per 100g", carbs: 0, protein: 20, fat: 13, calories: 208, micros: { vitB12: 3.2, vitB3: 8.9, vitB6: 0.8, vitD: 11.1, selenium: 36, phosphorus: 240, potassium: 490, magnesium: 29, iron: 0.8 } },
+  { id: 107, name: "Salmon - سلمون", category: "Protein", state: "per 100g", carbs: 0, protein: 20, fat: 13, calories: 208, micros: { vitB12: 3.2, vitB3: 8.9, vitB6: 0.8, vitD: 11.1, selenium: 36, phosphorus: 240, potassium: 490, magnesium: 29, iron: 0.8, omega3: 2.3, saturatedFat: 3.2 } },
   { id: 108, name: "Tilapia - بلطي", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 2.7, calories: 128, micros: { vitB12: 1.6, vitB3: 3.9, vitB6: 0.2, vitD: 1.2, selenium: 40, phosphorus: 185, potassium: 380, magnesium: 28 } },
   { id: 109, name: "Shrimp - جمبري", category: "Protein", state: "per 100g", carbs: 0.9, protein: 24, fat: 0.3, calories: 99, micros: { vitB12: 1.1, vitB3: 2.6, selenium: 38, phosphorus: 205, iodine: 35, zinc: 1.3, iron: 2.4, potassium: 259 } },
   { id: 110, name: "Turkey Breast - ديك رومي", category: "Protein", state: "per 100g", carbs: 0, protein: 29, fat: 1, calories: 135, micros: { vitB12: 1.1, vitB3: 11.8, vitB6: 0.9, selenium: 32, phosphorus: 240, potassium: 330, zinc: 2.0, magnesium: 28 } },
   { id: 111, name: "Sardines - سردين", category: "Protein", state: "per 100g", carbs: 0, protein: 21, fat: 11, calories: 185, micros: { vitB12: 8.9, vitD: 4.8, vitB3: 5.2, calcium: 382, phosphorus: 490, selenium: 53, iron: 2.9, zinc: 1.3, potassium: 397 } },
   // ── EGGS ─────────────────────────────────────────────────────────────────
-  { id: 120, name: "Whole Egg - بيضة كاملة", category: "Eggs", state: "per 100g", carbs: 1.1, protein: 13, fat: 10, calories: 143, micros: { vitA: 149, vitD: 2.0, vitB12: 1.1, vitB2: 0.46, vitB7: 20, vitK: 0.3, selenium: 30, phosphorus: 198, zinc: 1.3, iron: 1.8, choline: 294 } },
+  { id: 120, name: "Whole Egg - بيضة كاملة", category: "Eggs", state: "per 100g", carbs: 1.1, protein: 13, fat: 10, calories: 143, micros: { vitA: 149, vitD: 2.0, vitB12: 1.1, vitB2: 0.46, vitB7: 20, vitK: 0.3, selenium: 30, phosphorus: 198, zinc: 1.3, iron: 1.8, choline: 294, saturatedFat: 3.1 } },
   { id: 121, name: "Egg White - بياض البيض", category: "Eggs", state: "per 100g", carbs: 0.7, protein: 11, fat: 0.2, calories: 52, micros: { vitB2: 0.44, selenium: 20, potassium: 163, magnesium: 11 } },
   { id: 122, name: "Egg Yolk - صفار البيض", category: "Eggs", state: "per 100g", carbs: 3.6, protein: 16, fat: 27, calories: 322, micros: { vitA: 381, vitD: 5.4, vitB12: 2.5, vitB7: 53, vitK: 0.7, selenium: 56, phosphorus: 390, zinc: 2.5, iron: 2.7 } },
   { id: 123, name: "Boiled Egg - بيضة مسلوقة", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6.3, fat: 5, calories: 72, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, vitB2: 0.23, vitB7: 10, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8 } },
@@ -56,23 +56,23 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 205, name: "Cheddar Cheese - جبن شيدر", category: "Dairy", state: "per 100g", carbs: 1.3, protein: 25, fat: 33, calories: 402 },
   { id: 206, name: "Mozzarella - موزاريلا", category: "Dairy", state: "per 100g", carbs: 2.2, protein: 22, fat: 17, calories: 254 },
   { id: 207, name: "Cream Cheese - كريم تشيز", category: "Dairy", state: "per 100g", carbs: 4.1, protein: 6.2, fat: 34, calories: 350 },
-  { id: 208, name: "Butter - زبدة", category: "Dairy", state: "per 100g", carbs: 0.1, protein: 0.9, fat: 80, calories: 717 },
+  { id: 208, name: "Butter - زبدة", category: "Dairy", state: "per 100g", carbs: 0.1, protein: 0.9, fat: 80, calories: 717, micros: { saturatedFat: 51.4 } },
   { id: 209, name: "Labneh - لبنة", category: "Dairy", state: "per 100g", carbs: 4, protein: 7, fat: 5, calories: 89 },
   { id: 210, name: "Whipping Cream - كريمة خفق", category: "Dairy", state: "per 100g", carbs: 3.6, protein: 2.5, fat: 36, calories: 340 },
   { id: 211, name: "Greek Yogurt (low-fat) - زبادي يوناني", category: "Dairy", state: "per 100g", carbs: 4, protein: 10, fat: 0.7, calories: 59 },
   { id: 212, name: "Greek Yogurt (full-fat) - زبادي يوناني كامل", category: "Dairy", state: "per 100g", carbs: 3.6, protein: 9, fat: 5, calories: 97 },
   { id: 213, name: "Rayeb Yogurt - رايب", category: "Dairy", state: "per 100g", carbs: 5, protein: 3.5, fat: 3, calories: 60 },
   // ── MILK ──────────────────────────────────────────────────────────────────
-  { id: 412, name: "Whole Milk - حليب كامل الدسم", category: "Milk", state: "per 1L", carbs: 47, protein: 32, fat: 36, calories: 610 },
-  { id: 413, name: "Skim Milk - حليب خالي الدسم", category: "Milk", state: "per 1L", carbs: 50, protein: 35, fat: 2, calories: 360 },
-  { id: 414, name: "Semi-Skim Milk - حليب نصف دسم", category: "Milk", state: "per 1L", carbs: 48, protein: 33, fat: 18, calories: 470 },
-  { id: 415, name: "Almarai Protein Milk - حليب ألمراي بروتين", category: "Milk", state: "per 1L", carbs: 50, protein: 50, fat: 2, calories: 420 },
-  { id: 416, name: "Oat Milk - حليب الشوفان", category: "Milk", state: "per 1L", carbs: 70, protein: 10, fat: 15, calories: 450 },
-  { id: 417, name: "Almond Milk (unsweetened) - حليب اللوز", category: "Milk", state: "per 1L", carbs: 12, protein: 4, fat: 15, calories: 200 },
+  { id: 412, name: "Whole Milk - حليب كامل الدسم", category: "Milk", state: "per 100ml", carbs: 4.7, protein: 3.2, fat: 3.6, calories: 61, micros: { calcium: 113, vitB12: 0.45, vitB2: 0.16, vitD: 1.0, potassium: 150 } },
+  { id: 413, name: "Skim Milk - حليب خالي الدسم", category: "Milk", state: "per 100ml", carbs: 5.0, protein: 3.5, fat: 0.2, calories: 36, micros: { calcium: 125, vitB12: 0.5, vitB2: 0.18, vitD: 1.0, potassium: 160 } },
+  { id: 414, name: "Semi-Skim Milk - حليب نصف دسم", category: "Milk", state: "per 100ml", carbs: 4.8, protein: 3.3, fat: 1.8, calories: 47, micros: { calcium: 120, vitB12: 0.45, vitB2: 0.17, vitD: 1.0, potassium: 155 } },
+  { id: 415, name: "Almarai Protein Milk - حليب ألمراي بروتين", category: "Milk", state: "per 100ml", carbs: 5.0, protein: 5.0, fat: 0.2, calories: 42, micros: { calcium: 130, vitB12: 0.5, vitD: 1.0, potassium: 160 } },
+  { id: 416, name: "Oat Milk - حليب الشوفان", category: "Milk", state: "per 100ml", carbs: 7.0, protein: 1.0, fat: 1.5, calories: 45 },
+  { id: 417, name: "Almond Milk (unsweetened) - حليب اللوز", category: "Milk", state: "per 100ml", carbs: 1.2, protein: 0.4, fat: 1.5, calories: 20 },
   // ── CARBS ─────────────────────────────────────────────────────────────────
   { id: 301, name: "White Rice - أرز أبيض", category: "Carbs", state: "per 100g cooked", carbs: 28, protein: 2.7, fat: 0.3, calories: 130, micros: { vitB1: 0.02, vitB3: 0.4, vitB9: 3, iron: 0.2, magnesium: 12, phosphorus: 43, potassium: 35, selenium: 7.5 } },
   { id: 302, name: "Brown Rice - أرز بني", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 2.6, fat: 0.9, calories: 112, micros: { vitB1: 0.1, vitB3: 1.5, vitB6: 0.15, vitE: 0.1, magnesium: 44, phosphorus: 83, potassium: 79, selenium: 9.8, manganese: 0.9, zinc: 0.6 } },
-  { id: 303, name: "Oats - شوفان", category: "Carbs", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389, micros: { vitB1: 0.76, vitB5: 1.35, vitB9: 56, iron: 4.72, magnesium: 177, phosphorus: 523, potassium: 429, zinc: 3.97, manganese: 4.91, selenium: 28.9, copper: 626 } },
+  { id: 303, name: "Oats - شوفان", category: "Carbs", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389, micros: { vitB1: 0.76, vitB5: 1.35, vitB9: 56, iron: 4.72, magnesium: 177, phosphorus: 523, potassium: 429, zinc: 3.97, manganese: 4.91, selenium: 28.9, copper: 626, fiber: 10.6 } },
   { id: 304, name: "Whole Wheat Bread - خبز قمح كامل", category: "Carbs", state: "per 100g", carbs: 43, protein: 9, fat: 3.4, calories: 247, micros: { vitB1: 0.4, vitB3: 4.2, vitB9: 44, iron: 2.8, magnesium: 76, phosphorus: 212, potassium: 248, zinc: 1.8, selenium: 26, manganese: 2.7 } },
   { id: 305, name: "White Bread - خبز أبيض", category: "Carbs", state: "per 100g", carbs: 49, protein: 9, fat: 3.2, calories: 265, micros: { vitB1: 0.5, vitB3: 4.5, vitB9: 100, iron: 3.6, calcium: 260, selenium: 22, phosphorus: 108 } },
   { id: 306, name: "Pasta - مكرونة", category: "Carbs", state: "per 100g cooked", carbs: 25, protein: 5, fat: 0.9, calories: 131, micros: { vitB1: 0.09, vitB3: 1.0, vitB9: 7, iron: 0.5, magnesium: 15, phosphorus: 56, selenium: 18.4 } },
@@ -81,13 +81,13 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 309, name: "White Potato - بطاطس", category: "Carbs", state: "per 100g", carbs: 17, protein: 2, fat: 0.1, calories: 77, micros: { vitC: 19.7, vitB6: 0.3, vitB9: 16, vitB3: 1.44, potassium: 421, magnesium: 23, phosphorus: 57, iron: 0.78 } },
   { id: 310, name: "Bread (Baladi) - خبز بلدي", category: "Carbs", state: "per 100g", carbs: 52, protein: 8, fat: 1.5, calories: 253, micros: { vitB1: 0.35, vitB3: 3.8, vitB9: 80, iron: 3.2, calcium: 200, selenium: 20, phosphorus: 100 } },
   { id: 311, name: "Quinoa - كينوا", category: "Carbs", state: "per 100g cooked", carbs: 22, protein: 4, fat: 1.9, calories: 120, micros: { vitB1: 0.1, vitB2: 0.11, vitB9: 42, vitE: 0.6, iron: 1.49, magnesium: 64, phosphorus: 152, zinc: 1.09, potassium: 172, manganese: 0.63, copper: 199 } },
-  { id: 312, name: "Lentils (cooked) - عدس", category: "Carbs", state: "per 100g", carbs: 20, protein: 9, fat: 0.4, calories: 116, micros: { vitB1: 0.17, vitB6: 0.18, vitB9: 181, iron: 3.33, magnesium: 36, phosphorus: 180, potassium: 369, zinc: 1.27, manganese: 0.49, copper: 251, selenium: 2.8 } },
+  { id: 312, name: "Lentils (cooked) - عدس", category: "Carbs", state: "per 100g", carbs: 20, protein: 9, fat: 0.4, calories: 116, micros: { vitB1: 0.17, vitB6: 0.18, vitB9: 181, iron: 3.33, magnesium: 36, phosphorus: 180, potassium: 369, zinc: 1.27, manganese: 0.49, copper: 251, selenium: 2.8, fiber: 7.9 } },
   { id: 313, name: "Chickpeas (cooked) - حمص", category: "Carbs", state: "per 100g", carbs: 27, protein: 9, fat: 2.6, calories: 164, micros: { vitB6: 0.14, vitB9: 172, vitB5: 0.29, iron: 2.89, magnesium: 48, phosphorus: 168, potassium: 291, zinc: 1.53, manganese: 1.03, copper: 352, selenium: 3.7 } },
   { id: 314, name: "Fava Beans (Ful) - فول مدمس", category: "Carbs", state: "per 100g", carbs: 26, protein: 8, fat: 0.5, calories: 110, micros: { vitB1: 0.15, vitB9: 148, vitC: 1.4, iron: 1.9, magnesium: 43, phosphorus: 125, potassium: 332, zinc: 1.0, copper: 180, manganese: 0.54 } },
   { id: 315, name: "Corn - ذرة", category: "Carbs", state: "per 100g", carbs: 19, protein: 3.2, fat: 1.2, calories: 96, micros: { vitC: 6.8, vitB1: 0.2, vitB3: 1.77, vitB9: 42, vitB5: 0.72, magnesium: 37, phosphorus: 89, potassium: 270, zinc: 0.45, manganese: 0.16 } },
   // ── VEGETABLES ────────────────────────────────────────────────────────────
-  { id: 501, name: "Broccoli - بروكلي", category: "Vegetables", state: "per 100g", carbs: 7, protein: 2.8, fat: 0.4, calories: 34, micros: { vitC: 89.2, vitK: 101.6, vitA: 31, vitB9: 63, vitB6: 0.18, calcium: 47, potassium: 316, magnesium: 21, iron: 0.73, phosphorus: 66, manganese: 0.21 } },
-  { id: 502, name: "Spinach - سبانخ", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23, micros: { vitK: 482.9, vitA: 469, vitC: 28.1, vitB9: 194, vitE: 2.0, iron: 2.71, calcium: 99, magnesium: 79, potassium: 558, manganese: 0.9 } },
+  { id: 501, name: "Broccoli - بروكلي", category: "Vegetables", state: "per 100g", carbs: 7, protein: 2.8, fat: 0.4, calories: 34, micros: { vitC: 89.2, vitK: 101.6, vitA: 31, vitB9: 63, vitB6: 0.18, calcium: 47, potassium: 316, magnesium: 21, iron: 0.73, phosphorus: 66, manganese: 0.21, fiber: 2.6 } },
+  { id: 502, name: "Spinach - سبانخ", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23, micros: { vitK: 482.9, vitA: 469, vitC: 28.1, vitB9: 194, vitE: 2.0, iron: 2.71, calcium: 99, magnesium: 79, potassium: 558, manganese: 0.9, fiber: 2.2 } },
   { id: 503, name: "Cucumber - خيار", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 0.7, fat: 0.1, calories: 16, micros: { vitK: 16.4, vitC: 2.8, potassium: 147, magnesium: 13, vitB5: 0.26 } },
   { id: 504, name: "Tomato - طماطم", category: "Vegetables", state: "per 100g", carbs: 3.9, protein: 0.9, fat: 0.2, calories: 18, micros: { vitC: 13.7, vitA: 42, vitK: 7.9, vitB9: 15, potassium: 237, magnesium: 11, iron: 0.27 } },
   { id: 505, name: "Lettuce - خس", category: "Vegetables", state: "per 100g", carbs: 2.9, protein: 1.4, fat: 0.2, calories: 15, micros: { vitK: 102.3, vitA: 166, vitC: 9.2, vitB9: 73, calcium: 36, iron: 0.86 } },
@@ -105,7 +105,7 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 517, name: "Arugula (Rocket) - جرجير", category: "Vegetables", state: "per 100g", carbs: 3.7, protein: 2.6, fat: 0.7, calories: 25, micros: { vitK: 108.6, vitA: 119, vitC: 15, vitB9: 97, calcium: 160, iron: 1.46, magnesium: 47, potassium: 369 } },
   { id: 518, name: "Parsley - بقدونس", category: "Vegetables", state: "per 100g", carbs: 6.3, protein: 3, fat: 0.8, calories: 36, micros: { vitK: 1640, vitC: 133, vitA: 421, vitB9: 152, iron: 6.2, calcium: 138, potassium: 554, magnesium: 50 } },
   // ── FATS ──────────────────────────────────────────────────────────────────
-  { id: 601, name: "Olive Oil - زيت زيتون", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884 },
+  { id: 601, name: "Olive Oil - زيت زيتون", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 14.35, vitK: 60.2, omega3: 0.76, omega6: 9.76, saturatedFat: 13.8 } },
   { id: 602, name: "Coconut Oil - زيت جوز الهند", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 892 },
   { id: 603, name: "Avocado - أفوكادو", category: "Fats", state: "per 100g", carbs: 9, protein: 2, fat: 15, calories: 160, micros: { vitK: 21, vitE: 2.07, vitC: 10, vitB5: 1.39, vitB6: 0.26, vitB9: 81, potassium: 485, magnesium: 29, copper: 190 } },
   { id: 604, name: "Almonds - لوز", category: "Fats", state: "per 100g", carbs: 22, protein: 21, fat: 50, calories: 579, micros: { vitE: 25.6, vitB2: 1.14, vitB3: 3.38, magnesium: 270, calcium: 264, phosphorus: 481, iron: 3.71, zinc: 3.12, copper: 996, manganese: 2.18, selenium: 4.1 } },
@@ -113,13 +113,18 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 606, name: "Cashews - كاجو", category: "Fats", state: "per 100g", carbs: 30, protein: 18, fat: 44, calories: 553, micros: { vitK: 34.1, vitB1: 0.42, vitB6: 0.42, vitB9: 25, magnesium: 292, phosphorus: 593, iron: 6.68, zinc: 5.78, copper: 2195, manganese: 1.66, selenium: 19.9 } },
   { id: 607, name: "Peanut Butter - زبدة الفول السوداني", category: "Fats", state: "per 100g", carbs: 20, protein: 25, fat: 50, calories: 588, micros: { vitE: 9.1, vitB3: 13.1, vitB6: 0.44, vitB9: 87, magnesium: 168, phosphorus: 335, potassium: 558, iron: 1.74, zinc: 2.9, copper: 440 } },
   { id: 608, name: "Peanuts - فول سوداني", category: "Fats", state: "per 100g", carbs: 16, protein: 26, fat: 49, calories: 567, micros: { vitE: 8.33, vitB3: 12.07, vitB1: 0.64, vitB9: 240, magnesium: 168, phosphorus: 376, iron: 4.58, zinc: 3.27, copper: 1144, manganese: 1.93, selenium: 7.2 } },
-  { id: 609, name: "Sunflower Seeds - بذور عباد الشمس", category: "Fats", state: "per 100g", carbs: 20, protein: 21, fat: 51, calories: 584, micros: { vitE: 35.17, vitB1: 1.48, vitB6: 1.35, vitB9: 227, vitB5: 6.75, magnesium: 325, phosphorus: 660, iron: 5.25, zinc: 5.0, copper: 1800, manganese: 1.95, selenium: 53 } },
+  { id: 609, name: "Sunflower Seeds - بذور عباد الشمس", category: "Fats", state: "per 100g", carbs: 20, protein: 21, fat: 51, calories: 584, micros: { vitE: 35.17, vitB1: 1.48, vitB6: 1.35, vitB9: 227, vitB5: 6.75, magnesium: 325, phosphorus: 660, iron: 5.25, zinc: 5.0, copper: 1800, manganese: 1.95, selenium: 53, omega6: 23.0 } },
   { id: 610, name: "Tahini - طحينة", category: "Fats", state: "per 100g", carbs: 21, protein: 17, fat: 54, calories: 595, micros: { vitB1: 1.0, vitB9: 53, calcium: 426, iron: 8.95, magnesium: 95, phosphorus: 732, zinc: 4.62, copper: 1500, manganese: 1.42 } },
   { id: 611, name: "Flaxseeds - بذور الكتان", category: "Fats", state: "per 100g", carbs: 29, protein: 18, fat: 42, calories: 534, micros: { vitB1: 1.64, vitB9: 87, vitE: 0.31, magnesium: 392, phosphorus: 642, iron: 5.73, zinc: 4.34, copper: 1220, manganese: 2.48, selenium: 25.4 } },
   { id: 612, name: "Chia Seeds - بذور الشيا", category: "Fats", state: "per 100g", carbs: 42, protein: 17, fat: 31, calories: 486, micros: { vitB1: 0.62, vitB3: 8.83, calcium: 631, iron: 7.72, magnesium: 335, phosphorus: 860, zinc: 4.58, copper: 924, manganese: 2.72, selenium: 55.2 } },
+  { id: 613, name: "Ghee - سمن بلدي", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 99.8, calories: 900, micros: { vitA: 300, vitD: 1.5, vitK: 8.6, saturatedFat: 62.0 } },
+  { id: 614, name: "Sunflower Oil - زيت عباد الشمس", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 41.1, omega6: 65.7 } },
+  { id: 615, name: "Corn Oil - زيت الذرة", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 14.3, vitK: 1.9, omega6: 54.0 } },
+  { id: 616, name: "Avocado Oil - زيت الأفوكادو", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 12.1, vitK: 7.1, omega3: 0.96 } },
+  { id: 617, name: "Coconut Oil - زيت جوز الهند (Fats)", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 892, micros: { saturatedFat: 82.5 } },
   // ── FRUITS ────────────────────────────────────────────────────────────────
-  { id: 701, name: "Banana - موز", category: "Fruits", state: "per 100g", carbs: 23, protein: 1.1, fat: 0.3, calories: 89, micros: { vitB6: 0.37, vitC: 8.7, vitB9: 20, vitB5: 0.33, potassium: 358, magnesium: 27, manganese: 0.27, copper: 78 } },
-  { id: 702, name: "Apple - تفاح", category: "Fruits", state: "per 100g", carbs: 14, protein: 0.3, fat: 0.2, calories: 52, micros: { vitC: 4.6, vitK: 3.2, vitB9: 3, potassium: 107, calcium: 6 } },
+  { id: 701, name: "Banana - موز", category: "Fruits", state: "per 100g", carbs: 23, protein: 1.1, fat: 0.3, calories: 89, micros: { vitB6: 0.37, vitC: 8.7, vitB9: 20, vitB5: 0.33, potassium: 358, magnesium: 27, manganese: 0.27, copper: 78, fiber: 2.6 } },
+  { id: 702, name: "Apple - تفاح", category: "Fruits", state: "per 100g", carbs: 14, protein: 0.3, fat: 0.2, calories: 52, micros: { vitC: 4.6, vitK: 3.2, vitB9: 3, potassium: 107, calcium: 6, fiber: 2.4 } },
   { id: 703, name: "Orange - برتقال", category: "Fruits", state: "per 100g", carbs: 12, protein: 0.9, fat: 0.1, calories: 47, micros: { vitC: 53.2, vitB9: 30, vitA: 11, vitB1: 0.09, potassium: 181, calcium: 40, magnesium: 10 } },
   { id: 704, name: "Mango - مانجو", category: "Fruits", state: "per 100g", carbs: 15, protein: 0.8, fat: 0.4, calories: 60, micros: { vitC: 36.4, vitA: 54, vitB6: 0.12, vitK: 4.2, vitB9: 43, vitE: 0.9, potassium: 168, magnesium: 10, copper: 111 } },
   { id: 705, name: "Strawberry - فراولة", category: "Fruits", state: "per 100g", carbs: 8, protein: 0.7, fat: 0.3, calories: 32, micros: { vitC: 58.8, vitK: 2.2, vitB9: 24, manganese: 0.39, potassium: 153, magnesium: 13 } },
@@ -132,6 +137,11 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 712, name: "Pineapple - أناناس", category: "Fruits", state: "per 100g", carbs: 13, protein: 0.5, fat: 0.1, calories: 50, micros: { vitC: 47.8, vitB1: 0.08, vitB6: 0.11, vitB9: 18, manganese: 0.93, potassium: 109, magnesium: 12, copper: 110 } },
   { id: 713, name: "Peach - خوخ", category: "Fruits", state: "per 100g", carbs: 10, protein: 0.9, fat: 0.3, calories: 39, micros: { vitC: 6.6, vitA: 16, vitK: 2.6, vitE: 0.7, vitB3: 0.81, potassium: 190, magnesium: 9 } },
   { id: 714, name: "Pear - كمثرى", category: "Fruits", state: "per 100g", carbs: 15, protein: 0.4, fat: 0.1, calories: 57, micros: { vitC: 4.3, vitK: 4.4, vitB9: 7, copper: 82, potassium: 116 } },
+  // ── PANTRY ────────────────────────────────────────────────────────────────
+  { id: 801, name: "Vanilla Extract - فانيليا سائلة", category: "Pantry", state: "per 100g", carbs: 12.7, protein: 0.1, fat: 0.1, calories: 288 },
+  { id: 802, name: "Vanilla Package - باكيت فانيليا", category: "Pantry", state: "per piece", carbs: 2, protein: 0, fat: 0, calories: 8 },
+  { id: 803, name: "Baking Powder - بيكنج باودر", category: "Pantry", state: "per 100g", carbs: 27.7, protein: 0, fat: 0, calories: 53 },
+  { id: 804, name: "Cornstarch - نشا ذرة", category: "Pantry", state: "per 100g", carbs: 91, protein: 0.3, fat: 0.1, calories: 381 },
   // ── SUPPLEMENTS ───────────────────────────────────────────────────────────
   { id: 901, name: "Whey Protein - بروتين مصل اللبن", category: "Supplements", state: "per 30g scoop", carbs: 3, protein: 24, fat: 1.5, calories: 120 },
   { id: 902, name: "Casein Protein - بروتين كازين", category: "Supplements", state: "per 30g scoop", carbs: 4, protein: 24, fat: 1, calories: 120 },
@@ -142,19 +152,21 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 907, name: "Pre-Workout - ما قبل التمرين", category: "Supplements", state: "per serving", carbs: 5, protein: 0, fat: 0, calories: 20 },
   { id: 908, name: "Omega-3 - أوميغا 3", category: "Supplements", state: "per 2 capsules", carbs: 0, protein: 0, fat: 2, calories: 18 },
   { id: 920, name: "Peak Man Multivitamin - بيك مان", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 921, name: "Centrum Multivitamin - سنتروم", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 922, name: "Vitastress - فيتاستريس", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 921, name: "Centrum Multivitamin - سنتروم", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 922, name: "Vitastress - فيتاستريس", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 923, name: "L-Citrulline 5000mg - سيترولين", category: "Supplements", state: "per 5g", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 924, name: "L-Carnitine Liquid 1500mg - كارنيتين سائل", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 925, name: "L-Carnitine 500mg tablet - كارنيتين أقراص", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 925, name: "L-Carnitine 500mg tablet - كارنيتين أقراص", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 926, name: "Vitamin D3 - فيتامين د3", category: "Supplements", state: "per capsule", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 927, name: "Zinc - زنك", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 928, name: "Magnesium - مغنيسيوم", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 929, name: "Iron - حديد", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 930, name: "Vitamin C 1000mg - فيتامين ج", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 931, name: "B-Complex - فيتامين ب مركب", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 932, name: "Melatonin 5mg - ميلاتونين", category: "Supplements", state: "per tablet", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 927, name: "Zinc - زنك", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 928, name: "Magnesium - مغنيسيوم", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 929, name: "Iron - حديد", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 930, name: "Vitamin C 1000mg - فيتامين ج", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 931, name: "B-Complex - فيتامين ب مركب", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 932, name: "Melatonin 5mg - ميلاتونين", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 933, name: "Collagen - كولاجين", category: "Supplements", state: "per 10g scoop", carbs: 0, protein: 9, fat: 0, calories: 36 },
+  { id: 941, name: "Multivitamins - فيتامينات متعددة", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 942, name: "Omega-3 Fish Oil - أوميجا 3", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 1.0, calories: 9, micros: { omega3: 0.5 } },
   // ── BEVERAGES ─────────────────────────────────────────────────────────────
   { id: 951, name: "Black Tea - شاي أسود", category: "Beverages", state: "per cup (240ml)", carbs: 0.7, protein: 0, fat: 0, calories: 2 },
   { id: 952, name: "Green Tea - شاي أخضر", category: "Beverages", state: "per cup (240ml)", carbs: 0.5, protein: 0, fat: 0, calories: 2 },
@@ -165,7 +177,7 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 957, name: "Nescafé Instant - نسكافيه", category: "Beverages", state: "per teaspoon (1.8g)", carbs: 0.9, protein: 0.3, fat: 0, calories: 4 },
   // ── SWEETENERS ────────────────────────────────────────────────────────────
   { id: 961, name: "Stevia - ستيفيا", category: "Sweeteners", state: "per packet (1g)", carbs: 1, protein: 0, fat: 0, calories: 0 },
-  { id: 962, name: "Diet Sugar / Splenda - سكر دايت", category: "Sweeteners", state: "per packet (1g)", carbs: 1, protein: 0, fat: 0, calories: 0 },
+  { id: 962, name: "Diet Sugar / Splenda - سكر دايت", category: "Sweeteners", state: "per bag (1g)", carbs: 1, protein: 0, fat: 0, calories: 0 },
   { id: 963, name: "Erythritol - إيريثريتول", category: "Sweeteners", state: "per 100g", carbs: 100, protein: 0, fat: 0, calories: 20 },
   { id: 964, name: "White Sugar - سكر أبيض", category: "Sweeteners", state: "per 100g", carbs: 100, protein: 0, fat: 0, calories: 387 },
   // ── SOFT DRINKS ───────────────────────────────────────────────────────────
@@ -193,6 +205,7 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 1107, name: "Grilled Kofta - كفتة مشوية", category: "Egyptian", state: "per 100g", carbs: 5, protein: 18, fat: 8, calories: 164 },
   { id: 1108, name: "Mahshi Kousa - محشي كوسة", category: "Egyptian", state: "per 100g", carbs: 14, protein: 5, fat: 3, calories: 103 },
   { id: 1109, name: "Baladi Bread (Large) - عيش بلدي كبير", category: "Egyptian", state: "per piece (~120g)", carbs: 62, protein: 10, fat: 1.8, calories: 304 },
+  { id: 1110, name: "Rusks / Biscotti - بقسماط", category: "Egyptian", state: "per piece (~10g)", carbs: 7.5, protein: 0.8, fat: 0.5, calories: 38 },
   { id: 1110, name: "Taamiya (falafel) fried - طعمية مقلية", category: "Egyptian", state: "per piece (~20g)", carbs: 7, protein: 2, fat: 3, calories: 63 },
 ];
 
@@ -229,7 +242,7 @@ interface Client {
 
 // ─── MICRONUTRIENT TYPES ──────────────────────────────────────────────────────
 interface MicroNutrient {
-  key: string; name: string; unit: string; category: "Vitamins" | "Minerals";
+  key: string; name: string; unit: string; category: "Vitamins" | "Minerals" | "Fatty Acids";
 }
 
 const MICROS: MicroNutrient[] = [
@@ -261,6 +274,11 @@ const MICROS: MicroNutrient[] = [
   { key: "copper",   name: "Copper",          unit: "μg",     category: "Minerals" },
   { key: "manganese",name: "Manganese",       unit: "mg",     category: "Minerals" },
   { key: "chromium", name: "Chromium",        unit: "μg",     category: "Minerals" },
+  // Fatty Acids & Fiber
+  { key: "fiber",       name: "Fiber",          unit: "g",  category: "Fatty Acids" },
+  { key: "omega3",      name: "Omega-3",         unit: "g",  category: "Fatty Acids" },
+  { key: "omega6",      name: "Omega-6",         unit: "g",  category: "Fatty Acids" },
+  { key: "saturatedFat",name: "Saturated Fat",   unit: "g",  category: "Fatty Acids" },
 ];
 // dedupe
 const MICROS_LIST = MICROS.filter((m, i) => MICROS.findIndex(x => x.key === m.key) === i);
@@ -307,6 +325,11 @@ function getRDI(profile: { gender: "male"|"female"; age: number; isTraining: boo
     copper:  900,
     manganese: base([2.3,2.3,2.3],[1.8,1.8,1.8]),
     chromium: base([35,35,30],[25,25,20]),
+    // Fatty Acids & Fiber (AI / recommended values)
+    fiber: base([38,38,30],[25,25,21]),         // g/day — AI (Adequate Intake), DRI 2002
+    omega3: 1.6,                                 // g/day ALA — AI; EPA+DHA ~0.5g extra for athletes
+    omega6: 17,                                  // g/day LA — AI
+    saturatedFat: 20,                            // g/day — WHO: ≤10% of 2000 kcal
   };
 
   // Pregnancy adjustments (NIH DRI, ACOG guidelines)
@@ -369,7 +392,14 @@ function normalizeAr(s: string) {
   return s.replace(/[أإآ]/g, "ا").replace(/ة/g, "ه").replace(/ى/g, "ي").toLowerCase();
 }
 
-function isPerPiece(state: string) { return state === "per piece" || state.startsWith("per piece"); }
+function isPerPiece(state: string) {
+  return state === "per piece" || state.startsWith("per piece") ||
+    state === "per serving" || state.startsWith("per serving") ||
+    state === "per tablet" || state.startsWith("per tablet") ||
+    state.startsWith("per cup") || state.startsWith("per shot") ||
+    state.startsWith("per packet") || state.startsWith("per teaspoon") ||
+    state.startsWith("per scoop");
+}
 
 function calcMacros(item: FoodItem) {
   const r = isPerPiece(item.state) ? item.grams : item.grams / 100;
@@ -501,7 +531,7 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
             onChange={e => onGramsChange(+e.target.value)}
             className="w-14 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 px-1 py-0.5 text-xs"
           />
-          <span className="text-xs text-gray-500">{isPerPiece(item.state) ? "pcs" : "g"}</span>
+          <span className="text-xs text-gray-500">{isPerPiece(item.state) ? "×" : item.state.includes("100ml") ? "ml" : "g"}</span>
         </div>
         {!isPerPiece(item.state) && (
           <div className="flex gap-0.5">
@@ -529,7 +559,7 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
   const [selectedCat, setSelectedCat] = useState("All");
   const [selectedFoodIds, setSelectedFoodIds] = useState<Set<number>>(new Set());
   const [showCustomForm, setShowCustomForm] = useState(false);
-  const [customForm, setCustomForm] = useState({ name: "", calories: 0, protein: 0, carbs: 0, fat: 0, grams: 100 });
+  const [customForm, setCustomForm] = useState({ name: "", calories: 0, protein: 0, carbs: 0, fat: 0, grams: 100, fiber: 0, saturatedFat: 0, omega3: 0, omega6: 0 });
   const allFoods = [...FOOD_DATABASE, ...extraFoods];
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -570,14 +600,20 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
   function addCustomFoodToMeal() {
     if (!customForm.name.trim()) return;
     const tempId = 90000 + Date.now() % 10000;
+    const micros: Record<string, number> = {};
+    if (customForm.fiber) micros.fiber = customForm.fiber;
+    if (customForm.saturatedFat) micros.saturatedFat = customForm.saturatedFat;
+    if (customForm.omega3) micros.omega3 = customForm.omega3;
+    if (customForm.omega6) micros.omega6 = customForm.omega6;
     const newItem: FoodItem = {
       id: tempId, name: customForm.name, category: "Custom", state: "custom",
       carbs: customForm.carbs, protein: customForm.protein, fat: customForm.fat,
       calories: customForm.calories || Math.round(customForm.protein * 4 + customForm.carbs * 4 + customForm.fat * 9),
+      ...(Object.keys(micros).length > 0 ? { micros } : {}),
       grams: customForm.grams, instId: `custom-${Date.now()}-${Math.random()}`
     };
     onUpdate({ ...meal, items: [...meal.items, newItem] });
-    setCustomForm({ name: "", calories: 0, protein: 0, carbs: 0, fat: 0, grams: 100 });
+    setCustomForm({ name: "", calories: 0, protein: 0, carbs: 0, fat: 0, grams: 100, fiber: 0, saturatedFat: 0, omega3: 0, omega6: 0 });
     setShowCustomForm(false);
   }
   function removeItem(instId: string) {
@@ -683,6 +719,14 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
                     <div key={k}>
                       <label className="text-xs text-gray-500 capitalize">{k === "grams" ? "الوزن (g)" : k}</label>
                       <input type="number" value={customForm[k] || ""} onChange={e => setCustomForm(p => ({ ...p, [k]: +e.target.value }))} className="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800" />
+                    </div>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-1 mt-1">
+                  {([["fiber","Fiber (g)"],["saturatedFat","Sat. Fat (g/100g)"],["omega3","Omega-3 (g)"],["omega6","Omega-6 (g)"]] as const).map(([k, lbl]) => (
+                    <div key={k}>
+                      <label className="text-xs text-gray-400">{lbl}</label>
+                      <input type="number" step="0.01" value={(customForm as Record<string,number>)[k] || ""} onChange={e => setCustomForm(p => ({ ...p, [k]: +e.target.value }))} className="w-full text-xs border border-gray-200 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800" />
                     </div>
                   ))}
                 </div>
@@ -923,9 +967,10 @@ function RecipeBuilder({ allFoods, customRecipes, setCustomRecipes, onAddAsMeal,
 // ─── MAIN COMPONENT ────────────────────────────────────────────────────────────
 export default function MealPlanner() {
   const [dark, setDark] = useState(false);
-  const [tab, setTab] = useState<"planner" | "calculator" | "clients">("planner");
+  const [tab, setTab] = useState<"planner" | "calculator" | "clients" | "micros">("planner");
+  const [microsClientId, setMicrosClientId] = useState<number | null>(null);
   const [lang, setLang] = useState<"ar" | "en" | "both">("both");
-  const [printLang, setPrintLang] = useState<"ar" | "en" | "both">("both");
+  const [printLang, setPrintLang] = useState<"ar" | "en" | "both">("en");
   const [copyLang, setCopyLang] = useState<"ar" | "en" | "both">("both");
   const [meals, setMeals] = useState<Meal[]>([{ id: "m1", name: "Meal 1 - وجبة 1", notes: "", items: [] }]);
   const [targetMacros, setTargetMacros] = useState<TargetMacros>({ calories: 2000, protein: 150, carbs: 200, fat: 65 });
@@ -1093,6 +1138,20 @@ export default function MealPlanner() {
   const totals = grandTotals(meals);
   const selectedClient = clients.find(c => c.id === selectedClientId) || null;
 
+  const allFoodsForTracking = [...FOOD_DATABASE, ...customFoods];
+  const planTracking = meals.reduce((acc, meal) => {
+    meal.items.forEach(item => {
+      const fd = allFoodsForTracking.find(f => f.id === item.id);
+      if (!fd || !fd.micros) return;
+      const mult = isPerPiece(fd.state) ? item.grams : item.grams / 100;
+      acc.fiber += (fd.micros.fiber || 0) * mult;
+      acc.saturatedFat += (fd.micros.saturatedFat || 0) * mult;
+      acc.omega3 += (fd.micros.omega3 || 0) * mult;
+      acc.omega6 += (fd.micros.omega6 || 0) * mult;
+    });
+    return acc;
+  }, { fiber: 0, saturatedFat: 0, omega3: 0, omega6: 0 });
+
   // Client helpers
   function addClient() {
     if (!newClient.name.trim()) return;
@@ -1259,8 +1318,28 @@ export default function MealPlanner() {
           .pdf-health-card-title { font-size: 10px !important; letter-spacing: 2px !important; text-transform: uppercase !important; color: #0d7a5f !important; font-weight: 700 !important; margin-bottom: 8px !important; }
           .pdf-health-card-text { font-size: 13px !important; color: #374151 !important; line-height: 1.6 !important; }
 
+          /* ── GUIDELINES PAGE ────────────────────────────────────── */
+          .pdf-guidelines { padding: 0 40px 40px !important; page-break-before: always !important; }
+          .pdf-guideline-row { display: flex !important; align-items: flex-start !important; gap: 18px !important; padding: 14px 0 !important; border-bottom: 1px solid #f3f4f6 !important; }
+          .pdf-guideline-num { font-size: 22px !important; font-weight: 900 !important; color: #0d7a5f !important; min-width: 36px !important; line-height: 1 !important; padding-top: 2px !important; }
+          .pdf-guideline-text { font-size: 13px !important; color: #374151 !important; line-height: 1.6 !important; flex: 1 !important; }
+
+          /* ── SHOPPING LIST PAGE ─────────────────────────────────── */
+          .pdf-shopping { padding: 0 40px 40px !important; page-break-before: always !important; }
+          .pdf-shopping-grid { display: grid !important; grid-template-columns: 1fr 1fr !important; gap: 0 40px !important; margin-top: 24px !important; }
+          .pdf-shopping-cat { margin-bottom: 20px !important; }
+          .pdf-shopping-cat-title { font-size: 9px !important; letter-spacing: 3px !important; text-transform: uppercase !important; font-weight: 700 !important; color: #0b1f38 !important; border-bottom: 2px solid #0b1f38 !important; padding-bottom: 4px !important; margin-bottom: 8px !important; }
+          .pdf-shopping-item { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 7px 0 !important; border-bottom: 1px dashed #e5e7eb !important; gap: 8px !important; }
+          .pdf-shopping-check { width: 14px !important; height: 14px !important; border: 1.5px solid #6b7280 !important; border-radius: 2px !important; flex-shrink: 0 !important; }
+          .pdf-shopping-name { flex: 1 !important; font-size: 13px !important; color: #374151 !important; }
+          .pdf-shopping-qty { font-size: 13px !important; font-weight: 700 !important; color: #0b1f38 !important; white-space: nowrap !important; }
+
           /* ── FOOTER ─────────────────────────────────────────────── */
           .pdf-footer { position: fixed !important; bottom: 16px !important; left: 40px !important; right: 40px !important; display: flex !important; justify-content: space-between !important; font-size: 9px !important; color: #9ca3af !important; border-top: 1px solid #f3f4f6 !important; padding-top: 8px !important; }
+
+          /* ── MSR LOGO ───────────────────────────────────────────── */
+          .pdf-logo-msr { font-size: 15px !important; font-weight: 900 !important; letter-spacing: 1px !important; color: white !important; font-family: 'Segoe UI', Arial, sans-serif !important; }
+          .pdf-logo-msr-sm { font-size: 11px !important; font-weight: 900 !important; letter-spacing: 1px !important; color: white !important; font-family: 'Segoe UI', Arial, sans-serif !important; }
         }
       `}</style>
 
@@ -1271,7 +1350,7 @@ export default function MealPlanner() {
           <span className="font-bold text-lg">MSR Nutrition Planner</span>
         </div>
         <div className="flex gap-1">
-          {([["planner", <UtensilsCrossed size={16} />, "Planner"], ["calculator", <Calculator size={16} />, "Calc"], ["clients", <Users size={16} />, "Clients"]] as const).map(([t, icon, label]) => (
+          {([["planner", <UtensilsCrossed size={16} />, "Planner"], ["calculator", <Calculator size={16} />, "Calc"], ["clients", <Users size={16} />, "Clients"], ["micros", <BarChart2 size={16} />, "Micros"]] as const).map(([t, icon, label]) => (
             <button key={t} onClick={() => setTab(t as typeof tab)}
               className={cn("flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors", tab === t ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700")}>
               {icon}{label}
@@ -1298,7 +1377,7 @@ export default function MealPlanner() {
                   <div className="pdf-cover hidden print:flex">
                     <div className="pdf-cover-accent" />
                     <div className="flex justify-between items-start">
-                      <div className="pdf-cover-logo">M</div>
+                      <div className="pdf-cover-logo"><span className="pdf-logo-msr">MSR</span></div>
                       <div className="pdf-cover-issued"><div>ISSUED</div><div>{dateFormatted}</div></div>
                     </div>
                     <div className="pdf-cover-spacer" />
@@ -1320,7 +1399,7 @@ export default function MealPlanner() {
                   <div className="hidden print:block">
                     <div className="pdf-page-header">
                       <div className="pdf-page-header-logo">
-                        <div className="pdf-page-header-logo-icon">M</div>
+                        <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
                         <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
                       </div>
                       <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
@@ -1355,7 +1434,7 @@ export default function MealPlanner() {
                   <div className="hidden print:block" style={{pageBreakBefore:"always"}}>
                     <div className="pdf-page-header">
                       <div className="pdf-page-header-logo">
-                        <div className="pdf-page-header-logo-icon">M</div>
+                        <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
                         <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
                       </div>
                       <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
@@ -1413,7 +1492,7 @@ export default function MealPlanner() {
                       <div className="pdf-health hidden print:block">
                         <div className="pdf-page-header">
                           <div className="pdf-page-header-logo">
-                            <div className="pdf-page-header-logo-icon">M</div>
+                            <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
                             <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
                           </div>
                           <div className="pdf-page-header-right">Health Profile &nbsp;·&nbsp; <span>{planClientName}</span></div>
@@ -1457,6 +1536,83 @@ export default function MealPlanner() {
                       </div>
                     );
                   })()}
+
+                  {/* GUIDELINES PAGE */}
+                  <div className="pdf-guidelines hidden print:block">
+                    <div className="pdf-page-header">
+                      <div className="pdf-page-header-logo">
+                        <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
+                        <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
+                      </div>
+                      <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                    </div>
+                    <div style={{marginTop:"32px", marginBottom:"24px"}}>
+                      <div style={{fontSize:"22px", fontWeight:900, color:"#0b1f38", letterSpacing:"-0.5px"}}>Plan Guidelines</div>
+                      <div style={{fontSize:"12px", color:"#6b7280", marginTop:"4px"}}>Follow these instructions for the best results.</div>
+                    </div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">01</div><div className="pdf-guideline-text">Weigh foods raw unless the plan says cooked.</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">02</div><div className="pdf-guideline-text">Drink at least {planWaterGoal}L of water daily.</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">03</div><div className="pdf-guideline-text">Swap within the same meal option only, never across meals.</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">04</div><div className="pdf-guideline-text">Season freely with herbs and spices; count sauces and oils.</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">05</div><div className="pdf-guideline-text">Weigh yourself every morning on an empty stomach, after using the bathroom, wearing minimum light clothing.</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">06</div><div className="pdf-guideline-text">Take photos of your meals when in doubt about portions.</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">07</div><div className="pdf-guideline-text">Contact your coach if you feel unwell or cannot follow the plan.</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">08</div><div className="pdf-guideline-text">Consistency beats perfection — never skip more than one meal.</div></div>
+                  </div>
+
+                  {/* SHOPPING LIST PAGE */}
+                  {(() => {
+                    const allFoodsDB = [...FOOD_DATABASE, ...customFoods];
+                    const shoppingMap: Record<string, { name: string; category: string; grams: number }> = {};
+                    meals.forEach(meal => {
+                      meal.items.forEach(item => {
+                        const fd = allFoodsDB.find(f => f.id === item.id);
+                        const cat = fd?.category || "Other";
+                        const key = item.id + "_" + item.name;
+                        if (!shoppingMap[key]) shoppingMap[key] = { name: item.name, category: cat, grams: 0 };
+                        shoppingMap[key].grams += item.grams;
+                      });
+                    });
+                    const items = Object.values(shoppingMap);
+                    if (items.length === 0) return null;
+                    const byCategory: Record<string, typeof items> = {};
+                    items.forEach(it => { if (!byCategory[it.category]) byCategory[it.category] = []; byCategory[it.category].push(it); });
+                    const cats = Object.keys(byCategory).sort();
+                    return (
+                      <div className="pdf-shopping hidden print:block">
+                        <div className="pdf-page-header">
+                          <div className="pdf-page-header-logo">
+                            <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
+                            <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
+                          </div>
+                          <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                        </div>
+                        <div style={{marginTop:"32px", marginBottom:"8px"}}>
+                          <div style={{fontSize:"22px", fontWeight:900, color:"#0b1f38", letterSpacing:"-0.5px"}}>Shopping List</div>
+                          <div style={{fontSize:"12px", color:"#6b7280", marginTop:"4px"}}>Estimated for 7 days.</div>
+                        </div>
+                        <div className="pdf-shopping-grid">
+                          {cats.map(cat => (
+                            <div key={cat} className="pdf-shopping-cat">
+                              <div className="pdf-shopping-cat-title">{cat}</div>
+                              {byCategory[cat].map((it, idx) => {
+                                const nameParts = it.name.split(" - ");
+                                const enName = nameParts[0];
+                                const weekly = Math.round(it.grams * 7);
+                                return (
+                                  <div key={idx} className="pdf-shopping-item">
+                                    <div className="pdf-shopping-check" />
+                                    <div className="pdf-shopping-name">{enName}</div>
+                                    <div className="pdf-shopping-qty">{weekly}g</div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </>
               );
             })()}
@@ -1468,19 +1624,19 @@ export default function MealPlanner() {
                 <div><label className="text-xs text-gray-500">اسم العميل</label><input value={planClientName} onChange={e => setPlanClientName(e.target.value)} placeholder="سارة عماد..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div><label className="text-xs text-gray-500">الهدف</label><input value={planGoal} onChange={e => setPlanGoal(e.target.value)} placeholder="تنشيف..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div><label className="text-xs text-gray-500">التاريخ</label><input type="date" value={planDate} onChange={e => setPlanDate(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
-                <div><label className="text-xs text-gray-500">هدف الماء (لتر)</label><input type="number" step="0.5" value={planWaterGoal} onChange={e => setPlanWaterGoal(+e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+                <div><label className="text-xs text-gray-500">هدف الماء (لتر)</label><input type="number" step="0.5" min="0" value={planWaterGoal} onChange={e => setPlanWaterGoal(+e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div><label className="text-xs text-gray-500">اسم الكوتش</label><input value={coachName} onChange={e => setCoachName(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div><label className="text-xs text-gray-500">رقم التواصل</label><input value={coachPhone} onChange={e => setCoachPhone(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
               </div>
             </div>
 
             {/* target macros */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3 print:shadow-none">
-              <div className="flex items-center justify-between print:hidden">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3 print:hidden">
+              <div className="flex items-center justify-between">
                 <h2 className="font-bold text-base">Target Macros - الماكرو المستهدف</h2>
                 <MacroPieChart carbs={targetMacros.carbs} protein={targetMacros.protein} fat={targetMacros.fat} />
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 print:hidden">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 {(["calories", "protein", "carbs", "fat"] as const).map(k => (
                   <div key={k}>
                     <label className="text-xs text-gray-500 capitalize">{k}</label>
@@ -1495,10 +1651,51 @@ export default function MealPlanner() {
                 <div><div className="flex justify-between text-xs mb-0.5"><span>Protein</span><span>{totals.protein.toFixed(1)}g / {targetMacros.protein}g</span></div><ProgressBar value={totals.protein} max={targetMacros.protein} color="bg-blue-500" /></div>
                 <div><div className="flex justify-between text-xs mb-0.5"><span>Carbs</span><span>{totals.carbs.toFixed(1)}g / {targetMacros.carbs}g</span></div><ProgressBar value={totals.carbs} max={targetMacros.carbs} color="bg-yellow-500" /></div>
                 <div><div className="flex justify-between text-xs mb-0.5"><span>Fat</span><span>{totals.fat.toFixed(1)}g / {targetMacros.fat}g</span></div><ProgressBar value={totals.fat} max={targetMacros.fat} color="bg-red-500" /></div>
+                <div>
+                  <div className="flex justify-between text-xs mb-0.5">
+                    <span>🌾 Fiber</span>
+                    <span>{planTracking.fiber.toFixed(1)}g / 25g recommended</span>
+                  </div>
+                  <ProgressBar value={planTracking.fiber} max={25} color="bg-green-500" />
+                </div>
+                {(() => {
+                  const satFatLimit = targetMacros.calories > 0 ? (targetMacros.calories * 0.1) / 9 : 22;
+                  const satPct = satFatLimit > 0 ? planTracking.saturatedFat / satFatLimit * 100 : 0;
+                  return (
+                    <div>
+                      <div className="flex justify-between text-xs mb-0.5">
+                        <span>🧈 Saturated Fat</span>
+                        <span>{planTracking.saturatedFat.toFixed(1)}g / {satFatLimit.toFixed(0)}g limit</span>
+                      </div>
+                      <ProgressBar value={planTracking.saturatedFat} max={satFatLimit} color={satPct > 100 ? "bg-red-500" : satPct > 80 ? "bg-orange-400" : "bg-amber-400"} />
+                      {satPct > 100 && <div className="text-xs text-red-500 mt-0.5">⚠️ High saturated fat — consider reducing for heart health</div>}
+                    </div>
+                  );
+                })()}
+                {(() => {
+                  const ratio = planTracking.omega3 > 0 ? planTracking.omega6 / planTracking.omega3 : null;
+                  const ratioColor = ratio === null ? "text-gray-400" : ratio <= 4 ? "text-green-600" : ratio <= 10 ? "text-yellow-600" : "text-red-500";
+                  return (
+                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs">🐟 Omega-3 : Omega-6</span>
+                        <span className={`text-xs font-bold ${ratioColor}`}>
+                          {ratio === null ? "— no data" : `1 : ${ratio.toFixed(1)}`}
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-400 mt-0.5">
+                        ω-3: {planTracking.omega3.toFixed(2)}g · ω-6: {planTracking.omega6.toFixed(2)}g · Aim for 1:1 to 1:4
+                      </div>
+                      {ratio !== null && ratio > 10 && <div className="text-xs text-red-500 mt-0.5">⚠️ Very high omega-6 ratio — increase omega-3 sources</div>}
+                      {ratio !== null && ratio > 4 && ratio <= 10 && <div className="text-xs text-yellow-600 mt-0.5">Consider adding more omega-3 sources (salmon, sardines, flaxseed)</div>}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
 
-            {/* meals */}
+            {/* meals — interactive (hidden in print; PDF version is in the print-only section above) */}
+            <div className="print:hidden">
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleMealDragEnd}>
               <SortableContext items={meals.map(m => m.id)} strategy={verticalListSortingStrategy}>
                 <div className="space-y-3">
@@ -1522,6 +1719,7 @@ export default function MealPlanner() {
                 </div>
               </SortableContext>
             </DndContext>
+            </div>
 
             <div className="flex gap-2 print:hidden">
               <button onClick={addMeal} className="flex-1 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl py-3 text-sm text-gray-500 hover:border-blue-400 hover:text-blue-500 flex items-center justify-center gap-2">
@@ -1594,7 +1792,7 @@ export default function MealPlanner() {
               </div>
               {/* save template */}
               <div className="flex gap-2">
-                <input value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="Template name..." className="flex-1 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-sm bg-white dark:bg-gray-800" />
+                <input dir="ltr" value={templateName} onChange={e => setTemplateName(e.target.value)} placeholder="Template name..." className="flex-1 border border-gray-300 dark:border-gray-600 rounded-xl px-3 py-1.5 text-sm bg-white dark:bg-gray-800" />
                 <button onClick={saveTemplate} className="flex items-center gap-1 px-3 py-1.5 bg-blue-600 text-white rounded-xl text-sm hover:bg-blue-700"><Save size={14} /> Save</button>
               </div>
               {/* templates */}
@@ -1999,6 +2197,119 @@ export default function MealPlanner() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+        {tab === "micros" && (
+          <div className="space-y-4">
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
+              <h2 className="font-bold text-base mb-3 flex items-center gap-2">
+                <BarChart2 size={18} className="text-purple-500" />
+                Micronutrient Tracker
+              </h2>
+              <p className="text-xs text-gray-400 mb-3">Based on current planner meals. Select a client for their RDI targets.</p>
+
+              {/* Client selector */}
+              <div className="mb-4">
+                <label className="text-xs text-gray-500">Client RDI Profile</label>
+                <select
+                  value={microsClientId ?? ""}
+                  onChange={e => setMicrosClientId(e.target.value ? +e.target.value : null)}
+                  className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1"
+                >
+                  <option value="">— Use default (adult male) —</option>
+                  {clients.map(c => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+
+              {(() => {
+                const clientForMicros = clients.find(c => c.id === microsClientId) || null;
+                const rdi = getRDI(clientForMicros ?? { gender: "male", age: 30, isTraining: true, isPregnant: false, pregnancyMonth: 0, isLactating: false });
+                const clientOverrides = microOverrides[clientForMicros?.id ?? -1] || {};
+
+                // Build planMicros AND microSources from current meals
+                const planMicros: Record<string, number> = {};
+                const microSources: Record<string, { name: string; amount: number; unit: string }[]> = {};
+
+                meals.forEach(meal => {
+                  meal.items.forEach(item => {
+                    const fd = allFoodsForTracking.find(f => f.id === item.id);
+                    if (!fd || !fd.micros) return;
+                    const mult = isPerPiece(fd.state) ? item.grams : item.grams / 100;
+                    Object.entries(fd.micros).forEach(([key, val]) => {
+                      const contributed = (val as number) * mult;
+                      planMicros[key] = (planMicros[key] || 0) + contributed;
+                      if (!microSources[key]) microSources[key] = [];
+                      const existing = microSources[key].find(s => s.name === fd.name);
+                      if (existing) {
+                        existing.amount += contributed;
+                      } else {
+                        microSources[key].push({ name: fd.name, amount: contributed, unit: "" });
+                      }
+                    });
+                  });
+                });
+
+                const totalMicros: Record<string, number> = { ...planMicros };
+                Object.entries(clientOverrides).forEach(([k, v]) => {
+                  totalMicros[k] = (totalMicros[k] || 0) + (v as number);
+                });
+
+                return (
+                  <div className="space-y-6">
+                    {(["Vitamins", "Minerals", "Fatty Acids"] as const).map(cat => (
+                      <div key={cat}>
+                        <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-3">{cat}</div>
+                        <div className="space-y-3">
+                          {MICROS_LIST.filter(m => m.category === cat).map(micro => {
+                            const got = totalMicros[micro.key] || 0;
+                            const target = rdi[micro.key] || 0;
+                            const pct = target > 0 ? Math.min((got / target) * 100, 100) : 0;
+                            const color = pct >= 100 ? "#0d7a5f" : pct >= 50 ? "#f59e0b" : "#ef4444";
+                            const sources = (microSources[micro.key] || [])
+                              .filter(s => s.amount > 0.01)
+                              .sort((a, b) => b.amount - a.amount)
+                              .slice(0, 4);
+                            const manualVal = clientOverrides[micro.key] || "";
+                            return (
+                              <div key={micro.key} className="bg-gray-50 dark:bg-gray-800 rounded-xl p-3">
+                                <div className="flex items-center gap-2 mb-1.5">
+                                  <div className="w-28 text-xs font-medium text-gray-700 dark:text-gray-200 shrink-0 truncate" title={micro.name}>{micro.name}</div>
+                                  <div className="flex-1 bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
+                                    <div className="h-2 rounded-full transition-all" style={{ width: `${pct}%`, background: color }} />
+                                  </div>
+                                  <div className="text-xs w-24 text-right shrink-0 font-medium" style={{ color }}>
+                                    {got.toFixed(1)} / {target} {micro.unit}
+                                  </div>
+                                  <input
+                                    type="number" min="0" step="any"
+                                    value={manualVal}
+                                    placeholder="+add"
+                                    onChange={e => { const cid = clientForMicros?.id ?? -1; setMicroOverrides(prev => ({ ...prev, [cid]: { ...(prev[cid] || {}), [micro.key]: +e.target.value || 0 } })); }}
+                                    className="w-16 text-xs border border-gray-200 dark:border-gray-600 rounded px-1.5 py-0.5 bg-white dark:bg-gray-700 text-center"
+                                  />
+                                </div>
+                                {sources.length > 0 && (
+                                  <div className="flex flex-wrap gap-1 mt-1 pl-28">
+                                    {sources.map((s, i) => (
+                                      <span key={i} className="text-xs bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded px-1.5 py-0.5 text-gray-500 dark:text-gray-400">
+                                        {s.name.split(" - ")[0]} · {s.amount.toFixed(1)}{micro.unit}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                    <p className="text-xs text-gray-400">💡 "+add" to manually log supplements or unlisted foods.</p>
+                  </div>
+                );
+              })()}
+            </div>
           </div>
         )}
       </main>
