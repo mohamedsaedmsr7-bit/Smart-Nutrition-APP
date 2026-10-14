@@ -150,7 +150,7 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 905, name: "BCAA - أحماض أمينية", category: "Supplements", state: "per 10g", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 906, name: "Creatine - كرياتين", category: "Supplements", state: "per 5g", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 907, name: "Pre-Workout - ما قبل التمرين", category: "Supplements", state: "per serving", carbs: 5, protein: 0, fat: 0, calories: 20 },
-  { id: 908, name: "Omega-3 - أوميغا 3", category: "Supplements", state: "per 2 capsules", carbs: 0, protein: 0, fat: 2, calories: 18 },
+  { id: 908, name: "Omega-3 - أوميغا 3", category: "Supplements", state: "per capsule", carbs: 0, protein: 0, fat: 1, calories: 9, micros: { omega3: 0.3 } },
   { id: 920, name: "Peak Man Multivitamin - بيك مان", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 921, name: "Centrum Multivitamin - سنتروم", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 922, name: "Vitastress - فيتاستريس", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
@@ -397,8 +397,26 @@ function isPerPiece(state: string) {
     state === "per serving" || state.startsWith("per serving") ||
     state === "per tablet" || state.startsWith("per tablet") ||
     state.startsWith("per cup") || state.startsWith("per shot") ||
-    state.startsWith("per packet") || state.startsWith("per teaspoon") ||
-    state.startsWith("per scoop");
+    state.startsWith("per packet") || state.startsWith("per bag") ||
+    state.startsWith("per teaspoon") || state.startsWith("per scoop") ||
+    state.startsWith("per capsule") || state.startsWith("per sachet");
+}
+
+/** Returns a short unit label and sensible quick-pick values for a food state string */
+function getUnitInfo(state: string): { label: string; picks: number[] } {
+  if (state.startsWith("per cup"))      return { label: "cup",    picks: [1, 2, 3, 4] };
+  if (state.startsWith("per shot"))     return { label: "shot",   picks: [1, 2, 3, 4] };
+  if (state.startsWith("per serving"))  return { label: "srv",    picks: [1, 2, 3, 4] };
+  if (state.startsWith("per tablet"))   return { label: "tab",    picks: [1, 2, 3, 4] };
+  if (state.startsWith("per capsule"))  return { label: "cap",    picks: [1, 2, 3, 4] };
+  if (state.startsWith("per packet"))   return { label: "pkt",    picks: [1, 2, 3, 4] };
+  if (state.startsWith("per bag"))      return { label: "bag",    picks: [1, 2, 3, 4] };
+  if (state.startsWith("per sachet"))   return { label: "sachet", picks: [1, 2, 3, 4] };
+  if (state.startsWith("per teaspoon")) return { label: "tsp",    picks: [1, 2, 3, 4] };
+  if (state.startsWith("per scoop"))    return { label: "scoop",  picks: [1, 2, 3, 4] };
+  if (state.startsWith("per piece"))    return { label: "×",      picks: [1, 2, 3, 4] };
+  if (state.includes("100ml"))          return { label: "ml",     picks: [50, 100, 150, 200] };
+  return { label: "g", picks: [50, 100, 150, 200] };
 }
 
 function calcMacros(item: FoodItem) {
@@ -526,23 +544,21 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
       <div className="flex flex-col items-end gap-1">
         <div className="flex items-center gap-1">
           <input
-            type="number" min="0" step={isPerPiece(item.state) ? "1" : "5"}
+            type="number" min="0" step={isPerPiece(item.state) ? "1" : item.state.includes("100ml") ? "10" : "5"}
             value={item.grams}
             onChange={e => onGramsChange(+e.target.value)}
             className="w-14 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 px-1 py-0.5 text-xs"
           />
-          <span className="text-xs text-gray-500">{isPerPiece(item.state) ? "×" : item.state.includes("100ml") ? "ml" : "g"}</span>
+          <span className="text-xs text-gray-500">{getUnitInfo(item.state).label}</span>
         </div>
-        {!isPerPiece(item.state) && (
-          <div className="flex gap-0.5">
-            {[50, 100, 150, 200].map(g => (
-              <button key={g} onClick={() => onGramsChange(g)}
-                className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${item.grams === g ? "bg-teal-600 text-white border-teal-600" : "border-gray-300 dark:border-gray-600 text-gray-500 hover:border-teal-500 hover:text-teal-600"}`}>
-                {g}
-              </button>
-            ))}
-          </div>
-        )}
+        <div className="flex gap-0.5">
+          {getUnitInfo(item.state).picks.map(g => (
+            <button key={g} onClick={() => onGramsChange(g)}
+              className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${item.grams === g ? "bg-teal-600 text-white border-teal-600" : "border-gray-300 dark:border-gray-600 text-gray-500 hover:border-teal-500 hover:text-teal-600"}`}>
+              {g}
+            </button>
+          ))}
+        </div>
       </div>
       <button onClick={onRemove} className="text-red-400 hover:text-red-600 self-start mt-1"><Trash2 size={14} /></button>
     </div>
@@ -1462,9 +1478,14 @@ export default function MealPlanner() {
                             const enName = nameParts[0];
                             const arName = nameParts[1] || "";
                             const amt = isPerPiece(item.state) ? `${item.grams} ${item.grams === 1 ? "pc" : "pcs"}` : `${item.grams} g`;
+                            const showEn = printLang === "en" || printLang === "both";
+                            const showAr = printLang === "ar" || printLang === "both";
                             return (
                               <div key={item.instId} className="pdf-food-item">
-                                <div><div className="pdf-food-en">{enName}</div>{arName && <div className="pdf-food-ar">{arName}</div>}</div>
+                                <div>
+                                  {showEn && <div className="pdf-food-en">{enName}</div>}
+                                  {showAr && arName && <div className={showEn ? "pdf-food-ar" : "pdf-food-en"} style={showEn ? {} : {fontFamily:"'Noto Sans Arabic',sans-serif", direction:"rtl"}}>{arName}</div>}
+                                </div>
                                 <div className="pdf-food-amt">{amt}</div>
                               </div>
                             );
