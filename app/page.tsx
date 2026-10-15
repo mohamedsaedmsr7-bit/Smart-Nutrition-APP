@@ -987,6 +987,7 @@ export default function MealPlanner() {
   const [microsClientId, setMicrosClientId] = useState<number | null>(null);
   const [lang, setLang] = useState<"ar" | "en" | "both">("both");
   const [printLang, setPrintLang] = useState<"ar" | "en" | "both">("en");
+  const [showMealsInPdf, setShowMealsInPdf] = useState(false);
   const [copyLang, setCopyLang] = useState<"ar" | "en" | "both">("both");
   const [meals, setMeals] = useState<Meal[]>([{ id: "m1", name: "Meal 1 - وجبة 1", notes: "", items: [] }]);
   const [targetMacros, setTargetMacros] = useState<TargetMacros>({ calories: 2000, protein: 150, carbs: 200, fat: 65 });
@@ -1387,6 +1388,19 @@ export default function MealPlanner() {
               const gt = grandTotals(meals);
               const dateFormatted = new Date(planDate).toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" }).toUpperCase();
               const calPct = gt.calories > 0 ? { p: Math.round(gt.protein*4/gt.calories*100), c: Math.round(gt.carbs*4/gt.calories*100), f: Math.round(gt.fat*9/gt.calories*100) } : { p:0,c:0,f:0 };
+              // PDF label translation helper
+              const pdfAr = printLang === "ar";
+              const pdfBoth = printLang === "both";
+              function pdfT(en: string, ar: string) {
+                if (pdfAr) return ar;
+                if (pdfBoth) return `${en} · ${ar}`;
+                return en;
+              }
+              function pdfLabel(en: string, ar: string) {
+                if (pdfAr) return <span style={{fontFamily:"'Noto Sans Arabic',sans-serif"}}>{ar}</span>;
+                if (pdfBoth) return <>{en} · <span style={{fontFamily:"'Noto Sans Arabic',sans-serif"}}>{ar}</span></>;
+                return <>{en}</>;
+              }
               return (
                 <>
                   {/* COVER */}
@@ -1394,18 +1408,18 @@ export default function MealPlanner() {
                     <div className="pdf-cover-accent" />
                     <div className="flex justify-between items-start">
                       <div className="pdf-cover-logo"><span className="pdf-logo-msr">MSR</span></div>
-                      <div className="pdf-cover-issued"><div>ISSUED</div><div>{dateFormatted}</div></div>
+                      <div className="pdf-cover-issued"><div>{pdfT("ISSUED","صادر")}</div><div>{dateFormatted}</div></div>
                     </div>
                     <div className="pdf-cover-spacer" />
                     <div>
                       <div className="pdf-cover-brand">MSR Coach Mohamed Saed</div>
-                      <div className="pdf-cover-title">Nutrition<br/>Plan</div>
-                      {planClientName && <><div className="pdf-cover-prepared">Prepared for</div><div className="pdf-cover-client">{planClientName}</div></>}
+                      <div className="pdf-cover-title">{pdfAr ? <span style={{fontFamily:"'Noto Sans Arabic',sans-serif"}}>خطة<br/>التغذية</span> : <>Nutrition<br/>Plan</>}</div>
+                      {planClientName && <><div className="pdf-cover-prepared">{pdfT("Prepared for","أُعدَّت لـ")}</div><div className="pdf-cover-client">{planClientName}</div></>}
                       <div className="pdf-cover-stats">
                         <div className="pdf-cover-stat"><div className="pdf-cover-stat-val">{gt.calories.toFixed(0)}</div><div className="pdf-cover-stat-lbl">KCAL</div></div>
-                        <div className="pdf-cover-stat"><div className="pdf-cover-stat-val">{gt.protein.toFixed(0)}g</div><div className="pdf-cover-stat-lbl">PROTEIN</div></div>
-                        <div className="pdf-cover-stat"><div className="pdf-cover-stat-val">{meals.length}</div><div className="pdf-cover-stat-lbl">MEALS</div></div>
-                        {planGoal && <div className="pdf-cover-stat"><div className="pdf-cover-stat-val" style={{fontSize:"18px"}}>{planGoal}</div><div className="pdf-cover-stat-lbl">GOAL</div></div>}
+                        <div className="pdf-cover-stat"><div className="pdf-cover-stat-val">{gt.protein.toFixed(0)}g</div><div className="pdf-cover-stat-lbl">{pdfT("PROTEIN","بروتين")}</div></div>
+                        <div className="pdf-cover-stat"><div className="pdf-cover-stat-val">{meals.length}</div><div className="pdf-cover-stat-lbl">{pdfT("MEALS","وجبات")}</div></div>
+                        {planGoal && <div className="pdf-cover-stat"><div className="pdf-cover-stat-val" style={{fontSize:"18px"}}>{planGoal}</div><div className="pdf-cover-stat-lbl">{pdfT("GOAL","الهدف")}</div></div>}
                       </div>
                       <div className="pdf-cover-powered">MSR Nutrition Planner · {coachPhone}</div>
                     </div>
@@ -1418,12 +1432,12 @@ export default function MealPlanner() {
                         <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
                         <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
                       </div>
-                      <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                      <div className="pdf-page-header-right">{pdfT("Nutrition Plan","خطة التغذية")} &nbsp;·&nbsp; <span>{planClientName}</span></div>
                     </div>
                     <div className="pdf-summary">
-                      <div className="pdf-section-label">Daily Targets</div>
-                      <div className="pdf-section-title">Nutrition Plan</div>
-                      <div className="pdf-subtitle-text">Your meals are built around your goal and your lifestyle. Follow the portions as closely as you can, and message your coach whenever something doesn't fit your day.</div>
+                      <div className="pdf-section-label">{pdfLabel("Daily Targets","الأهداف اليومية")}</div>
+                      <div className="pdf-section-title">{pdfLabel("Nutrition Plan","خطة التغذية")}</div>
+                      <div className="pdf-subtitle-text">{pdfLabel("Your meals are built around your goal and your lifestyle. Follow the portions as closely as you can, and message your coach whenever something doesn't fit your day.","وجباتك مبنية على هدفك وأسلوب حياتك. اتبع الكميات قدر الإمكان، وتواصل مع كوتشك عند أي صعوبة.")}</div>
                       <div style={{display:"flex", gap:"40px", alignItems:"flex-start"}}>
                         <div style={{flex:"0 0 auto"}}>
                           <MacroPieChart carbs={gt.carbs} protein={gt.protein} fat={gt.fat} />
@@ -1431,15 +1445,15 @@ export default function MealPlanner() {
                           <div style={{textAlign:"center", fontSize:"10px", letterSpacing:"2px", color:"#9ca3af"}}>KCAL</div>
                         </div>
                         <div style={{flex:1}}>
-                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#3b82f6"}} /><div className="pdf-macro-label">Protein</div><div className="pdf-macro-val">{gt.protein.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.p}%</div></div>
-                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#0d7a5f"}} /><div className="pdf-macro-label">Carbs</div><div className="pdf-macro-val">{gt.carbs.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.c}%</div></div>
-                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#6b7280"}} /><div className="pdf-macro-label">Fat</div><div className="pdf-macro-val">{gt.fat.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.f}%</div></div>
-                          <div style={{fontSize:"10px", color:"#9ca3af", marginTop:"10px"}}>Daily total · {planWaterGoal}L water daily</div>
+                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#3b82f6"}} /><div className="pdf-macro-label">{pdfLabel("Protein","بروتين")}</div><div className="pdf-macro-val">{gt.protein.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.p}%</div></div>
+                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#0d7a5f"}} /><div className="pdf-macro-label">{pdfLabel("Carbs","كربوهيدرات")}</div><div className="pdf-macro-val">{gt.carbs.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.c}%</div></div>
+                          <div className="pdf-macro-row"><div className="pdf-macro-dot" style={{background:"#6b7280"}} /><div className="pdf-macro-label">{pdfLabel("Fat","دهون")}</div><div className="pdf-macro-val">{gt.fat.toFixed(0)} g</div><div className="pdf-macro-pct">{calPct.f}%</div></div>
+                          <div style={{fontSize:"10px", color:"#9ca3af", marginTop:"10px"}}>{pdfLabel(`Daily total · ${planWaterGoal}L water daily`,`الإجمالي اليومي · ${planWaterGoal}ل ماء يومياً`)}</div>
                         </div>
                       </div>
                       {planNotes && (
                         <div className="pdf-coach-box">
-                          <div className="pdf-coach-box-label">From Your Coach</div>
+                          <div className="pdf-coach-box-label">{pdfLabel("From Your Coach","من كوتشك")}</div>
                           <div className="pdf-coach-box-text">{planNotes}</div>
                         </div>
                       )}
@@ -1447,21 +1461,21 @@ export default function MealPlanner() {
                   </div>
 
                   {/* MEALS PAGES */}
-                  <div className="hidden print:block" style={{pageBreakBefore:"always"}}>
+                  {showMealsInPdf && <div className="hidden print:block" style={{pageBreakBefore:"always"}}>
                     <div className="pdf-page-header">
                       <div className="pdf-page-header-logo">
                         <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
                         <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
                       </div>
-                      <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                      <div className="pdf-page-header-right">{pdfT("Nutrition Plan","خطة التغذية")} &nbsp;·&nbsp; <span>{planClientName}</span></div>
                     </div>
                     <div className="pdf-meals-header">
-                      <div className="pdf-meals-header-left"><div className="lbl">Meals</div><div className="ttl">Nutrition Plan</div></div>
+                      <div className="pdf-meals-header-left"><div className="lbl">{pdfT("Meals","الوجبات")}</div><div className="ttl">{pdfT("Nutrition Plan","خطة التغذية")}</div></div>
                       <div className="pdf-meals-header-stats">
                         <div className="pdf-meals-header-stat"><div className="val">{gt.calories.toFixed(0)}</div><div className="lbl">KCAL</div></div>
-                        <div className="pdf-meals-header-stat"><div className="val">{gt.protein.toFixed(0)}g</div><div className="lbl">PROTEIN</div></div>
-                        <div className="pdf-meals-header-stat"><div className="val">{gt.carbs.toFixed(0)}g</div><div className="lbl">CARBS</div></div>
-                        <div className="pdf-meals-header-stat"><div className="val">{gt.fat.toFixed(0)}g</div><div className="lbl">FAT</div></div>
+                        <div className="pdf-meals-header-stat"><div className="val">{gt.protein.toFixed(0)}g</div><div className="lbl">{pdfT("PROTEIN","بروتين")}</div></div>
+                        <div className="pdf-meals-header-stat"><div className="val">{gt.carbs.toFixed(0)}g</div><div className="lbl">{pdfT("CARBS","كارب")}</div></div>
+                        <div className="pdf-meals-header-stat"><div className="val">{gt.fat.toFixed(0)}g</div><div className="lbl">{pdfT("FAT","دهون")}</div></div>
                       </div>
                     </div>
                     {meals.map((meal, mi) => {
@@ -1477,7 +1491,8 @@ export default function MealPlanner() {
                             const nameParts = item.name.split(" - ");
                             const enName = nameParts[0];
                             const arName = nameParts[1] || "";
-                            const amt = isPerPiece(item.state) ? `${item.grams} ${item.grams === 1 ? "pc" : "pcs"}` : `${item.grams} g`;
+                            const { label: unitLbl } = getUnitInfo(item.state);
+                            const amt = isPerPiece(item.state) ? `${item.grams} ${unitLbl}` : `${item.grams} ${unitLbl}`;
                             const showEn = printLang === "en" || printLang === "both";
                             const showAr = printLang === "ar" || printLang === "both";
                             return (
@@ -1492,17 +1507,17 @@ export default function MealPlanner() {
                           })}
                           {meal.notes && <div className="pdf-meal-notes">📝 {meal.notes}</div>}
                           <div className="pdf-meal-macros">
-                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#3b82f6"}} /><span>Protein {mt.protein.toFixed(0)}g</span></div>
-                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#0d7a5f"}} /><span>Carbs {mt.carbs.toFixed(0)}g</span></div>
-                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#6b7280"}} /><span>Fat {mt.fat.toFixed(0)}g</span></div>
+                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#3b82f6"}} /><span>{pdfT("Protein","بروتين")} {mt.protein.toFixed(0)}g</span></div>
+                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#0d7a5f"}} /><span>{pdfT("Carbs","كارب")} {mt.carbs.toFixed(0)}g</span></div>
+                            <div className="pdf-meal-macro-pill"><div className="pdf-meal-macro-dot" style={{background:"#6b7280"}} /><span>{pdfT("Fat","دهون")} {mt.fat.toFixed(0)}g</span></div>
                           </div>
                         </div>
                       );
                     })}
                     <div style={{padding:"0 40px", fontSize:"9px", color:"#9ca3af", borderTop:"1px solid #f3f4f6", paddingTop:"12px", marginTop:"20px"}}>
-                      MSR Coach Mohamed Saed · {coachPhone} · Prepared exclusively for {planClientName}
+                      MSR Coach Mohamed Saed · {coachPhone} · {pdfT(`Prepared exclusively for ${planClientName}`,`أُعدَّت خصيصاً لـ ${planClientName}`)}
                     </div>
-                  </div>
+                  </div>}
 
                   {/* HEALTH INFO PAGE — only renders when client data exists */}
                   {(() => {
@@ -1565,20 +1580,20 @@ export default function MealPlanner() {
                         <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
                         <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
                       </div>
-                      <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                      <div className="pdf-page-header-right">{pdfT("Nutrition Plan","خطة التغذية")} &nbsp;·&nbsp; <span>{planClientName}</span></div>
                     </div>
                     <div style={{marginTop:"32px", marginBottom:"24px"}}>
-                      <div style={{fontSize:"22px", fontWeight:900, color:"#0b1f38", letterSpacing:"-0.5px"}}>Plan Guidelines</div>
-                      <div style={{fontSize:"12px", color:"#6b7280", marginTop:"4px"}}>Follow these instructions for the best results.</div>
+                      <div style={{fontSize:"22px", fontWeight:900, color:"#0b1f38", letterSpacing:"-0.5px"}}>{pdfLabel("Plan Guidelines","إرشادات الخطة")}</div>
+                      <div style={{fontSize:"12px", color:"#6b7280", marginTop:"4px"}}>{pdfLabel("Follow these instructions for the best results.","اتبع هذه التعليمات للحصول على أفضل النتائج.")}</div>
                     </div>
-                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">01</div><div className="pdf-guideline-text">Weigh foods raw unless the plan says cooked.</div></div>
-                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">02</div><div className="pdf-guideline-text">Drink at least {planWaterGoal}L of water daily.</div></div>
-                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">03</div><div className="pdf-guideline-text">Swap within the same meal option only, never across meals.</div></div>
-                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">04</div><div className="pdf-guideline-text">Season freely with herbs and spices; count sauces and oils.</div></div>
-                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">05</div><div className="pdf-guideline-text">Weigh yourself every morning on an empty stomach, after using the bathroom, wearing minimum light clothing.</div></div>
-                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">06</div><div className="pdf-guideline-text">Take photos of your meals when in doubt about portions.</div></div>
-                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">07</div><div className="pdf-guideline-text">Contact your coach if you feel unwell or cannot follow the plan.</div></div>
-                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">08</div><div className="pdf-guideline-text">Consistency beats perfection — never skip more than one meal.</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">01</div><div className="pdf-guideline-text">{pdfLabel("Weigh foods raw unless the plan says cooked.","زن الأكل نيئاً إلا إذا نص الخطة على الطهي.")}</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">02</div><div className="pdf-guideline-text">{pdfLabel(`Drink at least ${planWaterGoal}L of water daily.`,`اشرب على الأقل ${planWaterGoal} لتر ماء يومياً.`)}</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">03</div><div className="pdf-guideline-text">{pdfLabel("Swap within the same meal option only, never across meals.","استبدل داخل نفس الوجبة فقط، لا تنقل بين الوجبات.")}</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">04</div><div className="pdf-guideline-text">{pdfLabel("Season freely with herbs and spices; count sauces and oils.","تبّل بالأعشاب والتوابل بحرية، واحسب الصلصات والزيوت.")}</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">05</div><div className="pdf-guideline-text">{pdfLabel("Weigh yourself every morning on an empty stomach, after using the bathroom, wearing minimum light clothing.","زن نفسك كل صباح على معدة فارغة بعد الحمام وبأقل ملابس ممكنة.")}</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">06</div><div className="pdf-guideline-text">{pdfLabel("Take photos of your meals when in doubt about portions.","صوّر وجباتك عند الشك في الكميات.")}</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">07</div><div className="pdf-guideline-text">{pdfLabel("Contact your coach if you feel unwell or cannot follow the plan.","تواصل مع كوتشك إذا شعرت بعدم ارتياح أو تعذّر عليك الالتزام.")}</div></div>
+                    <div className="pdf-guideline-row"><div className="pdf-guideline-num">08</div><div className="pdf-guideline-text">{pdfLabel("Consistency beats perfection — never skip more than one meal.","الاستمرارية أهم من الكمال — لا تفوّت أكثر من وجبة واحدة.")}</div></div>
                   </div>
 
                   {/* SHOPPING LIST PAGE */}
@@ -1606,11 +1621,11 @@ export default function MealPlanner() {
                             <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
                             <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
                           </div>
-                          <div className="pdf-page-header-right">Nutrition Plan &nbsp;·&nbsp; <span>{planClientName}</span></div>
+                          <div className="pdf-page-header-right">{pdfT("Nutrition Plan","خطة التغذية")} &nbsp;·&nbsp; <span>{planClientName}</span></div>
                         </div>
                         <div style={{marginTop:"32px", marginBottom:"8px"}}>
-                          <div style={{fontSize:"22px", fontWeight:900, color:"#0b1f38", letterSpacing:"-0.5px"}}>Shopping List</div>
-                          <div style={{fontSize:"12px", color:"#6b7280", marginTop:"4px"}}>Estimated for 7 days.</div>
+                          <div style={{fontSize:"22px", fontWeight:900, color:"#0b1f38", letterSpacing:"-0.5px"}}>{pdfLabel("Shopping List","قائمة التسوق")}</div>
+                          <div style={{fontSize:"12px", color:"#6b7280", marginTop:"4px"}}>{pdfLabel("Estimated for 7 days.","تقدير لمدة ٧ أيام.")}</div>
                         </div>
                         <div className="pdf-shopping-grid">
                           {cats.map(cat => (
@@ -1619,11 +1634,13 @@ export default function MealPlanner() {
                               {byCategory[cat].map((it, idx) => {
                                 const nameParts = it.name.split(" - ");
                                 const enName = nameParts[0];
+                                const arName = nameParts[1] || "";
+                                const shName = pdfAr ? (arName || enName) : pdfBoth && arName ? `${enName} - ${arName}` : enName;
                                 const weekly = Math.round(it.grams * 7);
                                 return (
                                   <div key={idx} className="pdf-shopping-item">
                                     <div className="pdf-shopping-check" />
-                                    <div className="pdf-shopping-name">{enName}</div>
+                                    <div className="pdf-shopping-name" style={pdfAr ? {fontFamily:"'Noto Sans Arabic',sans-serif", direction:"rtl"} : {}}>{shName}</div>
                                     <div className="pdf-shopping-qty">{weekly}g</div>
                                   </div>
                                 );
@@ -1796,6 +1813,10 @@ export default function MealPlanner() {
                     <option value="en">English Only</option>
                     <option value="ar">Arabic Only - عربي فقط</option>
                   </select>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <input type="checkbox" id="showMealsInPdf" checked={showMealsInPdf} onChange={e => setShowMealsInPdf(e.target.checked)} className="rounded" />
+                  <label htmlFor="showMealsInPdf" className="text-xs text-gray-500 cursor-pointer">Include meal details page in PDF</label>
                 </div>
               </div>
               <div className="flex gap-2 flex-wrap">
