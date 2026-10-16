@@ -28,69 +28,77 @@ interface FoodEntry {
 
 const FOOD_DATABASE: FoodEntry[] = [
   // ── PROTEINS ──────────────────────────────────────────────────────────────
-  { id: 101, name: "Chicken Breast - صدر دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 31, fat: 3.6, calories: 165, micros: { vitB3: 13.4, vitB6: 1.0, vitB12: 0.3, vitB5: 1.5, phosphorus: 220, selenium: 22, zinc: 1.0, potassium: 340, iron: 0.7, magnesium: 29, saturatedFat: 1.0 } },
-  { id: 102, name: "Chicken Thigh - فخذ دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 10.9, calories: 209, micros: { vitB3: 6.3, vitB6: 0.6, vitB12: 0.3, phosphorus: 180, selenium: 18, zinc: 1.5, potassium: 280, iron: 1.2, magnesium: 24, saturatedFat: 3.0 } },
-  { id: 103, name: "Ground Beef (lean) - لحم مفروم", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 7, calories: 172, micros: { vitB12: 2.5, vitB3: 5.5, vitB6: 0.4, iron: 2.5, zinc: 5.4, phosphorus: 200, selenium: 18, potassium: 320, saturatedFat: 2.8 } },
-  { id: 104, name: "Beef Steak - ستيك لحم", category: "Protein", state: "per 100g", carbs: 0, protein: 27, fat: 8, calories: 180, micros: { vitB12: 2.5, vitB3: 6.2, vitB6: 0.5, iron: 2.2, zinc: 5.0, phosphorus: 210, selenium: 20, potassium: 330, saturatedFat: 3.2 } },
-  { id: 105, name: "Lamb - لحم ضاني", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 14, calories: 218, micros: { vitB12: 2.7, vitB3: 5.7, vitB6: 0.4, iron: 1.9, zinc: 4.2, phosphorus: 195, selenium: 15, potassium: 310, saturatedFat: 5.8 } },
-  { id: 106, name: "Tuna (canned in water) - تونة", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 1, calories: 116, micros: { vitB12: 2.5, vitB3: 13.3, vitB6: 0.9, vitD: 4.0, selenium: 80, phosphorus: 195, potassium: 290, magnesium: 31, iron: 1.3, saturatedFat: 0.2 } },
+  { id: 101, name: "Chicken Breast - صدر دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 31, fat: 3.6, calories: 165, micros: { vitB3: 13.4, vitB6: 1.0, vitB12: 0.3, vitB5: 1.5, phosphorus: 220, selenium: 22, zinc: 1.0, potassium: 340, iron: 0.7, magnesium: 29, saturatedFat: 1.0, omega3: 0.04, omega6: 0.65 } },
+  { id: 102, name: "Chicken Thigh - فخذ دجاج", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 10.9, calories: 209, micros: { vitB3: 6.3, vitB6: 0.6, vitB12: 0.3, phosphorus: 180, selenium: 18, zinc: 1.5, potassium: 280, iron: 1.2, magnesium: 24, saturatedFat: 3.0, omega3: 0.1, omega6: 2.0 } },
+  { id: 103, name: "Ground Beef (lean) - لحم مفروم", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 7, calories: 172, micros: { vitB12: 2.5, vitB3: 5.5, vitB6: 0.4, iron: 2.5, zinc: 5.4, phosphorus: 200, selenium: 18, potassium: 320, saturatedFat: 2.8, omega3: 0.03, omega6: 0.3 } },
+  { id: 104, name: "Beef Steak - ستيك لحم", category: "Protein", state: "per 100g", carbs: 0, protein: 27, fat: 8, calories: 180, micros: { vitB12: 2.5, vitB3: 6.2, vitB6: 0.5, iron: 2.2, zinc: 5.0, phosphorus: 210, selenium: 20, potassium: 330, saturatedFat: 3.2, omega3: 0.03, omega6: 0.25 } },
+  { id: 105, name: "Lamb - لحم ضاني", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 14, calories: 218, micros: { vitB12: 2.7, vitB3: 5.7, vitB6: 0.4, iron: 1.9, zinc: 4.2, phosphorus: 195, selenium: 15, potassium: 310, saturatedFat: 5.8, omega3: 0.25, omega6: 0.9 } },
+  { id: 106, name: "Tuna (canned in water) - تونة", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 1, calories: 116, micros: { vitB12: 2.5, vitB3: 13.3, vitB6: 0.9, vitD: 4.0, selenium: 80, phosphorus: 195, potassium: 290, magnesium: 31, iron: 1.3, saturatedFat: 0.2, omega3: 0.27, omega6: 0.03 } },
   { id: 107, name: "Salmon - سلمون", category: "Protein", state: "per 100g", carbs: 0, protein: 20, fat: 13, calories: 208, micros: { vitB12: 3.2, vitB3: 8.9, vitB6: 0.8, vitD: 11.1, selenium: 36, phosphorus: 240, potassium: 490, magnesium: 29, iron: 0.8, omega3: 2.3, saturatedFat: 3.2 } },
-  { id: 108, name: "Tilapia - بلطي", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 2.7, calories: 128, micros: { vitB12: 1.6, vitB3: 3.9, vitB6: 0.2, vitD: 1.2, selenium: 40, phosphorus: 185, potassium: 380, magnesium: 28, saturatedFat: 0.9 } },
-  { id: 109, name: "Shrimp - جمبري", category: "Protein", state: "per 100g", carbs: 0.9, protein: 24, fat: 0.3, calories: 99, micros: { vitB12: 1.1, vitB3: 2.6, selenium: 38, phosphorus: 205, iodine: 35, zinc: 1.3, iron: 2.4, potassium: 259, saturatedFat: 0.1 } },
-  { id: 110, name: "Turkey Breast - ديك رومي", category: "Protein", state: "per 100g", carbs: 0, protein: 29, fat: 1, calories: 135, micros: { vitB12: 1.1, vitB3: 11.8, vitB6: 0.9, selenium: 32, phosphorus: 240, potassium: 330, zinc: 2.0, magnesium: 28, saturatedFat: 0.3 } },
-  { id: 111, name: "Sardines - سردين", category: "Protein", state: "per 100g", carbs: 0, protein: 21, fat: 11, calories: 185, micros: { vitB12: 8.9, vitD: 4.8, vitB3: 5.2, calcium: 382, phosphorus: 490, selenium: 53, iron: 2.9, zinc: 1.3, potassium: 397, omega3: 1.4, saturatedFat: 2.5 } },
+  { id: 108, name: "Tilapia - بلطي", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 2.7, calories: 128, micros: { vitB12: 1.6, vitB3: 3.9, vitB6: 0.2, vitD: 1.2, selenium: 40, phosphorus: 185, potassium: 380, magnesium: 28, saturatedFat: 0.9, omega3: 0.2, omega6: 0.15 } },
+  { id: 109, name: "Shrimp - جمبري", category: "Protein", state: "per 100g", carbs: 0.9, protein: 24, fat: 0.3, calories: 99, micros: { vitB12: 1.1, vitB3: 2.6, selenium: 38, phosphorus: 205, iodine: 35, zinc: 1.3, iron: 2.4, potassium: 259, saturatedFat: 0.1, omega3: 0.27, omega6: 0.05 } },
+  { id: 110, name: "Turkey Breast - ديك رومي", category: "Protein", state: "per 100g", carbs: 0, protein: 29, fat: 1, calories: 135, micros: { vitB12: 1.1, vitB3: 11.8, vitB6: 0.9, selenium: 32, phosphorus: 240, potassium: 330, zinc: 2.0, magnesium: 28, saturatedFat: 0.3, omega3: 0.04, omega6: 0.3 } },
+  { id: 111, name: "Sardines - سردين", category: "Protein", state: "per 100g", carbs: 0, protein: 21, fat: 11, calories: 185, micros: { vitB12: 8.9, vitD: 4.8, vitB3: 5.2, calcium: 382, phosphorus: 490, selenium: 53, iron: 2.9, zinc: 1.3, potassium: 397, omega3: 1.4, saturatedFat: 2.5, omega6: 1.4 } },
+  { id: 112, name: "Mullet (Boori) - بوري", category: "Protein", state: "per 100g cooked", carbs: 0, protein: 25.6, fat: 4.9, calories: 150, micros: { vitB12: 1.5, vitB3: 6.5, selenium: 45, phosphorus: 260, potassium: 420, magnesium: 35, iron: 1.0, omega3: 0.5, omega6: 0.4, saturatedFat: 1.3 } },
+  { id: 113, name: "Mackerel - ماكريل", category: "Protein", state: "per 100g cooked", carbs: 0, protein: 24, fat: 18, calories: 260, micros: { vitB12: 19, vitD: 16, vitB3: 9.1, selenium: 51, phosphorus: 217, potassium: 520, magnesium: 97, iron: 1.6, calcium: 15, omega3: 3.0, omega6: 0.4, saturatedFat: 4.2 } },
   // ── EGGS ─────────────────────────────────────────────────────────────────
-  { id: 120, name: "Whole Egg - بيضة كاملة", category: "Eggs", state: "per 100g", carbs: 1.1, protein: 13, fat: 10, calories: 143, micros: { vitA: 149, vitD: 2.0, vitB12: 1.1, vitB2: 0.46, vitB7: 20, vitK: 0.3, selenium: 30, phosphorus: 198, zinc: 1.3, iron: 1.8, choline: 294, saturatedFat: 3.1 } },
+  { id: 120, name: "Whole Egg - بيضة كاملة", category: "Eggs", state: "per 100g", carbs: 1.1, protein: 13, fat: 10, calories: 143, micros: { vitA: 149, vitD: 2.0, vitB12: 1.1, vitB2: 0.46, vitB7: 20, vitK: 0.3, selenium: 30, phosphorus: 198, zinc: 1.3, iron: 1.8, choline: 294, saturatedFat: 3.1, omega3: 0.08, omega6: 1.15 } },
   { id: 121, name: "Egg White - بياض البيض", category: "Eggs", state: "per 100g", carbs: 0.7, protein: 11, fat: 0.2, calories: 52, micros: { vitB2: 0.44, selenium: 20, potassium: 163, magnesium: 11, saturatedFat: 0 } },
-  { id: 122, name: "Egg Yolk - صفار البيض", category: "Eggs", state: "per 100g", carbs: 3.6, protein: 16, fat: 27, calories: 322, micros: { vitA: 381, vitD: 5.4, vitB12: 2.5, vitB7: 53, vitK: 0.7, selenium: 56, phosphorus: 390, zinc: 2.5, iron: 2.7, saturatedFat: 9.6 } },
-  { id: 123, name: "Boiled Egg - بيضة مسلوقة", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6.3, fat: 5, calories: 72, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, vitB2: 0.23, vitB7: 10, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8, saturatedFat: 1.6 } },
-  { id: 124, name: "Fried Egg - بيضة مقلية", category: "Eggs", state: "per piece", carbs: 0.4, protein: 6.3, fat: 7, calories: 90, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8, saturatedFat: 2.0 } },
-  { id: 125, name: "Scrambled Egg - بيض مخفوق", category: "Eggs", state: "per piece", carbs: 1.4, protein: 6.8, fat: 7.5, calories: 102, micros: { vitA: 75, vitD: 1.0, vitB12: 0.6, selenium: 15, phosphorus: 100, zinc: 0.6, iron: 0.8, saturatedFat: 2.2 } },
+  { id: 122, name: "Egg Yolk - صفار البيض", category: "Eggs", state: "per 100g", carbs: 3.6, protein: 16, fat: 27, calories: 322, micros: { vitA: 381, vitD: 5.4, vitB12: 2.5, vitB7: 53, vitK: 0.7, selenium: 56, phosphorus: 390, zinc: 2.5, iron: 2.7, saturatedFat: 9.6, omega3: 0.2, omega6: 3.3 } },
+  { id: 123, name: "Boiled Egg - بيضة مسلوقة", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6.3, fat: 5, calories: 72, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, vitB2: 0.23, vitB7: 10, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8, saturatedFat: 1.6, omega3: 0.04, omega6: 0.55 } },
+  { id: 124, name: "Fried Egg - بيضة مقلية", category: "Eggs", state: "per piece", carbs: 0.4, protein: 6.3, fat: 7, calories: 90, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8, saturatedFat: 2.0, omega3: 0.04, omega6: 0.9 } },
+  { id: 125, name: "Scrambled Egg - بيض مخفوق", category: "Eggs", state: "per piece", carbs: 1.4, protein: 6.8, fat: 7.5, calories: 102, micros: { vitA: 75, vitD: 1.0, vitB12: 0.6, selenium: 15, phosphorus: 100, zinc: 0.6, iron: 0.8, saturatedFat: 2.2, omega3: 0.05, omega6: 0.8 } },
   { id: 126, name: "Egg White only - بياض بيضة", category: "Eggs", state: "per piece", carbs: 0.2, protein: 3.6, fat: 0.1, calories: 17, micros: { vitB2: 0.15, selenium: 7, potassium: 54, saturatedFat: 0 } },
-  { id: 127, name: "Raw Whole Egg - بيضة كاملة نية", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6, fat: 5, calories: 70, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, vitB2: 0.23, vitB7: 10, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8, saturatedFat: 1.6 } },
+  { id: 127, name: "Raw Whole Egg - بيضة كاملة نية", category: "Eggs", state: "per piece", carbs: 0.6, protein: 6, fat: 5, calories: 70, micros: { vitA: 74, vitD: 1.0, vitB12: 0.6, vitB2: 0.23, vitB7: 10, selenium: 15, phosphorus: 95, zinc: 0.6, iron: 0.8, saturatedFat: 1.6, omega3: 0.04, omega6: 0.55 } },
   // ── DAIRY ────────────────────────────────────────────────────────────────
-  { id: 201, name: "Low-Fat Yogurt - زبادي قليل الدسم", category: "Dairy", state: "per 100g", carbs: 7, protein: 5, fat: 1.5, calories: 61, micros: { calcium: 183, vitB12: 0.75, vitB2: 0.23, phosphorus: 144, potassium: 255, iodine: 25, selenium: 3, magnesium: 17, saturatedFat: 0.9 } },
-  { id: 202, name: "Full-Fat Yogurt - زبادي كامل الدسم", category: "Dairy", state: "per 100g", carbs: 4.7, protein: 3.5, fat: 3.3, calories: 61, micros: { calcium: 121, vitB12: 0.4, vitB2: 0.14, phosphorus: 94, potassium: 141, iodine: 20, magnesium: 11, saturatedFat: 2.1 } },
-  { id: 203, name: "Cottage Cheese - جبن قريش", category: "Dairy", state: "per 100g", carbs: 3.4, protein: 11, fat: 4, calories: 98, micros: { calcium: 83, vitB12: 0.43, vitB2: 0.16, phosphorus: 159, selenium: 10, sodium: 364, potassium: 104, saturatedFat: 1.7 } },
-  { id: 204, name: "Feta Cheese - جبن فيتا", category: "Dairy", state: "per 100g", carbs: 4, protein: 14, fat: 21, calories: 264, micros: { calcium: 493, saturatedFat: 14.9, sodium: 917 } },
-  { id: 205, name: "Cheddar Cheese - جبن شيدر", category: "Dairy", state: "per 100g", carbs: 1.3, protein: 25, fat: 33, calories: 402, micros: { calcium: 721, saturatedFat: 21.0, sodium: 621 } },
-  { id: 206, name: "Mozzarella - موزاريلا", category: "Dairy", state: "per 100g", carbs: 2.2, protein: 22, fat: 17, calories: 254, micros: { calcium: 505, saturatedFat: 11.0, sodium: 486 } },
-  { id: 207, name: "Cream Cheese - كريم تشيز", category: "Dairy", state: "per 100g", carbs: 4.1, protein: 6.2, fat: 34, calories: 350, micros: { saturatedFat: 20.0, calcium: 98 } },
-  { id: 208, name: "Butter - زبدة", category: "Dairy", state: "per 100g", carbs: 0.1, protein: 0.9, fat: 80, calories: 717, micros: { saturatedFat: 51.4 } },
-  { id: 209, name: "Labneh - لبنة", category: "Dairy", state: "per 100g", carbs: 4, protein: 7, fat: 5, calories: 89, micros: { calcium: 150, saturatedFat: 3.2 } },
-  { id: 210, name: "Whipping Cream - كريمة خفق", category: "Dairy", state: "per 100g", carbs: 3.6, protein: 2.5, fat: 36, calories: 340, micros: { saturatedFat: 23.0 } },
-  { id: 211, name: "Greek Yogurt (low-fat) - زبادي يوناني", category: "Dairy", state: "per 100g", carbs: 4, protein: 10, fat: 0.7, calories: 59, micros: { calcium: 110, vitB12: 0.75, saturatedFat: 0.4 } },
-  { id: 212, name: "Greek Yogurt (full-fat) - زبادي يوناني كامل", category: "Dairy", state: "per 100g", carbs: 3.6, protein: 9, fat: 5, calories: 97, micros: { calcium: 100, vitB12: 0.75, saturatedFat: 3.2 } },
-  { id: 213, name: "Rayeb Yogurt - رايب", category: "Dairy", state: "per 100g", carbs: 5, protein: 3.5, fat: 3, calories: 60, micros: { calcium: 118, saturatedFat: 1.9 } },
+  { id: 201, name: "Low-Fat Yogurt - زبادي قليل الدسم", category: "Dairy", state: "per 100g", carbs: 7, protein: 5, fat: 1.5, calories: 61, micros: { calcium: 183, vitB12: 0.75, vitB2: 0.23, phosphorus: 144, potassium: 255, iodine: 25, selenium: 3, magnesium: 17, saturatedFat: 0.9, omega3: 0.01, omega6: 0.03 } },
+  { id: 202, name: "Full-Fat Yogurt - زبادي كامل الدسم", category: "Dairy", state: "per 100g", carbs: 4.7, protein: 3.5, fat: 3.3, calories: 61, micros: { calcium: 121, vitB12: 0.4, vitB2: 0.14, phosphorus: 94, potassium: 141, iodine: 20, magnesium: 11, saturatedFat: 2.1, omega3: 0.03, omega6: 0.1 } },
+  { id: 203, name: "Cottage Cheese - جبن قريش", category: "Dairy", state: "per 100g", carbs: 3.4, protein: 11, fat: 4, calories: 98, micros: { calcium: 83, vitB12: 0.43, vitB2: 0.16, phosphorus: 159, selenium: 10, sodium: 364, potassium: 104, saturatedFat: 1.7, omega3: 0.02, omega6: 0.07 } },
+  { id: 204, name: "Feta Cheese - جبن فيتا", category: "Dairy", state: "per 100g", carbs: 4, protein: 14, fat: 21, calories: 264, micros: { calcium: 493, saturatedFat: 14.9, sodium: 917, omega3: 0.05, omega6: 0.5 } },
+  { id: 205, name: "Cheddar Cheese - جبن شيدر", category: "Dairy", state: "per 100g", carbs: 1.3, protein: 25, fat: 33, calories: 402, micros: { calcium: 721, saturatedFat: 21.0, sodium: 621, omega3: 0.3, omega6: 0.6 } },
+  { id: 206, name: "Mozzarella - موزاريلا", category: "Dairy", state: "per 100g", carbs: 2.2, protein: 22, fat: 17, calories: 254, micros: { calcium: 505, saturatedFat: 11.0, sodium: 486, omega3: 0.15, omega6: 0.4 } },
+  { id: 207, name: "Cream Cheese - كريم تشيز", category: "Dairy", state: "per 100g", carbs: 4.1, protein: 6.2, fat: 34, calories: 350, micros: { saturatedFat: 20.0, calcium: 98, omega3: 0.3, omega6: 1.1 } },
+  { id: 208, name: "Butter - زبدة", category: "Dairy", state: "per 100g", carbs: 0.1, protein: 0.9, fat: 80, calories: 717, micros: { saturatedFat: 51.4, omega3: 0.3, omega6: 2.7 } },
+  { id: 209, name: "Labneh - لبنة", category: "Dairy", state: "per 100g", carbs: 4, protein: 7, fat: 5, calories: 89, micros: { calcium: 150, saturatedFat: 3.2, omega3: 0.05, omega6: 0.15 } },
+  { id: 210, name: "Whipping Cream - كريمة خفق", category: "Dairy", state: "per 100g", carbs: 3.6, protein: 2.5, fat: 36, calories: 340, micros: { saturatedFat: 23.0, omega3: 0.2, omega6: 0.9 } },
+  { id: 211, name: "Greek Yogurt (low-fat) - زبادي يوناني", category: "Dairy", state: "per 100g", carbs: 4, protein: 10, fat: 0.7, calories: 59, micros: { calcium: 110, vitB12: 0.75, saturatedFat: 0.4, omega3: 0.01, omega6: 0.02 } },
+  { id: 212, name: "Greek Yogurt (full-fat) - زبادي يوناني كامل", category: "Dairy", state: "per 100g", carbs: 3.6, protein: 9, fat: 5, calories: 97, micros: { calcium: 100, vitB12: 0.75, saturatedFat: 3.2, omega3: 0.04, omega6: 0.12 } },
+  { id: 213, name: "Rayeb Yogurt - رايب", category: "Dairy", state: "per 100g", carbs: 5, protein: 3.5, fat: 3, calories: 60, micros: { calcium: 118, saturatedFat: 1.9, omega3: 0.03, omega6: 0.08 } },
+  { id: 214, name: "Light Cream Cheese - كريم تشيز لايت", category: "Dairy", state: "per 100g", carbs: 5, protein: 9, fat: 8, calories: 125, micros: { calcium: 100, sodium: 420, saturatedFat: 5.2, omega3: 0.1, omega6: 0.3 } },
+  { id: 215, name: "Low-Salt White Cheese (low-fat) - جبنة بيضاء قليلة الملح قليلة الدسم", category: "Dairy", state: "per 100g", carbs: 3, protein: 17, fat: 9, calories: 170, micros: { calcium: 450, sodium: 350, phosphorus: 300, vitB12: 1.0, saturatedFat: 5.8, omega3: 0.05, omega6: 0.2 } },
+  { id: 216, name: "Low-Salt White Cheese (full-fat) - جبنة بيضاء قليلة الملح", category: "Dairy", state: "per 100g", carbs: 3, protein: 14, fat: 20, calories: 248, micros: { calcium: 450, sodium: 350, phosphorus: 280, vitB12: 1.0, saturatedFat: 13, omega3: 0.1, omega6: 0.5 } },
   // ── MILK ──────────────────────────────────────────────────────────────────
-  { id: 412, name: "Whole Milk - حليب كامل الدسم", category: "Milk", state: "per 100ml", carbs: 4.7, protein: 3.2, fat: 3.6, calories: 61, micros: { calcium: 113, vitB12: 0.45, vitB2: 0.16, vitD: 1.0, potassium: 150, saturatedFat: 2.3 } },
+  { id: 412, name: "Whole Milk - حليب كامل الدسم", category: "Milk", state: "per 100ml", carbs: 4.7, protein: 3.2, fat: 3.6, calories: 61, micros: { calcium: 113, vitB12: 0.45, vitB2: 0.16, vitD: 1.0, potassium: 150, saturatedFat: 2.3, omega3: 0.07, omega6: 0.12 } },
   { id: 413, name: "Skim Milk - حليب خالي الدسم", category: "Milk", state: "per 100ml", carbs: 5.0, protein: 3.5, fat: 0.2, calories: 36, micros: { calcium: 125, vitB12: 0.5, vitB2: 0.18, vitD: 1.0, potassium: 160, saturatedFat: 0.1 } },
-  { id: 414, name: "Semi-Skim Milk - حليب نصف دسم", category: "Milk", state: "per 100ml", carbs: 4.8, protein: 3.3, fat: 1.8, calories: 47, micros: { calcium: 120, vitB12: 0.45, vitB2: 0.17, vitD: 1.0, potassium: 155, saturatedFat: 1.1 } },
+  { id: 414, name: "Semi-Skim Milk - حليب نصف دسم", category: "Milk", state: "per 100ml", carbs: 4.8, protein: 3.3, fat: 1.8, calories: 47, micros: { calcium: 120, vitB12: 0.45, vitB2: 0.17, vitD: 1.0, potassium: 155, saturatedFat: 1.1, omega3: 0.04, omega6: 0.06 } },
   { id: 415, name: "Almarai Protein Milk - حليب ألمراي بروتين", category: "Milk", state: "per 100ml", carbs: 5.0, protein: 5.0, fat: 0.2, calories: 42, micros: { calcium: 130, vitB12: 0.5, vitD: 1.0, potassium: 160, saturatedFat: 0.1 } },
   { id: 416, name: "Oat Milk - حليب الشوفان", category: "Milk", state: "per 100ml", carbs: 7.0, protein: 1.0, fat: 1.5, calories: 45, micros: { calcium: 120, fiber: 0.8, saturatedFat: 0.2 } },
   { id: 417, name: "Almond Milk (unsweetened) - حليب اللوز", category: "Milk", state: "per 100ml", carbs: 1.2, protein: 0.4, fat: 1.5, calories: 20, micros: { calcium: 150, fiber: 0.4, saturatedFat: 0.1 } },
   // ── CARBS ─────────────────────────────────────────────────────────────────
   { id: 301, name: "White Rice - أرز أبيض", category: "Carbs", state: "per 100g cooked", carbs: 28, protein: 2.7, fat: 0.3, calories: 130, micros: { vitB1: 0.02, vitB3: 0.4, vitB9: 3, iron: 0.2, magnesium: 12, phosphorus: 43, potassium: 35, selenium: 7.5, fiber: 0.4, saturatedFat: 0.1 } },
-  { id: 302, name: "Brown Rice - أرز بني", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 2.6, fat: 0.9, calories: 112, micros: { vitB1: 0.1, vitB3: 1.5, vitB6: 0.15, vitE: 0.1, magnesium: 44, phosphorus: 83, potassium: 79, selenium: 9.8, manganese: 0.9, zinc: 0.6, fiber: 1.8, saturatedFat: 0.2 } },
-  { id: 303, name: "Oats - شوفان", category: "Carbs", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389, micros: { vitB1: 0.76, vitB5: 1.35, vitB9: 56, iron: 4.72, magnesium: 177, phosphorus: 523, potassium: 429, zinc: 3.97, manganese: 4.91, selenium: 28.9, copper: 626, fiber: 10.6, saturatedFat: 1.2 } },
-  { id: 304, name: "Whole Wheat Bread - خبز قمح كامل", category: "Carbs", state: "per 100g", carbs: 43, protein: 9, fat: 3.4, calories: 247, micros: { vitB1: 0.4, vitB3: 4.2, vitB9: 44, iron: 2.8, magnesium: 76, phosphorus: 212, potassium: 248, zinc: 1.8, selenium: 26, manganese: 2.7, fiber: 6.0, saturatedFat: 0.7 } },
-  { id: 305, name: "White Bread - خبز أبيض", category: "Carbs", state: "per 100g", carbs: 49, protein: 9, fat: 3.2, calories: 265, micros: { vitB1: 0.5, vitB3: 4.5, vitB9: 100, iron: 3.6, calcium: 260, selenium: 22, phosphorus: 108, fiber: 2.7, saturatedFat: 0.7 } },
-  { id: 306, name: "Pasta - مكرونة", category: "Carbs", state: "per 100g cooked", carbs: 25, protein: 5, fat: 0.9, calories: 131, micros: { vitB1: 0.09, vitB3: 1.0, vitB9: 7, iron: 0.5, magnesium: 15, phosphorus: 56, selenium: 18.4, fiber: 1.8, saturatedFat: 0.1 } },
-  { id: 307, name: "Whole Wheat Pasta - مكرونة قمح كامل", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 5.5, fat: 0.8, calories: 124, micros: { vitB1: 0.15, vitB3: 1.6, vitB9: 13, iron: 1.4, magnesium: 45, phosphorus: 125, zinc: 1.1, manganese: 1.3, selenium: 20, fiber: 4.5, saturatedFat: 0.1 } },
+  { id: 302, name: "Brown Rice - أرز بني", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 2.6, fat: 0.9, calories: 112, micros: { vitB1: 0.1, vitB3: 1.5, vitB6: 0.15, vitE: 0.1, magnesium: 44, phosphorus: 83, potassium: 79, selenium: 9.8, manganese: 0.9, zinc: 0.6, fiber: 1.8, saturatedFat: 0.2, omega3: 0.01, omega6: 0.3 } },
+  { id: 303, name: "Oats - شوفان", category: "Carbs", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389, micros: { vitB1: 0.76, vitB5: 1.35, vitB9: 56, iron: 4.72, magnesium: 177, phosphorus: 523, potassium: 429, zinc: 3.97, manganese: 4.91, selenium: 28.9, copper: 626, fiber: 10.6, saturatedFat: 1.2, omega3: 0.1, omega6: 2.4 } },
+  { id: 304, name: "Whole Wheat Bread - خبز قمح كامل", category: "Carbs", state: "per 100g", carbs: 43, protein: 9, fat: 3.4, calories: 247, micros: { vitB1: 0.4, vitB3: 4.2, vitB9: 44, iron: 2.8, magnesium: 76, phosphorus: 212, potassium: 248, zinc: 1.8, selenium: 26, manganese: 2.7, fiber: 6.0, saturatedFat: 0.7, omega3: 0.07, omega6: 0.7 } },
+  { id: 305, name: "White Bread - خبز أبيض", category: "Carbs", state: "per 100g", carbs: 49, protein: 9, fat: 3.2, calories: 265, micros: { vitB1: 0.5, vitB3: 4.5, vitB9: 100, iron: 3.6, calcium: 260, selenium: 22, phosphorus: 108, fiber: 2.7, saturatedFat: 0.7, omega3: 0.1, omega6: 0.8 } },
+  { id: 306, name: "Pasta - مكرونة", category: "Carbs", state: "per 100g cooked", carbs: 25, protein: 5, fat: 0.9, calories: 131, micros: { vitB1: 0.09, vitB3: 1.0, vitB9: 7, iron: 0.5, magnesium: 15, phosphorus: 56, selenium: 18.4, fiber: 1.8, saturatedFat: 0.1, omega3: 0.01, omega6: 0.2 } },
+  { id: 307, name: "Whole Wheat Pasta - مكرونة قمح كامل", category: "Carbs", state: "per 100g cooked", carbs: 23, protein: 5.5, fat: 0.8, calories: 124, micros: { vitB1: 0.15, vitB3: 1.6, vitB9: 13, iron: 1.4, magnesium: 45, phosphorus: 125, zinc: 1.1, manganese: 1.3, selenium: 20, fiber: 4.5, saturatedFat: 0.1, omega3: 0.02, omega6: 0.3 } },
   { id: 308, name: "Sweet Potato - بطاطا حلوة", category: "Carbs", state: "per 100g", carbs: 20, protein: 1.6, fat: 0.1, calories: 86, micros: { vitA: 961, vitC: 2.4, vitB5: 0.8, vitB6: 0.29, vitE: 0.26, vitB9: 11, potassium: 337, magnesium: 25, phosphorus: 47, manganese: 0.26, calcium: 30, fiber: 3.0, saturatedFat: 0 } },
   { id: 309, name: "White Potato - بطاطس", category: "Carbs", state: "per 100g", carbs: 17, protein: 2, fat: 0.1, calories: 77, micros: { vitC: 19.7, vitB6: 0.3, vitB9: 16, vitB3: 1.44, potassium: 421, magnesium: 23, phosphorus: 57, iron: 0.78, fiber: 2.1, saturatedFat: 0 } },
-  { id: 310, name: "Bread (Baladi) - خبز بلدي", category: "Carbs", state: "per 100g", carbs: 52, protein: 8, fat: 1.5, calories: 253, micros: { vitB1: 0.35, vitB3: 3.8, vitB9: 80, iron: 3.2, calcium: 200, selenium: 20, phosphorus: 100, fiber: 5.0, saturatedFat: 0.3 } },
-  { id: 311, name: "Quinoa - كينوا", category: "Carbs", state: "per 100g cooked", carbs: 22, protein: 4, fat: 1.9, calories: 120, micros: { vitB1: 0.1, vitB2: 0.11, vitB9: 42, vitE: 0.6, iron: 1.49, magnesium: 64, phosphorus: 152, zinc: 1.09, potassium: 172, manganese: 0.63, copper: 199, fiber: 2.8, saturatedFat: 0.2 } },
-  { id: 312, name: "Lentils (cooked) - عدس", category: "Carbs", state: "per 100g", carbs: 20, protein: 9, fat: 0.4, calories: 116, micros: { vitB1: 0.17, vitB6: 0.18, vitB9: 181, iron: 3.33, magnesium: 36, phosphorus: 180, potassium: 369, zinc: 1.27, manganese: 0.49, copper: 251, selenium: 2.8, fiber: 7.9, saturatedFat: 0.1 } },
-  { id: 313, name: "Chickpeas (cooked) - حمص", category: "Carbs", state: "per 100g", carbs: 27, protein: 9, fat: 2.6, calories: 164, micros: { vitB6: 0.14, vitB9: 172, vitB5: 0.29, iron: 2.89, magnesium: 48, phosphorus: 168, potassium: 291, zinc: 1.53, manganese: 1.03, copper: 352, selenium: 3.7, fiber: 7.6, saturatedFat: 0.3 } },
-  { id: 314, name: "Fava Beans (Ful) - فول مدمس", category: "Carbs", state: "per 100g", carbs: 26, protein: 8, fat: 0.5, calories: 110, micros: { vitB1: 0.15, vitB9: 148, vitC: 1.4, iron: 1.9, magnesium: 43, phosphorus: 125, potassium: 332, zinc: 1.0, copper: 180, manganese: 0.54, fiber: 5.4, saturatedFat: 0.1 } },
-  { id: 315, name: "Corn - ذرة", category: "Carbs", state: "per 100g", carbs: 19, protein: 3.2, fat: 1.2, calories: 96, micros: { vitC: 6.8, vitB1: 0.2, vitB3: 1.77, vitB9: 42, vitB5: 0.72, magnesium: 37, phosphorus: 89, potassium: 270, zinc: 0.45, manganese: 0.16, fiber: 2.4, saturatedFat: 0.2 } },
+  { id: 310, name: "Bread (Baladi) - خبز بلدي", category: "Carbs", state: "per 100g", carbs: 52, protein: 8, fat: 1.5, calories: 253, micros: { vitB1: 0.35, vitB3: 3.8, vitB9: 80, iron: 3.2, calcium: 200, selenium: 20, phosphorus: 100, fiber: 5.0, saturatedFat: 0.3, omega3: 0.03, omega6: 0.4 } },
+  { id: 311, name: "Quinoa - كينوا", category: "Carbs", state: "per 100g cooked", carbs: 22, protein: 4, fat: 1.9, calories: 120, micros: { vitB1: 0.1, vitB2: 0.11, vitB9: 42, vitE: 0.6, iron: 1.49, magnesium: 64, phosphorus: 152, zinc: 1.09, potassium: 172, manganese: 0.63, copper: 199, fiber: 2.8, saturatedFat: 0.2, omega3: 0.1, omega6: 0.9 } },
+  { id: 312, name: "Lentils (cooked) - عدس", category: "Carbs", state: "per 100g", carbs: 20, protein: 9, fat: 0.4, calories: 116, micros: { vitB1: 0.17, vitB6: 0.18, vitB9: 181, iron: 3.33, magnesium: 36, phosphorus: 180, potassium: 369, zinc: 1.27, manganese: 0.49, copper: 251, selenium: 2.8, fiber: 7.9, saturatedFat: 0.1, omega3: 0.05, omega6: 0.15 } },
+  { id: 313, name: "Chickpeas (cooked) - حمص", category: "Carbs", state: "per 100g", carbs: 27, protein: 9, fat: 2.6, calories: 164, micros: { vitB6: 0.14, vitB9: 172, vitB5: 0.29, iron: 2.89, magnesium: 48, phosphorus: 168, potassium: 291, zinc: 1.53, manganese: 1.03, copper: 352, selenium: 3.7, fiber: 7.6, saturatedFat: 0.3, omega3: 0.1, omega6: 1.0 } },
+  { id: 314, name: "Fava Beans (Ful) - فول مدمس", category: "Carbs", state: "per 100g", carbs: 26, protein: 8, fat: 0.5, calories: 110, micros: { vitB1: 0.15, vitB9: 148, vitC: 1.4, iron: 1.9, magnesium: 43, phosphorus: 125, potassium: 332, zinc: 1.0, copper: 180, manganese: 0.54, fiber: 5.4, saturatedFat: 0.1, omega3: 0.03, omega6: 0.2 } },
+  { id: 315, name: "Corn - ذرة", category: "Carbs", state: "per 100g", carbs: 19, protein: 3.2, fat: 1.2, calories: 96, micros: { vitC: 6.8, vitB1: 0.2, vitB3: 1.77, vitB9: 42, vitB5: 0.72, magnesium: 37, phosphorus: 89, potassium: 270, zinc: 0.45, manganese: 0.16, fiber: 2.4, saturatedFat: 0.2, omega3: 0.02, omega6: 0.5 } },
+  { id: 316, name: "Sweet Potato (boiled) - بطاطا مسلوقة", category: "Carbs", state: "per 100g", carbs: 17.7, protein: 1.4, fat: 0.1, calories: 76, micros: { vitA: 787, vitC: 12.8, vitB6: 0.24, vitB5: 0.5, vitB9: 6, potassium: 230, magnesium: 18, phosphorus: 32, manganese: 0.26, calcium: 27, fiber: 2.5, saturatedFat: 0 } },
+  { id: 317, name: "Pasta with Tomato Sauce (boiled) - مكرونة بصلصة الطماطم", category: "Carbs", state: "per 100g cooked", carbs: 24, protein: 4.7, fat: 1.5, calories: 130, micros: { vitC: 2.5, vitA: 12, vitK: 3, vitB9: 10, iron: 0.6, magnesium: 16, phosphorus: 55, potassium: 120, selenium: 14, fiber: 2.0, saturatedFat: 0.3, omega6: 0.3 } },
+  { id: 318, name: "Tortilla Bread (wheat) - خبز تورتيلا", category: "Carbs", state: "per 100g", carbs: 50, protein: 8.5, fat: 8, calories: 306, micros: { vitB1: 0.6, vitB3: 4.5, vitB9: 90, iron: 3.5, calcium: 130, magnesium: 25, phosphorus: 120, selenium: 25, fiber: 2.9, saturatedFat: 2.5, omega3: 0.1, omega6: 1.0 } },
   // ── VEGETABLES ────────────────────────────────────────────────────────────
-  { id: 501, name: "Broccoli - بروكلي", category: "Vegetables", state: "per 100g", carbs: 7, protein: 2.8, fat: 0.4, calories: 34, micros: { vitC: 89.2, vitK: 101.6, vitA: 31, vitB9: 63, vitB6: 0.18, calcium: 47, potassium: 316, magnesium: 21, iron: 0.73, phosphorus: 66, manganese: 0.21, fiber: 2.6, saturatedFat: 0.1 } },
-  { id: 502, name: "Spinach - سبانخ", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23, micros: { vitK: 482.9, vitA: 469, vitC: 28.1, vitB9: 194, vitE: 2.0, iron: 2.71, calcium: 99, magnesium: 79, potassium: 558, manganese: 0.9, fiber: 2.2, saturatedFat: 0.1 } },
+  { id: 501, name: "Broccoli - بروكلي", category: "Vegetables", state: "per 100g", carbs: 7, protein: 2.8, fat: 0.4, calories: 34, micros: { vitC: 89.2, vitK: 101.6, vitA: 31, vitB9: 63, vitB6: 0.18, calcium: 47, potassium: 316, magnesium: 21, iron: 0.73, phosphorus: 66, manganese: 0.21, fiber: 2.6, saturatedFat: 0.1, omega3: 0.1, omega6: 0.03 } },
+  { id: 502, name: "Spinach - سبانخ", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 2.9, fat: 0.4, calories: 23, micros: { vitK: 482.9, vitA: 469, vitC: 28.1, vitB9: 194, vitE: 2.0, iron: 2.71, calcium: 99, magnesium: 79, potassium: 558, manganese: 0.9, fiber: 2.2, saturatedFat: 0.1, omega3: 0.14, omega6: 0.03 } },
   { id: 503, name: "Cucumber - خيار", category: "Vegetables", state: "per 100g", carbs: 3.6, protein: 0.7, fat: 0.1, calories: 16, micros: { vitK: 16.4, vitC: 2.8, potassium: 147, magnesium: 13, vitB5: 0.26, fiber: 0.5, saturatedFat: 0 } },
   { id: 504, name: "Tomato - طماطم", category: "Vegetables", state: "per 100g", carbs: 3.9, protein: 0.9, fat: 0.2, calories: 18, micros: { vitC: 13.7, vitA: 42, vitK: 7.9, vitB9: 15, potassium: 237, magnesium: 11, iron: 0.27, fiber: 1.2, saturatedFat: 0 } },
-  { id: 505, name: "Lettuce - خس", category: "Vegetables", state: "per 100g", carbs: 2.9, protein: 1.4, fat: 0.2, calories: 15, micros: { vitK: 102.3, vitA: 166, vitC: 9.2, vitB9: 73, calcium: 36, iron: 0.86, fiber: 1.3, saturatedFat: 0 } },
+  { id: 505, name: "Lettuce - خس", category: "Vegetables", state: "per 100g", carbs: 2.9, protein: 1.4, fat: 0.2, calories: 15, micros: { vitK: 102.3, vitA: 166, vitC: 9.2, vitB9: 73, calcium: 36, iron: 0.86, fiber: 1.3, saturatedFat: 0, omega3: 0.05, omega6: 0.04 } },
   { id: 506, name: "Bell Pepper - فلفل رومي", category: "Vegetables", state: "per 100g", carbs: 6, protein: 1, fat: 0.3, calories: 31, micros: { vitC: 127.7, vitA: 157, vitB6: 0.29, vitK: 4.9, vitB9: 46, potassium: 211, magnesium: 12, fiber: 2.1, saturatedFat: 0.1 } },
   { id: 507, name: "Cauliflower - قرنبيط", category: "Vegetables", state: "per 100g", carbs: 5, protein: 1.9, fat: 0.3, calories: 25, micros: { vitC: 48.2, vitK: 15.5, vitB9: 57, vitB6: 0.18, potassium: 299, magnesium: 15, fiber: 2.0, saturatedFat: 0.1 } },
   { id: 508, name: "Green Beans - فاصوليا خضراء", category: "Vegetables", state: "per 100g", carbs: 7, protein: 1.8, fat: 0.1, calories: 31, micros: { vitK: 43, vitC: 12.2, vitA: 35, vitB9: 37, calcium: 37, iron: 1.03, magnesium: 25, potassium: 211, fiber: 2.7, saturatedFat: 0 } },
@@ -102,26 +110,35 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 514, name: "Mushrooms - فطر", category: "Vegetables", state: "per 100g", carbs: 3.3, protein: 3.1, fat: 0.3, calories: 22, micros: { vitD: 0.2, vitB2: 0.4, vitB3: 3.6, vitB5: 1.5, vitB9: 17, selenium: 9.3, phosphorus: 86, potassium: 318, copper: 305, iron: 0.5, fiber: 1.0, saturatedFat: 0.1 } },
   { id: 515, name: "Peas - بازلاء", category: "Vegetables", state: "per 100g", carbs: 14, protein: 5.4, fat: 0.4, calories: 81, micros: { vitC: 40, vitK: 24.8, vitB1: 0.27, vitB9: 65, vitB6: 0.17, iron: 1.47, magnesium: 33, phosphorus: 108, potassium: 244, zinc: 1.24, fiber: 5.7, saturatedFat: 0.1 } },
   { id: 516, name: "Molokhia - ملوخية", category: "Vegetables", state: "per 100g", carbs: 7, protein: 4.5, fat: 0.7, calories: 43, micros: { vitK: 700, vitA: 467, vitC: 33, vitB9: 102, calcium: 208, iron: 3.0, magnesium: 75, potassium: 525, fiber: 3.5, saturatedFat: 0.1 } },
-  { id: 517, name: "Arugula (Rocket) - جرجير", category: "Vegetables", state: "per 100g", carbs: 3.7, protein: 2.6, fat: 0.7, calories: 25, micros: { vitK: 108.6, vitA: 119, vitC: 15, vitB9: 97, calcium: 160, iron: 1.46, magnesium: 47, potassium: 369, fiber: 1.6, saturatedFat: 0.1 } },
+  { id: 517, name: "Arugula (Rocket) - جرجير", category: "Vegetables", state: "per 100g", carbs: 3.7, protein: 2.6, fat: 0.7, calories: 25, micros: { vitK: 108.6, vitA: 119, vitC: 15, vitB9: 97, calcium: 160, iron: 1.46, magnesium: 47, potassium: 369, fiber: 1.6, saturatedFat: 0.1, omega3: 0.17, omega6: 0.1 } },
   { id: 518, name: "Parsley - بقدونس", category: "Vegetables", state: "per 100g", carbs: 6.3, protein: 3, fat: 0.8, calories: 36, micros: { vitK: 1640, vitC: 133, vitA: 421, vitB9: 152, iron: 6.2, calcium: 138, potassium: 554, magnesium: 50, fiber: 3.3, saturatedFat: 0.1 } },
+  { id: 519, name: "Green Pepper - فلفل أخضر", category: "Vegetables", state: "per 100g", carbs: 4.6, protein: 0.9, fat: 0.2, calories: 20, micros: { vitC: 80.4, vitA: 18, vitK: 7.4, vitB6: 0.22, vitB9: 10, potassium: 175, magnesium: 10, fiber: 1.7, saturatedFat: 0.1 } },
+  { id: 520, name: "Cabbage - كرنب", category: "Vegetables", state: "per 100g", carbs: 5.8, protein: 1.3, fat: 0.1, calories: 25, micros: { vitC: 36.6, vitK: 76, vitB9: 43, vitB6: 0.12, calcium: 40, potassium: 170, magnesium: 12, fiber: 2.5, saturatedFat: 0, omega3: 0.03 } },
+  { id: 521, name: "Okra - بامية", category: "Vegetables", state: "per 100g", carbs: 7.5, protein: 1.9, fat: 0.2, calories: 33, micros: { vitC: 23, vitK: 31, vitB9: 60, vitB6: 0.2, calcium: 82, magnesium: 57, potassium: 299, manganese: 0.8, fiber: 3.2, saturatedFat: 0 } },
+  { id: 522, name: "Radish - فجل", category: "Vegetables", state: "per 100g", carbs: 3.4, protein: 0.7, fat: 0.1, calories: 16, micros: { vitC: 14.8, vitB9: 25, potassium: 233, calcium: 25, magnesium: 10, fiber: 1.6, saturatedFat: 0 } },
+  { id: 523, name: "Beetroot (boiled) - بنجر مسلوق", category: "Vegetables", state: "per 100g", carbs: 10, protein: 1.7, fat: 0.2, calories: 44, micros: { vitB9: 80, vitC: 3.6, potassium: 305, magnesium: 23, manganese: 0.33, iron: 0.8, phosphorus: 38, fiber: 2.0, saturatedFat: 0 } },
+  { id: 524, name: "Pumpkin - قرع عسلي", category: "Vegetables", state: "per 100g", carbs: 6.5, protein: 1, fat: 0.1, calories: 26, micros: { vitA: 426, vitC: 9, vitE: 0.4, potassium: 340, magnesium: 12, fiber: 0.5, saturatedFat: 0.1 } },
+  { id: 525, name: "Mixed Vegetables (boiled) - خضار مسلوقة متنوعة", category: "Vegetables", state: "per 100g", carbs: 7, protein: 2, fat: 0.3, calories: 35, micros: { vitC: 20, vitK: 40, vitA: 250, vitB9: 40, potassium: 220, magnesium: 18, fiber: 2.8, saturatedFat: 0 } },
+  { id: 526, name: "Green Salad (no dressing) - سلطة خضراء", category: "Vegetables", state: "per 100g", carbs: 3, protein: 1.2, fat: 0.2, calories: 16, micros: { vitK: 70, vitA: 120, vitC: 12, vitB9: 60, calcium: 40, potassium: 190, magnesium: 14, fiber: 1.3, saturatedFat: 0, omega3: 0.05 } },
+  { id: 527, name: "Mixed Salad: Tomato, Cucumber, Green Pepper - سلطة طماطم وخيار وفلفل أخضر", category: "Vegetables", state: "per 100g", carbs: 4, protein: 0.8, fat: 0.2, calories: 18, micros: { vitC: 32, vitK: 10.6, vitA: 22, vitB9: 11, potassium: 186, magnesium: 11, fiber: 1.1, saturatedFat: 0 } },
   // ── FATS ──────────────────────────────────────────────────────────────────
   { id: 601, name: "Olive Oil - زيت زيتون", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 14.35, vitK: 60.2, omega3: 0.76, omega6: 9.76, saturatedFat: 13.8 } },
-  { id: 602, name: "Coconut Oil - زيت جوز الهند", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 892, micros: { saturatedFat: 82.5 } },
-  { id: 603, name: "Avocado - أفوكادو", category: "Fats", state: "per 100g", carbs: 9, protein: 2, fat: 15, calories: 160, micros: { vitK: 21, vitE: 2.07, vitC: 10, vitB5: 1.39, vitB6: 0.26, vitB9: 81, potassium: 485, magnesium: 29, copper: 190, fiber: 6.7, saturatedFat: 2.1 } },
-  { id: 604, name: "Almonds - لوز", category: "Fats", state: "per 100g", carbs: 22, protein: 21, fat: 50, calories: 579, micros: { vitE: 25.6, vitB2: 1.14, vitB3: 3.38, magnesium: 270, calcium: 264, phosphorus: 481, iron: 3.71, zinc: 3.12, copper: 996, manganese: 2.18, selenium: 4.1, fiber: 12.5, saturatedFat: 3.8 } },
-  { id: 605, name: "Walnuts - جوز", category: "Fats", state: "per 100g", carbs: 14, protein: 15, fat: 65, calories: 654, micros: { vitB6: 0.54, vitB9: 98, vitE: 0.7, magnesium: 158, phosphorus: 346, iron: 2.91, zinc: 3.09, copper: 1590, manganese: 3.41, omega3: 9.08, fiber: 6.7, saturatedFat: 6.1 } },
-  { id: 606, name: "Cashews - كاجو", category: "Fats", state: "per 100g", carbs: 30, protein: 18, fat: 44, calories: 553, micros: { vitK: 34.1, vitB1: 0.42, vitB6: 0.42, vitB9: 25, magnesium: 292, phosphorus: 593, iron: 6.68, zinc: 5.78, copper: 2195, manganese: 1.66, selenium: 19.9, fiber: 3.3, saturatedFat: 7.8 } },
-  { id: 607, name: "Peanut Butter - زبدة الفول السوداني", category: "Fats", state: "per 100g", carbs: 20, protein: 25, fat: 50, calories: 588, micros: { vitE: 9.1, vitB3: 13.1, vitB6: 0.44, vitB9: 87, magnesium: 168, phosphorus: 335, potassium: 558, iron: 1.74, zinc: 2.9, copper: 440, fiber: 6.0, saturatedFat: 10.0 } },
-  { id: 608, name: "Peanuts - فول سوداني", category: "Fats", state: "per 100g", carbs: 16, protein: 26, fat: 49, calories: 567, micros: { vitE: 8.33, vitB3: 12.07, vitB1: 0.64, vitB9: 240, magnesium: 168, phosphorus: 376, iron: 4.58, zinc: 3.27, copper: 1144, manganese: 1.93, selenium: 7.2, fiber: 8.5, saturatedFat: 6.8 } },
-  { id: 609, name: "Sunflower Seeds - بذور عباد الشمس", category: "Fats", state: "per 100g", carbs: 20, protein: 21, fat: 51, calories: 584, micros: { vitE: 35.17, vitB1: 1.48, vitB6: 1.35, vitB9: 227, vitB5: 6.75, magnesium: 325, phosphorus: 660, iron: 5.25, zinc: 5.0, copper: 1800, manganese: 1.95, selenium: 53, omega6: 23.0, fiber: 8.6, saturatedFat: 4.5 } },
-  { id: 610, name: "Tahini - طحينة", category: "Fats", state: "per 100g", carbs: 21, protein: 17, fat: 54, calories: 595, micros: { vitB1: 1.0, vitB9: 53, calcium: 426, iron: 8.95, magnesium: 95, phosphorus: 732, zinc: 4.62, copper: 1500, manganese: 1.42, fiber: 9.3, saturatedFat: 7.5 } },
-  { id: 611, name: "Flaxseeds - بذور الكتان", category: "Fats", state: "per 100g", carbs: 29, protein: 18, fat: 42, calories: 534, micros: { vitB1: 1.64, vitB9: 87, vitE: 0.31, magnesium: 392, phosphorus: 642, iron: 5.73, zinc: 4.34, copper: 1220, manganese: 2.48, selenium: 25.4, omega3: 22.8, fiber: 27.3, saturatedFat: 3.7 } },
-  { id: 612, name: "Chia Seeds - بذور الشيا", category: "Fats", state: "per 100g", carbs: 42, protein: 17, fat: 31, calories: 486, micros: { vitB1: 0.62, vitB3: 8.83, calcium: 631, iron: 7.72, magnesium: 335, phosphorus: 860, zinc: 4.58, copper: 924, manganese: 2.72, selenium: 55.2, omega3: 17.8, fiber: 34.4, saturatedFat: 3.3 } },
-  { id: 613, name: "Ghee - سمن بلدي", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 99.8, calories: 900, micros: { vitA: 300, vitD: 1.5, vitK: 8.6, saturatedFat: 62.0 } },
-  { id: 614, name: "Sunflower Oil - زيت عباد الشمس", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 41.1, omega6: 65.7, saturatedFat: 11.0 } },
-  { id: 615, name: "Corn Oil - زيت الذرة", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 14.3, vitK: 1.9, omega6: 54.0, saturatedFat: 13.0 } },
-  { id: 616, name: "Avocado Oil - زيت الأفوكادو", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 12.1, vitK: 7.1, omega3: 0.96, saturatedFat: 11.6 } },
-  { id: 617, name: "Coconut Oil - زيت جوز الهند (Fats)", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 892, micros: { saturatedFat: 82.5 } },
+  { id: 602, name: "Coconut Oil - زيت جوز الهند", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 892, micros: { saturatedFat: 82.5, omega6: 1.8 } },
+  { id: 603, name: "Avocado - أفوكادو", category: "Fats", state: "per 100g", carbs: 9, protein: 2, fat: 15, calories: 160, micros: { vitK: 21, vitE: 2.07, vitC: 10, vitB5: 1.39, vitB6: 0.26, vitB9: 81, potassium: 485, magnesium: 29, copper: 190, fiber: 6.7, saturatedFat: 2.1, omega3: 0.1, omega6: 1.7 } },
+  { id: 604, name: "Almonds - لوز", category: "Fats", state: "per 100g", carbs: 22, protein: 21, fat: 50, calories: 579, micros: { vitE: 25.6, vitB2: 1.14, vitB3: 3.38, magnesium: 270, calcium: 264, phosphorus: 481, iron: 3.71, zinc: 3.12, copper: 996, manganese: 2.18, selenium: 4.1, fiber: 12.5, saturatedFat: 3.8, omega6: 12.3 } },
+  { id: 605, name: "Walnuts - جوز", category: "Fats", state: "per 100g", carbs: 14, protein: 15, fat: 65, calories: 654, micros: { vitB6: 0.54, vitB9: 98, vitE: 0.7, magnesium: 158, phosphorus: 346, iron: 2.91, zinc: 3.09, copper: 1590, manganese: 3.41, omega3: 9.08, fiber: 6.7, saturatedFat: 6.1, omega6: 38.1 } },
+  { id: 606, name: "Cashews - كاجو", category: "Fats", state: "per 100g", carbs: 30, protein: 18, fat: 44, calories: 553, micros: { vitK: 34.1, vitB1: 0.42, vitB6: 0.42, vitB9: 25, magnesium: 292, phosphorus: 593, iron: 6.68, zinc: 5.78, copper: 2195, manganese: 1.66, selenium: 19.9, fiber: 3.3, saturatedFat: 7.8, omega3: 0.06, omega6: 7.8 } },
+  { id: 607, name: "Peanut Butter - زبدة الفول السوداني", category: "Fats", state: "per 100g", carbs: 20, protein: 25, fat: 50, calories: 588, micros: { vitE: 9.1, vitB3: 13.1, vitB6: 0.44, vitB9: 87, magnesium: 168, phosphorus: 335, potassium: 558, iron: 1.74, zinc: 2.9, copper: 440, fiber: 6.0, saturatedFat: 10.0, omega6: 12.5 } },
+  { id: 608, name: "Peanuts - فول سوداني", category: "Fats", state: "per 100g", carbs: 16, protein: 26, fat: 49, calories: 567, micros: { vitE: 8.33, vitB3: 12.07, vitB1: 0.64, vitB9: 240, magnesium: 168, phosphorus: 376, iron: 4.58, zinc: 3.27, copper: 1144, manganese: 1.93, selenium: 7.2, fiber: 8.5, saturatedFat: 6.8, omega6: 15.6 } },
+  { id: 609, name: "Sunflower Seeds - بذور عباد الشمس", category: "Fats", state: "per 100g", carbs: 20, protein: 21, fat: 51, calories: 584, micros: { vitE: 35.17, vitB1: 1.48, vitB6: 1.35, vitB9: 227, vitB5: 6.75, magnesium: 325, phosphorus: 660, iron: 5.25, zinc: 5.0, copper: 1800, manganese: 1.95, selenium: 53, omega6: 23.0, fiber: 8.6, saturatedFat: 4.5, omega3: 0.07 } },
+  { id: 610, name: "Tahini - طحينة", category: "Fats", state: "per 100g", carbs: 21, protein: 17, fat: 54, calories: 595, micros: { vitB1: 1.0, vitB9: 53, calcium: 426, iron: 8.95, magnesium: 95, phosphorus: 732, zinc: 4.62, copper: 1500, manganese: 1.42, fiber: 9.3, saturatedFat: 7.5, omega3: 0.4, omega6: 21.6 } },
+  { id: 611, name: "Flaxseeds - بذور الكتان", category: "Fats", state: "per 100g", carbs: 29, protein: 18, fat: 42, calories: 534, micros: { vitB1: 1.64, vitB9: 87, vitE: 0.31, magnesium: 392, phosphorus: 642, iron: 5.73, zinc: 4.34, copper: 1220, manganese: 2.48, selenium: 25.4, omega3: 22.8, fiber: 27.3, saturatedFat: 3.7, omega6: 5.9 } },
+  { id: 612, name: "Chia Seeds - بذور الشيا", category: "Fats", state: "per 100g", carbs: 42, protein: 17, fat: 31, calories: 486, micros: { vitB1: 0.62, vitB3: 8.83, calcium: 631, iron: 7.72, magnesium: 335, phosphorus: 860, zinc: 4.58, copper: 924, manganese: 2.72, selenium: 55.2, omega3: 17.8, fiber: 34.4, saturatedFat: 3.3, omega6: 5.8 } },
+  { id: 613, name: "Ghee - سمن بلدي", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 99.8, calories: 900, micros: { vitA: 300, vitD: 1.5, vitK: 8.6, saturatedFat: 62.0, omega3: 0.4, omega6: 3.0 } },
+  { id: 614, name: "Sunflower Oil - زيت عباد الشمس", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 41.1, omega6: 65.7, saturatedFat: 11.0, omega3: 0.2 } },
+  { id: 615, name: "Corn Oil - زيت الذرة", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 14.3, vitK: 1.9, omega6: 54.0, saturatedFat: 13.0, omega3: 1.2 } },
+  { id: 616, name: "Avocado Oil - زيت الأفوكادو", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { vitE: 12.1, vitK: 7.1, omega3: 0.96, saturatedFat: 11.6, omega6: 12.5 } },
+  { id: 617, name: "Coconut Oil - زيت جوز الهند (Fats)", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 892, micros: { saturatedFat: 82.5, omega6: 1.8 } },
   // ── FRUITS ────────────────────────────────────────────────────────────────
   { id: 701, name: "Banana - موز", category: "Fruits", state: "per 100g", carbs: 23, protein: 1.1, fat: 0.3, calories: 89, micros: { vitB6: 0.37, vitC: 8.7, vitB9: 20, vitB5: 0.33, potassium: 358, magnesium: 27, manganese: 0.27, copper: 78, fiber: 2.6, saturatedFat: 0.1 } },
   { id: 702, name: "Apple - تفاح", category: "Fruits", state: "per 100g", carbs: 14, protein: 0.3, fat: 0.2, calories: 52, micros: { vitC: 4.6, vitK: 3.2, vitB9: 3, potassium: 107, calcium: 6, fiber: 2.4, saturatedFat: 0 } },
@@ -141,7 +158,8 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 801, name: "Vanilla Extract - فانيليا سائلة", category: "Pantry", state: "per 100g", carbs: 12.7, protein: 0.1, fat: 0.1, calories: 288 },
   { id: 802, name: "Vanilla Package - باكيت فانيليا", category: "Pantry", state: "per piece", carbs: 2, protein: 0, fat: 0, calories: 8 },
   { id: 803, name: "Baking Powder - بيكنج باودر", category: "Pantry", state: "per 100g", carbs: 27.7, protein: 0, fat: 0, calories: 53 },
-  { id: 804, name: "Cornstarch - نشا ذرة", category: "Pantry", state: "per 100g", carbs: 91, protein: 0.3, fat: 0.1, calories: 381 },
+  { id: 804, name: "Corn Starch (Cornstarch) - نشا ذرة", category: "Pantry", state: "per 100g", carbs: 91, protein: 0.3, fat: 0.1, calories: 381 },
+  { id: 805, name: "Cocoa Powder (Coco, unsweetened) - كاكاو بودرة", category: "Pantry", state: "per 100g", carbs: 57.9, protein: 19.6, fat: 13.7, calories: 228, micros: { iron: 13.9, magnesium: 499, phosphorus: 734, potassium: 1524, zinc: 6.8, copper: 3788, manganese: 3.8, calcium: 128, selenium: 14.3, fiber: 33.2, saturatedFat: 8.1, omega6: 0.4 } },
   // ── SUPPLEMENTS ───────────────────────────────────────────────────────────
   { id: 901, name: "Whey Protein - بروتين مصل اللبن", category: "Supplements", state: "per 30g scoop", carbs: 3, protein: 24, fat: 1.5, calories: 120 },
   { id: 902, name: "Casein Protein - بروتين كازين", category: "Supplements", state: "per 30g scoop", carbs: 4, protein: 24, fat: 1, calories: 120 },
@@ -150,7 +168,7 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 905, name: "BCAA - أحماض أمينية", category: "Supplements", state: "per 10g", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 906, name: "Creatine - كرياتين", category: "Supplements", state: "per 5g", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 907, name: "Pre-Workout - ما قبل التمرين", category: "Supplements", state: "per serving", carbs: 5, protein: 0, fat: 0, calories: 20 },
-  { id: 908, name: "Omega-3 - أوميغا 3", category: "Supplements", state: "per capsule", carbs: 0, protein: 0, fat: 1, calories: 9, micros: { omega3: 0.3 } },
+  { id: 908, name: "Omega-3 - أوميغا 3", category: "Supplements", state: "per serving (1g omega-3)", carbs: 0, protein: 0, fat: 1, calories: 9, micros: { omega3: 1.0 } },
   { id: 920, name: "Peak Man Multivitamin - بيك مان", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 921, name: "Centrum Multivitamin - سنتروم", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 922, name: "Vitastress - فيتاستريس", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
@@ -166,7 +184,7 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 932, name: "Melatonin 5mg - ميلاتونين", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 933, name: "Collagen - كولاجين", category: "Supplements", state: "per 10g scoop", carbs: 0, protein: 9, fat: 0, calories: 36 },
   { id: 941, name: "Multivitamins - فيتامينات متعددة", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 0, calories: 0 },
-  { id: 942, name: "Omega-3 Fish Oil - أوميجا 3", category: "Supplements", state: "per serving", carbs: 0, protein: 0, fat: 1.0, calories: 9, micros: { omega3: 0.5 } },
+  { id: 942, name: "Omega-3 Fish Oil - أوميجا 3", category: "Supplements", state: "per serving (1g omega-3)", carbs: 0, protein: 0, fat: 1.0, calories: 9, micros: { omega3: 1.0 } },
   // ── BEVERAGES ─────────────────────────────────────────────────────────────
   { id: 951, name: "Black Tea - شاي أسود", category: "Beverages", state: "per cup (240ml)", carbs: 0.7, protein: 0, fat: 0, calories: 2 },
   { id: 952, name: "Green Tea - شاي أخضر", category: "Beverages", state: "per cup (240ml)", carbs: 0.5, protein: 0, fat: 0, calories: 2 },
@@ -185,19 +203,19 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 972, name: "Diet Coke - كوكا كولا زيرو", category: "Beverages", state: "per 330ml can", carbs: 0, protein: 0, fat: 0, calories: 0 },
   { id: 973, name: "Water - مياه", category: "Beverages", state: "per 250ml glass", carbs: 0, protein: 0, fat: 0, calories: 0 },
   // ── RAW / UNCOOKED ────────────────────────────────────────────────────────
-  { id: 1001, name: "Raw Chicken Breast (uncooked) - صدر دجاج نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 23, fat: 2.6, calories: 120 },
-  { id: 1002, name: "Raw Chicken Thigh (uncooked) - فخذ دجاج نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 19, fat: 8, calories: 153 },
-  { id: 1003, name: "Raw Ground Beef (uncooked) - لحم مفروم نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 20, fat: 10, calories: 176 },
+  { id: 1001, name: "Raw Chicken Breast (uncooked) - صدر دجاج نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 23, fat: 2.6, calories: 120, micros: { omega3: 0.03, omega6: 0.5 } },
+  { id: 1002, name: "Raw Chicken Thigh (uncooked) - فخذ دجاج نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 19, fat: 8, calories: 153, micros: { omega3: 0.1, omega6: 1.5 } },
+  { id: 1003, name: "Raw Ground Beef (uncooked) - لحم مفروم نيء", category: "Raw", state: "per 100g raw", carbs: 0, protein: 20, fat: 10, calories: 176, micros: { omega3: 0.05, omega6: 0.4 } },
   { id: 1004, name: "Raw White Rice (dry) - أرز أبيض جاف", category: "Raw", state: "per 100g dry", carbs: 78, protein: 6.5, fat: 0.5, calories: 350 },
   { id: 1005, name: "Raw Brown Rice (dry) - أرز بني جاف", category: "Raw", state: "per 100g dry", carbs: 76, protein: 7.5, fat: 2.5, calories: 370 },
-  { id: 1006, name: "Raw Oats (dry) - شوفان جاف", category: "Raw", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389 },
+  { id: 1006, name: "Raw Oats (dry) - شوفان جاف", category: "Raw", state: "per 100g dry", carbs: 66, protein: 17, fat: 7, calories: 389, micros: { omega3: 0.1, omega6: 2.4 } },
   { id: 1007, name: "Raw Potato (uncooked) - بطاطس نية", category: "Raw", state: "per 100g raw", carbs: 17, protein: 2, fat: 0.1, calories: 77 },
   { id: 1008, name: "Raw Sweet Potato - بطاطا حلوة نية", category: "Raw", state: "per 100g raw", carbs: 20, protein: 1.6, fat: 0.1, calories: 86 },
   { id: 1009, name: "Raw Pasta (dry) - مكرونة جافة", category: "Raw", state: "per 100g dry", carbs: 74, protein: 13, fat: 1.5, calories: 357 },
   { id: 1010, name: "Raw Lentils (dry) - عدس جاف", category: "Raw", state: "per 100g dry", carbs: 63, protein: 26, fat: 1, calories: 353 },
   // ── EGYPTIAN DISHES ───────────────────────────────────────────────────────
   { id: 1101, name: "Egyptian Lentil Soup - شوربة عدس مصرية", category: "Egyptian", state: "per 100g", carbs: 11, protein: 4, fat: 1.5, calories: 76, micros: { fiber: 3.0, saturatedFat: 0.2 } },
-  { id: 1102, name: "Baked Falafel - فلافل بالفرن", category: "Egyptian", state: "per piece (~30g)", carbs: 6, protein: 2.5, fat: 1.5, calories: 48, micros: { fiber: 1.5, saturatedFat: 0.2 } },
+  { id: 1102, name: "Baked Falafel - فلافل بالفرن", category: "Egyptian", state: "per piece (~30g)", carbs: 6, protein: 2.5, fat: 1.5, calories: 48, micros: { fiber: 1.5, saturatedFat: 0.2, omega3: 0.01, omega6: 0.4 } },
   { id: 1103, name: "Ful Medames - فول مدمس", category: "Egyptian", state: "per 100g", carbs: 26, protein: 8, fat: 0.5, calories: 110, micros: { vitB1: 0.15, vitB9: 148, vitC: 1.4, iron: 1.9, magnesium: 43, phosphorus: 125, potassium: 332, zinc: 1.0, copper: 180, manganese: 0.54, fiber: 5.4, saturatedFat: 0.1 } },
   { id: 1104, name: "Koshari - كشري", category: "Egyptian", state: "per 100g", carbs: 23, protein: 4, fat: 2, calories: 126, micros: { fiber: 3.8, saturatedFat: 0.3 } },
   { id: 1105, name: "Hawawshi (lean) - حواوشي هش", category: "Egyptian", state: "per 100g", carbs: 18, protein: 14, fat: 8, calories: 200, micros: { fiber: 1.2, saturatedFat: 3.2 } },
@@ -205,8 +223,8 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 1107, name: "Grilled Kofta - كفتة مشوية", category: "Egyptian", state: "per 100g", carbs: 5, protein: 18, fat: 8, calories: 164, micros: { saturatedFat: 3.5, iron: 1.8 } },
   { id: 1108, name: "Mahshi Kousa - محشي كوسة", category: "Egyptian", state: "per 100g", carbs: 14, protein: 5, fat: 3, calories: 103, micros: { fiber: 1.8, saturatedFat: 0.6 } },
   { id: 1109, name: "Baladi Bread (Large) - عيش بلدي كبير", category: "Egyptian", state: "per piece (~120g)", carbs: 62, protein: 10, fat: 1.8, calories: 304, micros: { vitB1: 0.42, iron: 3.8, calcium: 240, fiber: 6.0, saturatedFat: 0.3 } },
-  { id: 1110, name: "Rusks / Biscotti - بقسماط", category: "Egyptian", state: "per piece (~10g)", carbs: 7.5, protein: 0.8, fat: 0.5, calories: 38, micros: { fiber: 0.4, saturatedFat: 0.1 } },
-  { id: 1111, name: "Taamiya (falafel) fried - طعمية مقلية", category: "Egyptian", state: "per piece (~20g)", carbs: 7, protein: 2, fat: 3, calories: 63, micros: { fiber: 1.2, saturatedFat: 0.5 } },
+  { id: 1110, name: "Rusks / Biscotti - بقسماط", category: "Egyptian", state: "per 100g", carbs: 75, protein: 8, fat: 5, calories: 380, micros: { fiber: 4, saturatedFat: 1.0 } },
+  { id: 1111, name: "Taamiya (falafel) fried - طعمية مقلية", category: "Egyptian", state: "per piece (~20g)", carbs: 7, protein: 2, fat: 3, calories: 63, micros: { fiber: 1.2, saturatedFat: 0.5, omega3: 0.02, omega6: 1.0 } },
 ];
 
 // ─── INTERFACES ────────────────────────────────────────────────────────────────
@@ -495,6 +513,93 @@ function TrendArrow({ metric, current, previous, goal }: { metric: string; curre
       {diff > 0 ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
       {current} ({diff > 0 ? "+" : ""}{diff.toFixed(1)})
     </span>
+  );
+}
+
+// ─── MANUAL TARGET EDITOR (fiber / saturated fat) ─────────────────────────────
+function TargetEditor({ value, defaultValue, unit, onChange }: {
+  value: number | null; defaultValue: number; unit: string; onChange: (v: number | null) => void;
+}) {
+  const isCustom = value !== null;
+  return (
+    <span className="inline-flex items-center gap-1" dir="ltr">
+      <input
+        type="number" min="0" step="0.5"
+        value={isCustom ? value : ""}
+        placeholder={String(defaultValue)}
+        title="Type a custom target, or leave empty to use the recommended value"
+        onChange={e => onChange(e.target.value === "" ? null : Math.max(0, +e.target.value))}
+        className={cn(
+          "w-14 text-center text-xs border rounded px-1 py-0.5 bg-white dark:bg-gray-800",
+          isCustom ? "border-blue-400 font-bold text-blue-700 dark:text-blue-300" : "border-gray-300 dark:border-gray-600"
+        )}
+      />
+      <span className="text-[10px] text-gray-500">{unit}</span>
+      {isCustom && (
+        <button onClick={() => onChange(null)} title={`Reset to recommended (${defaultValue}${unit})`}
+          className="text-[10px] text-blue-600 hover:underline">reset</button>
+      )}
+    </span>
+  );
+}
+
+// ─── OMEGA-3 : OMEGA-6 BALANCE ────────────────────────────────────────────────
+function OmegaBalance({ omega3, omega6, target3, target6 }: {
+  omega3: number; omega6: number; target3: number; target6: number;
+}) {
+  const total = omega3 + omega6;
+  const hasData = total > 0;
+  const ratio = omega3 > 0 ? omega6 / omega3 : null;          // grams of ω-6 per 1 g of ω-3
+  const share3 = hasData ? (omega3 / total) * 100 : 0;         // % of the omega pool that is ω-3
+  // Ratio zones: ≤ 4:1 good · 4–10:1 high · > 10:1 very high  (ω-3 share ≥ 20% / ≥ 9% )
+  let tone: "none" | "good" | "warn" | "bad" = "none";
+  let message = "";
+  if (hasData) {
+    if (omega3 === 0) { tone = "bad"; message = "No omega-3 in this plan — add fatty fish, walnuts, flax/chia or an omega-3 serving."; }
+    else if (ratio! <= 4) { tone = "good"; message = "Well balanced — ω-6 : ω-3 is within 4 : 1."; }
+    else if (ratio! <= 10) { tone = "warn"; message = "Omega-6 is high — add omega-3 sources (salmon, sardines, mackerel, flax, fish oil)."; }
+    else { tone = "bad"; message = "Omega-6 is very high — increase omega-3 sources or reduce seed oils / fried foods."; }
+  }
+  const toneText = { none: "text-gray-400", good: "text-green-600", warn: "text-yellow-600", bad: "text-red-500" }[tone];
+  const chip = !hasData ? "no data" : omega3 === 0 ? "no ω-3" : `1 : ${ratio!.toFixed(1)}`;
+  const p3 = target3 > 0 ? (omega3 / target3) * 100 : 0;
+  const p6 = target6 > 0 ? (omega6 / target6) * 100 : 0;
+  return (
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2 space-y-2">
+      <div className="flex justify-between items-center">
+        <span className="text-xs font-medium">🐟 Omega-3 : Omega-6 balance</span>
+        <span className={`text-xs font-bold ${toneText}`} dir="ltr">{chip}</span>
+      </div>
+      {/* balance bar: teal = ω-3 share, amber = ω-6 share. Marker = 1:4 target (ω-3 ≥ 20% of total) */}
+      <div dir="ltr">
+        <div className="relative h-3 rounded-full overflow-hidden bg-gray-200 dark:bg-gray-700 flex">
+          {hasData && <div className="h-full bg-teal-500 transition-all" style={{ width: `${share3}%` }} />}
+          {hasData && <div className="h-full bg-amber-400 transition-all" style={{ width: `${100 - share3}%` }} />}
+          <div className="absolute top-0 bottom-0 w-0.5 bg-gray-800 dark:bg-white opacity-70" style={{ left: "20%" }} />
+        </div>
+        <div className="relative h-3 text-[9px] text-gray-400">
+          <span className="absolute" style={{ left: "20%", transform: "translateX(-50%)" }}>1:4 target</span>
+          <span className="absolute right-0">more ω-3 ←</span>
+        </div>
+      </div>
+      <div className="flex justify-between text-[11px]" dir="ltr">
+        <span><span className="inline-block w-2 h-2 rounded-full bg-teal-500 mr-1" />ω-3 {omega3.toFixed(2)} g {hasData && <span className="text-gray-400">({share3.toFixed(0)}%)</span>}</span>
+        <span><span className="inline-block w-2 h-2 rounded-full bg-amber-400 mr-1" />ω-6 {omega6.toFixed(2)} g {hasData && <span className="text-gray-400">({(100 - share3).toFixed(0)}%)</span>}</span>
+      </div>
+      {/* intake vs daily adequate intake */}
+      <div className="space-y-1">
+        <div>
+          <div className="flex justify-between text-[10px] text-gray-500"><span>Omega-3 intake</span><span dir="ltr">{omega3.toFixed(2)} / {target3} g</span></div>
+          <ProgressBar value={omega3} max={target3} color={p3 >= 100 ? "bg-green-600" : p3 >= 50 ? "bg-teal-500" : "bg-teal-300"} />
+        </div>
+        <div>
+          <div className="flex justify-between text-[10px] text-gray-500"><span>Omega-6 intake</span><span dir="ltr">{omega6.toFixed(2)} / {target6} g</span></div>
+          <ProgressBar value={omega6} max={target6} color={p6 > 150 ? "bg-orange-400" : "bg-amber-400"} />
+        </div>
+      </div>
+      {message && <div className={`text-xs ${toneText}`}>{tone === "good" ? "✅" : "⚠️"} {message}</div>}
+      {!hasData && <div className="text-xs text-gray-400">Add foods to see the balance. Aim for ω-6 : ω-3 of 4 : 1 or lower.</div>}
+    </div>
   );
 }
 
@@ -1077,8 +1182,24 @@ export default function MealPlanner() {
   // Micronutrient manual overrides: clientId → { key → value }
   const [microOverrides, setMicroOverrides] = useState<Record<number, Record<string, number>>>({});
   // Calculator state
-  const [calcData, setCalcData] = useState({ age: 25, weight: 70, height: 170, gender: "male", activity: "1.55", goal: "maintain" });
-  const [calcResult, setCalcResult] = useState<{ bmr: number; tdee: number; target: number; water?: number } | null>(null);
+  const [calcData, setCalcData] = useState<{ age: number; weight: number; height: number; gender: string; activity: string; goal: string; formula: "mifflin" | "katch"; bodyFat: number }>({
+    age: 25, weight: 70, height: 170, gender: "male", activity: "1.55", goal: "maintain", formula: "mifflin", bodyFat: 20,
+  });
+  const [calcResult, setCalcResult] = useState<{ bmr: number; tdee: number; target: number; water?: number; formula?: "mifflin" | "katch"; lbm?: number } | null>(null);
+  // Manual overrides for fiber / saturated fat targets (null = use the recommended value)
+  const [manualTargets, setManualTargets] = useState<{ fiber: number | null; saturatedFat: number | null }>(() => {
+    try {
+      const s = localStorage.getItem("pro_manual_targets_v1");
+      if (s) {
+        const d = JSON.parse(s);
+        return { fiber: typeof d.fiber === "number" ? d.fiber : null, saturatedFat: typeof d.saturatedFat === "number" ? d.saturatedFat : null };
+      }
+    } catch {}
+    return { fiber: null, saturatedFat: null };
+  });
+  useEffect(() => {
+    try { localStorage.setItem("pro_manual_targets_v1", JSON.stringify(manualTargets)); } catch {}
+  }, [manualTargets]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -1217,15 +1338,25 @@ export default function MealPlanner() {
   function printPlan() { window.print(); }
 
   function calcBMR() {
-    const { age, weight, height, gender, activity, goal } = calcData;
-    const bmr = gender === "male"
-      ? 10 * weight + 6.25 * height - 5 * age + 5
-      : 10 * weight + 6.25 * height - 5 * age - 161;
+    const { age, weight, height, gender, activity, goal, formula, bodyFat } = calcData;
+    let bmr: number;
+    let lbm: number | undefined;
+    if (formula === "katch") {
+      // Katch-McArdle: BMR = 370 + 21.6 × lean body mass (kg)
+      const bf = Math.min(60, Math.max(3, bodyFat || 0));
+      lbm = weight * (1 - bf / 100);
+      bmr = 370 + 21.6 * lbm;
+    } else {
+      // Mifflin-St Jeor
+      bmr = gender === "male"
+        ? 10 * weight + 6.25 * height - 5 * age + 5
+        : 10 * weight + 6.25 * height - 5 * age - 161;
+    }
     const tdee = bmr * parseFloat(activity);
     const target = goal === "cut" ? tdee - 500 : goal === "gain" ? tdee + 300 : tdee;
     const act = parseFloat(activity) || 1.2;
     const water = Number((weight * 0.035 + (act >= 1.725 ? 0.75 : act >= 1.55 ? 0.5 : 0.2)).toFixed(1));
-    setCalcResult({ bmr: Math.round(bmr), tdee: Math.round(tdee), target: Math.round(target), water });
+    setCalcResult({ bmr: Math.round(bmr), tdee: Math.round(tdee), target: Math.round(target), water, formula, lbm: lbm !== undefined ? Number(lbm.toFixed(1)) : undefined });
   }
 
   function applyCalcToMacros() {
@@ -1362,14 +1493,22 @@ export default function MealPlanner() {
           body { background: white !important; color: #111 !important; font-family: 'Segoe UI', 'Arial', sans-serif !important; margin: 0 !important; }
           @page { margin: 0; size: A4; }
           @page :first { margin: 0; }
+          html, body { height: auto !important; min-height: 0 !important; }
+          .min-h-screen { min-height: 0 !important; }
+          .pdf-main { max-width: none !important; margin: 0 !important; padding: 0 !important; }
+          .pdf-main > *, .pdf-planner > * { margin-top: 0 !important; margin-bottom: 0 !important; }
+          .pdf-break { break-before: page !important; page-break-before: always !important; }
 
           /* ── COVER PAGE ─────────────────────────────────────────── */
           .pdf-cover {
             display: flex !important; flex-direction: column !important;
-            min-height: 100vh !important; background: #0b1f38 !important;
+            box-sizing: border-box !important; width: 100% !important;
+            height: 296mm !important; min-height: 0 !important; max-height: 296mm !important;
+            background: #0b1f38 !important;
             color: white !important; padding: 40px 50px !important;
-            page-break-after: always !important; position: relative !important;
+            position: relative !important;
             overflow: hidden !important;
+            break-inside: avoid !important; page-break-inside: avoid !important;
           }
           .pdf-cover-accent {
             position: absolute !important; bottom: 0 !important; right: 0 !important;
@@ -1412,7 +1551,7 @@ export default function MealPlanner() {
           .pdf-page-header-right span { color: #0b1f38 !important; font-weight: 600 !important; }
 
           /* ── SUMMARY PAGE ───────────────────────────────────────── */
-          .pdf-summary { padding: 0 40px 40px !important; page-break-after: always !important; }
+          .pdf-summary { padding: 0 40px 40px !important; }
           .pdf-section-label { font-size: 10px !important; letter-spacing: 3px !important; text-transform: uppercase !important; color: #0d7a5f !important; font-weight: 700 !important; margin-bottom: 6px !important; }
           .pdf-section-title { font-size: 30px !important; font-weight: 900 !important; text-transform: uppercase !important; color: #0b1f38 !important; margin-bottom: 14px !important; }
           .pdf-subtitle-text { font-size: 12px !important; color: #6b7280 !important; line-height: 1.6 !important; max-width: 420px !important; margin-bottom: 28px !important; }
@@ -1499,10 +1638,10 @@ export default function MealPlanner() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto p-4 space-y-4">
+      <main className="pdf-main max-w-4xl mx-auto p-4 space-y-4">
         {/* ── PLANNER TAB ── */}
         {tab === "planner" && (
-          <div className="space-y-4">
+          <div className="pdf-planner space-y-4">
             {/* ── PDF COVER PAGE (print only) ─────────────────────────────── */}
             {(() => {
               const gt = grandTotals(meals);
@@ -1546,7 +1685,7 @@ export default function MealPlanner() {
                   </div>
 
                   {/* SUMMARY PAGE */}
-                  <div className="hidden print:block">
+                  <div className="pdf-break hidden print:block">
                     <div className="pdf-page-header">
                       <div className="pdf-page-header-logo">
                         <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
@@ -1873,77 +2012,66 @@ export default function MealPlanner() {
                     matchedClient || { gender: currentGender, age: 30, isTraining: true, isPregnant: false, pregnancyMonth: 0, isLactating: false },
                     targetMacros.calories
                   );
-                  const fiberTarget = planRDI.fiber;
+                  // Recommended values stay the default; a manual value (if typed) overrides them.
+                  const defaultFiber = planRDI.fiber;
+                  const defaultSatFat = planRDI.saturatedFat;
+                  const fiberTarget = manualTargets.fiber ?? defaultFiber;
+                  const satFatLimit = manualTargets.saturatedFat ?? defaultSatFat;
                   const isFiberMet = planTracking.fiber >= fiberTarget;
-                  return (
-                    <div>
-                      <div className="flex justify-between text-xs mb-0.5">
-                        <span className="flex items-center gap-1 font-medium">
-                          <span>🌾 Fiber - الألياف</span>
-                          <span className="text-[10px] text-gray-400 font-normal">
-                            ({currentGender === "female" ? "Woman RDI: 25g" : "Man RDI: 38g"})
-                          </span>
-                        </span>
-                        <span className={isFiberMet ? "font-bold text-green-600 dark:text-green-400" : "font-medium"}>
-                          {planTracking.fiber.toFixed(1)}g / {fiberTarget}g
-                        </span>
-                      </div>
-                      <ProgressBar
-                        value={planTracking.fiber}
-                        max={fiberTarget}
-                        color={isFiberMet ? "bg-green-600" : planTracking.fiber >= fiberTarget * 0.5 ? "bg-green-500" : "bg-emerald-400"}
-                      />
-                    </div>
-                  );
-                })()}
-                {(() => {
-                  // Saturated fat cap: 20 grams per 2000 calories
-                  const satFatLimit = targetMacros.calories > 0 ? (targetMacros.calories / 2000) * 20 : 20;
                   const satPct = satFatLimit > 0 ? (planTracking.saturatedFat / satFatLimit) * 100 : 0;
                   const isOver = planTracking.saturatedFat > satFatLimit;
                   return (
-                    <div>
-                      <div className="flex justify-between text-xs mb-0.5">
-                        <span className="flex items-center gap-1 font-medium">
-                          <span>🧈 Saturated Fat - دهون مشبعة</span>
-                          <span className="text-[10px] text-gray-400 font-normal">
-                            (Cap: 20g/2000 kcal)
+                    <>
+                      <div>
+                        <div className="flex justify-between items-center text-xs mb-0.5 gap-2">
+                          <span className="flex items-center gap-1 font-medium flex-wrap">
+                            <span>🌾 Fiber - الألياف</span>
+                            <span className="text-[10px] text-gray-400 font-normal">
+                              {manualTargets.fiber !== null ? `Custom · recommended ${defaultFiber}g` : `Recommended: ${defaultFiber}g`}
+                            </span>
                           </span>
-                        </span>
-                        <span className={isOver ? "font-bold text-red-500 flex items-center gap-1" : "font-medium"}>
-                          {planTracking.saturatedFat.toFixed(1)}g / {satFatLimit.toFixed(1)}g cap
-                        </span>
-                      </div>
-                      <ProgressBar
-                        value={planTracking.saturatedFat}
-                        max={satFatLimit}
-                        color={isOver ? "bg-red-500" : satPct > 80 ? "bg-orange-400" : "bg-amber-400"}
-                      />
-                      {isOver && (
-                        <div className="text-xs text-red-500 mt-0.5 font-medium flex items-center gap-1">
-                          ⚠️ Exceeded saturated fat cap ({satFatLimit.toFixed(1)}g max) — تجاوز الحد المسموح للدهون المشبعة
+                          <span className={cn("flex items-center gap-1", isFiberMet ? "font-bold text-green-600 dark:text-green-400" : "font-medium")} dir="ltr">
+                            {planTracking.fiber.toFixed(1)}g /
+                            <TargetEditor value={manualTargets.fiber} defaultValue={defaultFiber} unit="g"
+                              onChange={v => setManualTargets(p => ({ ...p, fiber: v }))} />
+                          </span>
                         </div>
-                      )}
-                    </div>
-                  );
-                })()}
-                {(() => {
-                  const ratio = planTracking.omega3 > 0 ? planTracking.omega6 / planTracking.omega3 : null;
-                  const ratioColor = ratio === null ? "text-gray-400" : ratio <= 4 ? "text-green-600" : ratio <= 10 ? "text-yellow-600" : "text-red-500";
-                  return (
-                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
-                      <div className="flex justify-between items-center">
-                        <span className="text-xs">🐟 Omega-3 : Omega-6</span>
-                        <span className={`text-xs font-bold ${ratioColor}`}>
-                          {ratio === null ? "— no data" : `1 : ${ratio.toFixed(1)}`}
-                        </span>
+                        <ProgressBar
+                          value={planTracking.fiber}
+                          max={fiberTarget}
+                          color={isFiberMet ? "bg-green-600" : planTracking.fiber >= fiberTarget * 0.5 ? "bg-green-500" : "bg-emerald-400"}
+                        />
                       </div>
-                      <div className="text-xs text-gray-400 mt-0.5">
-                        ω-3: {planTracking.omega3.toFixed(2)}g · ω-6: {planTracking.omega6.toFixed(2)}g · Aim for 1:1 to 1:4
+                      <div>
+                        <div className="flex justify-between items-center text-xs mb-0.5 gap-2">
+                          <span className="flex items-center gap-1 font-medium flex-wrap">
+                            <span>🧈 Saturated Fat - دهون مشبعة</span>
+                            <span className="text-[10px] text-gray-400 font-normal">
+                              {manualTargets.saturatedFat !== null ? `Custom · recommended ${defaultSatFat}g` : `Recommended cap: ${defaultSatFat}g (20g/2000 kcal)`}
+                            </span>
+                          </span>
+                          <span className={cn("flex items-center gap-1", isOver ? "font-bold text-red-500" : "font-medium")} dir="ltr">
+                            {planTracking.saturatedFat.toFixed(1)}g /
+                            <TargetEditor value={manualTargets.saturatedFat} defaultValue={defaultSatFat} unit="g"
+                              onChange={v => setManualTargets(p => ({ ...p, saturatedFat: v }))} />
+                          </span>
+                        </div>
+                        <ProgressBar
+                          value={planTracking.saturatedFat}
+                          max={satFatLimit}
+                          color={isOver ? "bg-red-500" : satPct > 80 ? "bg-orange-400" : "bg-amber-400"}
+                        />
+                        {isOver && (
+                          <div className="text-xs text-red-500 mt-0.5 font-medium flex items-center gap-1">
+                            ⚠️ Exceeded saturated fat limit ({satFatLimit.toFixed(1)}g max) — تجاوز الحد المسموح للدهون المشبعة
+                          </div>
+                        )}
                       </div>
-                      {ratio !== null && ratio > 10 && <div className="text-xs text-red-500 mt-0.5">⚠️ Very high omega-6 ratio — increase omega-3 sources</div>}
-                      {ratio !== null && ratio > 4 && ratio <= 10 && <div className="text-xs text-yellow-600 mt-0.5">Consider adding more omega-3 sources (salmon, sardines, flaxseed)</div>}
-                    </div>
+                      <OmegaBalance
+                        omega3={planTracking.omega3} omega6={planTracking.omega6}
+                        target3={planRDI.omega3} target6={planRDI.omega6}
+                      />
+                    </>
                   );
                 })()}
               </div>
@@ -1987,7 +2115,7 @@ export default function MealPlanner() {
 
             {/* ── RECIPE BUILDER ───────────────────────────────────────────── */}
             {showRecipeBuilder && (
-              <RecipeBuilder
+              <div className="print:hidden"><RecipeBuilder
                 allFoods={[...FOOD_DATABASE, ...customFoods]}
                 customRecipes={customRecipes}
                 setCustomRecipes={setCustomRecipes}
@@ -2000,11 +2128,11 @@ export default function MealPlanner() {
                   setMeals(prev => [...prev, { id: `m${Date.now()}`, name: r.name, items, notes: r.notes, collapsed: false }]);
                 }}
                 onClose={() => setShowRecipeBuilder(false)}
-              />
+              /></div>
             )}
 
-            {/* plan notes */}
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm">
+            {/* plan notes (screen only — the PDF shows these in the "From Your Coach" box) */}
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm print:hidden">
               <label className="text-xs font-semibold text-gray-500 uppercase">Plan Notes - ملاحظات الخطة</label>
               <textarea value={planNotes} onChange={e => setPlanNotes(e.target.value)} rows={3}
                 placeholder="General notes, instructions..."
@@ -2278,6 +2406,22 @@ export default function MealPlanner() {
           <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-4">
             <h2 className="font-bold text-base">BMR / TDEE Calculator - حاسبة السعرات</h2>
             <div className="grid grid-cols-2 gap-3">
+              <div className="col-span-2"><label className="text-xs text-gray-500">Equation - المعادلة</label>
+                <select value={calcData.formula} onChange={e => setCalcData(p => ({ ...p, formula: e.target.value as "mifflin" | "katch" }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1">
+                  <option value="mifflin">Mifflin-St Jeor (default) - ميفلن سانت جور</option>
+                  <option value="katch">Katch-McArdle (uses body fat %) - كاتش ماكاردل</option>
+                </select>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  {calcData.formula === "katch"
+                    ? "Based on lean body mass — more accurate for lean / muscular clients when body fat % is known."
+                    : "Based on age, weight, height and gender — the standard choice when body fat % is unknown."}
+                </p>
+              </div>
+              {calcData.formula === "katch" && (
+                <div className="col-span-2"><label className="text-xs text-gray-500">Body Fat % - نسبة الدهون</label>
+                  <input type="number" min="3" max="60" step="0.1" value={calcData.bodyFat} onChange={e => setCalcData(p => ({ ...p, bodyFat: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" />
+                </div>
+              )}
               <div><label className="text-xs text-gray-500">Age - العمر</label><input type="number" value={calcData.age} onChange={e => setCalcData(p => ({ ...p, age: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
               <div><label className="text-xs text-gray-500">Weight (kg) - الوزن</label><input type="number" value={calcData.weight} onChange={e => setCalcData(p => ({ ...p, weight: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
               <div><label className="text-xs text-gray-500">Height (cm) - الطول</label><input type="number" value={calcData.height} onChange={e => setCalcData(p => ({ ...p, height: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
@@ -2307,6 +2451,10 @@ export default function MealPlanner() {
             <button onClick={calcBMR} className="w-full bg-blue-600 text-white rounded-xl py-2 text-sm font-semibold hover:bg-blue-700">Calculate</button>
             {calcResult && (
               <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 space-y-2 text-sm">
+                <div className="flex justify-between text-xs text-gray-500">
+                  <span>Equation</span>
+                  <span>{calcResult.formula === "katch" ? `Katch-McArdle${calcResult.lbm ? ` · LBM ${calcResult.lbm} kg` : ""}` : "Mifflin-St Jeor"}</span>
+                </div>
                 <div className="flex justify-between"><span>BMR</span><span className="font-bold">{calcResult.bmr} kcal</span></div>
                 <div className="flex justify-between"><span>TDEE</span><span className="font-bold">{calcResult.tdee} kcal</span></div>
                 <div className="flex justify-between text-blue-700 dark:text-blue-300"><span>Target ({calcData.goal})</span><span className="font-bold">{calcResult.target} kcal</span></div>
@@ -2509,6 +2657,8 @@ export default function MealPlanner() {
                     pregnancyMonth: selectedClient.pregnancyMonth || 0,
                     isLactating: !!selectedClient.isLactating,
                   });
+                  if (manualTargets.fiber !== null) rdi.fiber = manualTargets.fiber;
+                  if (manualTargets.saturatedFat !== null) rdi.saturatedFat = manualTargets.saturatedFat;
                   // Calculate micros from current plan meals
                   const planMicros: Record<string, number> = {};
                   const allFoods = [...FOOD_DATABASE, ...customFoods];
@@ -2684,6 +2834,8 @@ export default function MealPlanner() {
               {(() => {
                 const clientForMicros = clients.find(c => c.id === microsClientId) || null;
                 const rdi = getRDI(clientForMicros ?? { gender: "male", age: 30, isTraining: true, isPregnant: false, pregnancyMonth: 0, isLactating: false });
+                if (manualTargets.fiber !== null) rdi.fiber = manualTargets.fiber;
+                if (manualTargets.saturatedFat !== null) rdi.saturatedFat = manualTargets.saturatedFat;
                 const clientOverrides = microOverrides[clientForMicros?.id ?? -1] || {};
 
                 // Build planMicros AND microSources from current meals
