@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
   useSensor, useSensors, DragEndEvent,
@@ -13,6 +13,7 @@ import {
   Plus, Trash2, Copy, Printer, Sun, Moon, ChevronDown, ChevronUp,
   GripVertical, Users, Calculator, UtensilsCrossed, BarChart2,
   TrendingUp, TrendingDown, Minus, Save, History, ArrowLeft,
+  BookOpen, ImagePlus, Download, Upload, X, Clock, Cloud, CloudOff, RefreshCw,
 } from "lucide-react";
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
@@ -24,6 +25,7 @@ interface FoodEntry {
   id: number; name: string; category: string; state: string;
   carbs: number; protein: number; fat: number; calories: number;
   micros?: Partial<Record<string, number>>; // per 100g (or per piece for per-piece items)
+  recipeId?: number; // set when this food item IS a saved recipe (per serving)
 }
 
 const FOOD_DATABASE: FoodEntry[] = [
@@ -232,8 +234,9 @@ interface FoodItem {
   id: number; name: string; category: string; state: string;
   carbs: number; protein: number; fat: number; calories: number;
   grams: number; instId: string;
+  recipeId?: number; micros?: Partial<Record<string, number>>;
 }
-interface Meal { id: string; name: string; notes: string; items: FoodItem[]; }
+interface Meal { id: string; name: string; notes: string; items: FoodItem[]; recipeId?: number; }
 interface TargetMacros { calories: number; protein: number; carbs: number; fat: number; }
 interface Template { id: number; name: string; meals: Meal[]; targetMacros: TargetMacros; createdAt: string; waterGoal?: number; }
 interface BodyMeasurements {
@@ -419,6 +422,11 @@ interface CustomRecipe {
   id: number; name: string; category: string; notes: string;
   serves: number;
   ingredients: { foodId: number; isCustom?: boolean; grams: number }[];
+  steps?: string[];            // instructions, one entry per step
+  images?: string[];           // compressed JPEG data-URLs; first one is the cover
+  prepMin?: number; cookMin?: number;
+  difficulty?: "Easy" | "Medium" | "Hard";
+  updatedAt?: string;
 }
 
 const EMPTY_MEASUREMENTS: BodyMeasurements = { weight: 0, height: 0, bodyFat: 0, arms: 0, thighs: 0, waist: 0, hip: 0, highHip: 0, neck: 0 };
@@ -488,6 +496,134 @@ function grandTotals(meals: Meal[]) {
 }
 
 const CATEGORIES = Array.from(new Set(FOOD_DATABASE.map(f => f.category)));
+
+// ─── RECIPE / CUSTOM-FOOD HELPERS ─────────────────────────────────────────────
+const RECIPE_CATEGORIES = ["Breakfast", "Lunch", "Dinner", "Snack", "Meal prep", "High-protein", "Dessert", "Drink"];
+const MAX_RECIPE_IMAGES = 6;
+
+/** Calories vs. macros check. Atwater: 4 kcal/g protein & carbs, 9 kcal/g fat.
+ *  Differences up to 5% (or ≤ 5 kcal) are treated as rounding/fibre noise and ignored. */
+const CAL_TOLERANCE_PCT = 5;
+const CAL_TOLERANCE_ABS = 5;
+function calorieCheck(protein: number, carbs: number, fat: number, calories: number) {
+  const calc = Math.round(protein * 4 + carbs * 4 + fat * 9);
+  const diff = calories - calc;
+  const base = Math.max(calc, calories, 1);
+  const pct = (Math.abs(diff) / base) * 100;
+  const mismatch = calories > 0 && pct > CAL_TOLERANCE_PCT && Math.abs(diff) > CAL_TOLERANCE_ABS;
+  return { calc, diff, pct, mismatch };
+}
+
+function foodMult(fd: FoodEntry, amount: number) {
+  return isPerPiece(fd.state) ? amount : amount / 100;
+}
+
+function round1(n: number) { return Math.round(n * 10) / 10; }
+
+/** Totals for the WHOLE recipe (all servings). */
+function recipeBatch(r: CustomRecipe, foods: FoodEntry[]) {
+  const t = { calories: 0, protein: 0, carbs: 0, fat: 0 };
+  const micros: Record<string, number> = {};
+  let missing = 0;
+  r.ingredients.forEach(ing => {
+    const fd = foods.find(f => f.id === ing.foodId);
+    if (!fd) { missing++; return; }
+    const m = foodMult(fd, ing.grams);
+    t.calories += fd.calories * m;
+    t.protein += fd.protein * m;
+    t.carbs += fd.carbs * m;
+    t.fat += fd.fat * m;
+    if (fd.micros) {
+      Object.entries(fd.micros).forEach(([k, v]) => {
+        if (typeof v === "number") micros[k] = (micros[k] || 0) + v * m;
+      });
+    }
+  });
+  return { ...t, micros, missing };
+}
+
+/** A recipe behaves like any other food item: macros + micros are PER SERVING. */
+function recipeToFood(r: CustomRecipe, foods: FoodEntry[]): FoodEntry {
+  const b = recipeBatch(r, foods);
+  const s = Math.max(1, r.serves || 1);
+  const micros: Record<string, number> = {};
+  Object.entries(b.micros).forEach(([k, v]) => { micros[k] = Math.round((v / s) * 1000) / 1000; });
+  return {
+    id: r.id, name: r.name || "Untitled recipe", category: "Recipes", state: "per serving (recipe)",
+    carbs: round1(b.carbs / s), protein: round1(b.protein / s), fat: round1(b.fat / s),
+    calories: Math.round(b.calories / s), micros, recipeId: r.id,
+  };
+}
+
+function newRecipe(): CustomRecipe {
+  return {
+    id: Date.now(), name: "", category: "Meal prep", notes: "", serves: 1, ingredients: [],
+    steps: [""], images: [], prepMin: 0, cookMin: 0, difficulty: "Easy",
+  };
+}
+
+// ─── LOCAL DATABASE (IndexedDB) — recipes + photos live here, on this PC/browser ──
+const IDB_NAME = "msr_planner_db";
+const IDB_STORE = "kv";
+function idbOpen(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    if (typeof indexedDB === "undefined") { reject(new Error("IndexedDB unavailable")); return; }
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+async function idbGet<T>(key: string): Promise<T | undefined> {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const rq = db.transaction(IDB_STORE, "readonly").objectStore(IDB_STORE).get(key);
+    rq.onsuccess = () => { resolve(rq.result as T | undefined); db.close(); };
+    rq.onerror = () => { reject(rq.error); db.close(); };
+  });
+}
+async function idbSet(key: string, value: unknown): Promise<void> {
+  const db = await idbOpen();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, "readwrite");
+    tx.objectStore(IDB_STORE).put(value, key);
+    tx.oncomplete = () => { resolve(); db.close(); };
+    tx.onerror = () => { reject(tx.error); db.close(); };
+    tx.onabort = () => { reject(tx.error); db.close(); };
+  });
+}
+
+/** Resize + re-encode a photo so many of them fit comfortably in local storage (~60-150 KB each). */
+function compressImage(file: File, maxDim = 1000, quality = 0.78): Promise<string> {
+  return new Promise((resolve, reject) => {
+    if (!file.type.startsWith("image/")) { reject(new Error("Not an image file")); return; }
+    const reader = new FileReader();
+    reader.onerror = () => reject(reader.error ?? new Error("Could not read file"));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Could not open this image (unsupported format?)"));
+      img.onload = () => {
+        const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+        const w = Math.max(1, Math.round(img.width * scale));
+        const h = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = w; canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) { reject(new Error("Canvas not available")); return; }
+        ctx.fillStyle = "#ffffff"; ctx.fillRect(0, 0, w, h);
+        ctx.drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function fmtAmt(n: number) {
+  const r = Math.round(n * 10) / 10;
+  return Number.isInteger(r) ? String(r) : r.toFixed(1);
+}
 
 // ─── SUB-COMPONENTS ────────────────────────────────────────────────────────────
 function ProgressBar({ value, max, color }: { value: number; max: number; color: string }) {
@@ -651,8 +787,8 @@ function ProgressLineChart({ checkIns, metric, label, goal }: { checkIns: Client
 }
 
 // ─── SORTABLE FOOD ITEM ─────────────────────────────────────────────────────────
-function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
-  item: FoodItem; onRemove: () => void; onGramsChange: (g: number) => void; lang: "ar" | "en" | "both";
+function SortableFoodItem({ item, onRemove, onGramsChange, lang, onOpenRecipe }: {
+  item: FoodItem; onRemove: () => void; onGramsChange: (g: number) => void; lang: "ar" | "en" | "both"; onOpenRecipe?: () => void;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.instId });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
@@ -663,7 +799,14 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
         <GripVertical size={16} />
       </button>
       <div className="flex-1 min-w-0">
-        <div className="font-medium truncate text-xs">{displayName(item.name, lang)}</div>
+        <div className="font-medium truncate text-xs flex items-center gap-1">
+          <span className="truncate">{displayName(item.name, lang)}</span>
+          {item.recipeId !== undefined && onOpenRecipe && (
+            <button onClick={onOpenRecipe} title="Open this recipe" className="shrink-0 flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 hover:bg-purple-200 print:hidden">
+              <BookOpen size={10} />recipe
+            </button>
+          )}
+        </div>
         <div className="text-xs text-gray-500 dark:text-gray-400">{item.state}</div>
         <div className="text-xs text-gray-500 flex gap-2 mt-0.5">
           <span className="text-yellow-600">{m.carbs}g C</span>
@@ -697,16 +840,18 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang }: {
 }
 
 // ─── MEAL CARD ─────────────────────────────────────────────────────────────────
-function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dragHandleProps }: {
+function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dragHandleProps, onSaveCustomFood, onDeleteCustomFood, onOpenRecipe }: {
   meal: Meal; onUpdate: (m: Meal) => void; onDelete: () => void; onDuplicate: () => void;
   lang: "ar" | "en" | "both"; extraFoods: FoodEntry[]; dragHandleProps?: React.HTMLAttributes<HTMLElement>;
+  onSaveCustomFood: (food: Omit<FoodEntry, "id">) => FoodEntry;
+  onDeleteCustomFood: (food: FoodEntry) => void;
+  onOpenRecipe: (id: number) => void;
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedCat, setSelectedCat] = useState("All");
   const [selectedFoodIds, setSelectedFoodIds] = useState<Set<number>>(new Set());
   const [showCustomForm, setShowCustomForm] = useState(false);
-  const [customForm, setCustomForm] = useState({ name: "", calories: 0, protein: 0, carbs: 0, fat: 0, grams: 100, fiber: 0, saturatedFat: 0, omega3: 0, omega6: 0 });
   const allFoods = [...FOOD_DATABASE, ...extraFoods];
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -744,23 +889,11 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
   function toggleFoodSelect(id: number) {
     setSelectedFoodIds(prev => { const s = new Set(prev); s.has(id) ? s.delete(id) : s.add(id); return s; });
   }
-  function addCustomFoodToMeal() {
-    if (!customForm.name.trim()) return;
-    const tempId = 90000 + Date.now() % 10000;
-    const micros: Record<string, number> = {};
-    if (customForm.fiber) micros.fiber = customForm.fiber;
-    if (customForm.saturatedFat) micros.saturatedFat = customForm.saturatedFat;
-    if (customForm.omega3) micros.omega3 = customForm.omega3;
-    if (customForm.omega6) micros.omega6 = customForm.omega6;
-    const newItem: FoodItem = {
-      id: tempId, name: customForm.name, category: "Custom", state: "custom",
-      carbs: customForm.carbs, protein: customForm.protein, fat: customForm.fat,
-      calories: customForm.calories || Math.round(customForm.protein * 4 + customForm.carbs * 4 + customForm.fat * 9),
-      ...(Object.keys(micros).length > 0 ? { micros } : {}),
-      grams: customForm.grams, instId: `custom-${Date.now()}-${Math.random()}`
-    };
+  /** Adds a custom food to this meal. If "save" is ticked it is also stored in the food database for later. */
+  function addCustomFoodToMeal(food: Omit<FoodEntry, "id">, amount: number, save: boolean) {
+    const entry: FoodEntry = save ? onSaveCustomFood(food) : { ...food, id: 90000 + (Date.now() % 100000) };
+    const newItem: FoodItem = { ...entry, grams: amount, instId: `custom-${Date.now()}-${Math.random()}` };
     onUpdate({ ...meal, items: [...meal.items, newItem] });
-    setCustomForm({ name: "", calories: 0, protein: 0, carbs: 0, fat: 0, grams: 100, fiber: 0, saturatedFat: 0, omega3: 0, omega6: 0 });
     setShowCustomForm(false);
   }
   function removeItem(instId: string) {
@@ -826,6 +959,7 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
                   <SortableFoodItem key={item.instId} item={item} lang={lang}
                     onRemove={() => removeItem(item.instId)}
                     onGramsChange={g => updateGrams(item.instId, g)}
+                    onOpenRecipe={item.recipeId !== undefined ? () => onOpenRecipe(item.recipeId as number) : undefined}
                   />
                 ))}
               </div>
@@ -856,32 +990,10 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
                 ✚
               </button>
             </div>
-            {/* custom food inline form */}
+            {/* custom food form (shared component: calorie check + save to database) */}
             {showCustomForm && (
-              <div className="border border-purple-200 dark:border-purple-800 rounded-xl bg-purple-50 dark:bg-purple-900/20 p-3 space-y-2">
-                <p className="text-xs font-semibold text-purple-700 dark:text-purple-300">➕ إضافة أكل مخصص</p>
-                <input value={customForm.name} onChange={e => setCustomForm(p => ({ ...p, name: e.target.value }))} placeholder="اسم الأكل..." className="w-full text-xs border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 bg-white dark:bg-gray-800" />
-                <div className="grid grid-cols-3 gap-1">
-                  {(["calories","protein","carbs","fat","grams"] as const).map(k => (
-                    <div key={k}>
-                      <label className="text-xs text-gray-500 capitalize">{k === "grams" ? "الوزن (g)" : k}</label>
-                      <input type="number" value={customForm[k] || ""} onChange={e => setCustomForm(p => ({ ...p, [k]: +e.target.value }))} className="w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800" />
-                    </div>
-                  ))}
-                </div>
-                <div className="grid grid-cols-2 gap-1 mt-1">
-                  {([["fiber","Fiber (g)"],["saturatedFat","Sat. Fat (g/100g)"],["omega3","Omega-3 (g)"],["omega6","Omega-6 (g)"]] as const).map(([k, lbl]) => (
-                    <div key={k}>
-                      <label className="text-xs text-gray-400">{lbl}</label>
-                      <input type="number" step="0.01" value={(customForm as unknown as Record<string,number>)[k] || ""} onChange={e => setCustomForm(p => ({ ...p, [k]: +e.target.value }))} className="w-full text-xs border border-gray-200 dark:border-gray-600 rounded px-1 py-1 bg-white dark:bg-gray-800" />
-                    </div>
-                  ))}
-                </div>
-                <div className="flex gap-1 justify-end">
-                  <button onClick={() => setShowCustomForm(false)} className="text-xs text-gray-500 px-3 py-1 hover:text-gray-700">إلغاء</button>
-                  <button onClick={addCustomFoodToMeal} className="text-xs bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700 font-semibold">إضافة ✓</button>
-                </div>
-              </div>
+              <CustomFoodForm showAmount showSaveToggle submitLabel="Add to meal ✓"
+                onSubmit={addCustomFoodToMeal} onCancel={() => setShowCustomForm(false)} />
             )}
             {(search || selectedCat !== "All") && (
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 overflow-hidden">
@@ -892,6 +1004,10 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
                       <input type="checkbox" checked={selectedFoodIds.has(f.id)} onChange={() => toggleFoodSelect(f.id)} className="accent-blue-600" />
                       <span className="flex-1">{displayName(f.name, lang)}</span>
                       <span className="text-gray-400 text-xs">{f.state}</span>
+                      {extraFoods.some(x => x.id === f.id) && f.category === "Custom" && (
+                        <button onClick={e => { e.preventDefault(); onDeleteCustomFood(f); }} title="Remove from my food database"
+                          className="text-red-400 hover:text-red-600 px-1"><Trash2 size={13} /></button>
+                      )}
                       <button onClick={e => { e.preventDefault(); addItem(f); }} className="text-blue-500 hover:text-blue-700 font-bold px-1 text-base leading-none">+</button>
                     </label>
                   ))}
@@ -914,198 +1030,1435 @@ function MealCard({ meal, onUpdate, onDelete, onDuplicate, lang, extraFoods, dra
   );
 }
 
-// ─── RECIPE BUILDER COMPONENT ────────────────────────────────────────────────
-interface RecipeBuilderProps {
-  allFoods: FoodEntry[];
-  customRecipes: CustomRecipe[];
-  setCustomRecipes: React.Dispatch<React.SetStateAction<CustomRecipe[]>>;
-  onAddAsMeal: (r: CustomRecipe) => void;
-  onClose: () => void;
+// ─── CUSTOM FOOD FORM (shared: planner meal card + Recipes tab) ────────────────
+interface FoodDraft {
+  name: string; basis: "100g" | "serving";
+  calories: number; protein: number; carbs: number; fat: number;
+  fiber: number; saturatedFat: number; omega3: number; omega6: number; amount: number;
 }
-function RecipeBuilder({ allFoods, customRecipes, setCustomRecipes, onAddAsMeal, onClose }: RecipeBuilderProps) {
-  const [rbName, setRbName] = useState("");
-  const [rbCategory, setRbCategory] = useState("Meal");
-  const [rbNotes, setRbNotes] = useState("");
-  const [rbServes, setRbServes] = useState(1);
-  const [rbIngredients, setRbIngredients] = useState<{ foodId: number; grams: number }[]>([]);
-  const [rbSearch, setRbSearch] = useState("");
-  const [editId, setEditId] = useState<number | null>(null);
+const EMPTY_FOOD_DRAFT: FoodDraft = {
+  name: "", basis: "100g", calories: 0, protein: 0, carbs: 0, fat: 0,
+  fiber: 0, saturatedFat: 0, omega3: 0, omega6: 0, amount: 100,
+};
+function draftFromFood(f: FoodEntry): FoodDraft {
+  const m = f.micros || {};
+  const serving = isPerPiece(f.state);
+  return {
+    name: f.name, basis: serving ? "serving" : "100g",
+    calories: f.calories, protein: f.protein, carbs: f.carbs, fat: f.fat,
+    fiber: m.fiber || 0, saturatedFat: m.saturatedFat || 0, omega3: m.omega3 || 0, omega6: m.omega6 || 0,
+    amount: serving ? 1 : 100,
+  };
+}
 
-  function loadForEdit(r: CustomRecipe) {
-    setEditId(r.id); setRbName(r.name); setRbCategory(r.category);
-    setRbNotes(r.notes); setRbServes(r.serves);
-    setRbIngredients(r.ingredients.map(i => ({ foodId: i.foodId, grams: i.grams })));
-  }
-  function clearForm() {
-    setEditId(null); setRbName(""); setRbCategory("Meal"); setRbNotes(""); setRbServes(1); setRbIngredients([]);
-  }
-  function saveRecipe() {
-    if (!rbName.trim() || rbIngredients.length === 0) return;
-    const recipe: CustomRecipe = { id: editId || Date.now(), name: rbName, category: rbCategory, notes: rbNotes, serves: rbServes, ingredients: rbIngredients };
-    setCustomRecipes(prev => {
-      const next = editId ? prev.map(r => r.id === editId ? recipe : r) : [...prev, recipe];
-      localStorage.setItem("custom_recipes_v1", JSON.stringify(next));
-      return next;
-    });
-    clearForm();
-  }
-  function deleteRecipe(id: number) {
-    setCustomRecipes(prev => { const next = prev.filter(r => r.id !== id); localStorage.setItem("custom_recipes_v1", JSON.stringify(next)); return next; });
-  }
+function CustomFoodForm({ initial, showAmount, showSaveToggle, submitLabel, onSubmit, onCancel }: {
+  initial?: FoodEntry; showAmount?: boolean; showSaveToggle?: boolean; submitLabel: string;
+  onSubmit: (food: Omit<FoodEntry, "id">, amount: number, save: boolean) => void; onCancel: () => void;
+}) {
+  const [d, setD] = useState<FoodDraft>(initial ? draftFromFood(initial) : EMPTY_FOOD_DRAFT);
+  const [save, setSave] = useState(true);
+  const set = (k: keyof FoodDraft) => (e: React.ChangeEvent<HTMLInputElement>) =>
+    setD(p => ({ ...p, [k]: Math.max(0, +e.target.value) }));
+  const chk = calorieCheck(d.protein, d.carbs, d.fat, d.calories);
+  const canSubmit = d.name.trim().length > 0;
+  const inputCls = "w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-1.5 py-1 bg-white dark:bg-gray-800";
 
-  const rbTotals = rbIngredients.reduce((acc, ing) => {
-    const fd = allFoods.find(f => f.id === ing.foodId);
-    if (!fd) return acc;
-    const mult = isPerPiece(fd.state) ? ing.grams : ing.grams / 100;
-    return { calories: acc.calories + fd.calories * mult, protein: acc.protein + fd.protein * mult, carbs: acc.carbs + fd.carbs * mult, fat: acc.fat + fd.fat * mult };
-  }, { calories: 0, protein: 0, carbs: 0, fat: 0 });
-
-  const rbSearched = rbSearch.trim().length > 1
-    ? allFoods.filter(f => f.name.toLowerCase().includes(rbSearch.toLowerCase()) || normalizeAr(f.name).includes(normalizeAr(rbSearch)))
-    : [];
+  function submit() {
+    if (!canSubmit) return;
+    const micros: Record<string, number> = {};
+    if (d.fiber) micros.fiber = d.fiber;
+    if (d.saturatedFat) micros.saturatedFat = d.saturatedFat;
+    if (d.omega3) micros.omega3 = d.omega3;
+    if (d.omega6) micros.omega6 = d.omega6;
+    const food: Omit<FoodEntry, "id"> = {
+      name: d.name.trim(), category: "Custom", state: d.basis === "100g" ? "per 100g" : "per serving",
+      carbs: d.carbs, protein: d.protein, fat: d.fat,
+      calories: d.calories > 0 ? d.calories : chk.calc,
+      ...(Object.keys(micros).length ? { micros } : {}),
+    };
+    onSubmit(food, d.amount > 0 ? d.amount : d.basis === "100g" ? 100 : 1, save);
+  }
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-4 border-2 border-purple-100 dark:border-purple-900">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold text-base flex items-center gap-2">
-          <UtensilsCrossed size={16} className="text-purple-600" />
-          Recipe Builder - منشئ الوصفات
-        </h3>
-        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
+    <div dir="ltr" className="border border-purple-200 dark:border-purple-800 rounded-xl bg-purple-50 dark:bg-purple-900/20 p-3 space-y-2 text-left">
+      <p className="text-xs font-semibold text-purple-700 dark:text-purple-300">{initial ? "✏️ Edit food - تعديل" : "➕ Custom food - أكل مخصص"}</p>
+      <input value={d.name} onChange={e => setD(p => ({ ...p, name: e.target.value }))}
+        placeholder="Name — e.g. Protein Bar - بار بروتين" className={inputCls} />
+      <div className="flex gap-1 text-xs">
+        {([["100g", "Values per 100 g"], ["serving", "Values per serving / piece"]] as const).map(([v, lbl]) => (
+          <button key={v} type="button"
+            onClick={() => setD(p => ({ ...p, basis: v, amount: v === "100g" ? 100 : 1 }))}
+            className={cn("flex-1 px-2 py-1 rounded-lg border transition-colors",
+              d.basis === v ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300")}>
+            {lbl}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-4 gap-1">
+        {([["calories", "Calories"], ["protein", "Protein g"], ["carbs", "Carbs g"], ["fat", "Fat g"]] as const).map(([k, lbl]) => (
+          <div key={k}>
+            <label className="text-[11px] text-gray-500">{lbl}</label>
+            <input type="number" min="0" step="any" value={d[k] || ""} onChange={set(k)} className={inputCls} />
+          </div>
+        ))}
+      </div>
+      {/* calories vs macros check — silent when the gap is small */}
+      {chk.mismatch && (
+        <div className="rounded-lg border border-amber-300 dark:border-amber-700 bg-amber-50 dark:bg-amber-900/30 p-2 text-xs text-amber-800 dark:text-amber-200 space-y-1">
+          <div>⚠️ Calories don&apos;t match the macros: you entered <b>{d.calories} kcal</b>, but protein×4 + carbs×4 + fat×9 = <b>{chk.calc} kcal</b> ({chk.diff > 0 ? "+" : ""}{chk.diff} kcal, {chk.pct.toFixed(0)}% off).</div>
+          <div className="flex gap-2 items-center flex-wrap">
+            <button type="button" onClick={() => setD(p => ({ ...p, calories: chk.calc }))}
+              className="px-2 py-0.5 rounded bg-amber-600 text-white hover:bg-amber-700">Use {chk.calc} kcal</button>
+            <span className="opacity-80">or keep yours if it matches the product label.</span>
+          </div>
+        </div>
+      )}
+      <div className="grid grid-cols-4 gap-1">
+        {([["fiber", "Fiber g"], ["saturatedFat", "Sat. fat g"], ["omega3", "Omega-3 g"], ["omega6", "Omega-6 g"]] as const).map(([k, lbl]) => (
+          <div key={k}>
+            <label className="text-[11px] text-gray-400">{lbl}</label>
+            <input type="number" min="0" step="any" value={d[k] || ""} onChange={set(k)} className={inputCls} />
+          </div>
+        ))}
+      </div>
+      {showAmount && (
+        <div className="w-32">
+          <label className="text-[11px] text-gray-500">Amount to add ({d.basis === "100g" ? "g" : "servings"})</label>
+          <input type="number" min="0" step="any" value={d.amount || ""} onChange={set("amount")} className={inputCls} />
+        </div>
+      )}
+      {showSaveToggle && (
+        <label className="flex items-center gap-2 text-xs cursor-pointer">
+          <input type="checkbox" checked={save} onChange={e => setSave(e.target.checked)} className="accent-purple-600" />
+          Save to my food database for later (حفظ في قاعدة بياناتي)
+        </label>
+      )}
+      <div className="flex gap-1 justify-end">
+        <button type="button" onClick={onCancel} className="text-xs text-gray-500 px-3 py-1 hover:text-gray-700">Cancel - إلغاء</button>
+        <button type="button" onClick={submit} disabled={!canSubmit}
+          className="text-xs bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700 font-semibold disabled:opacity-40 disabled:cursor-not-allowed">{submitLabel}</button>
+      </div>
+    </div>
+  );
+}
+
+// ─── BACKUP VALIDATION ─────────────────────────────────────────────────────────
+function isRecipeLike(r: unknown): r is CustomRecipe {
+  const x = r as Partial<CustomRecipe> | null;
+  return !!x && typeof x.id === "number" && typeof x.name === "string" && Array.isArray(x.ingredients);
+}
+function isFoodLike(f: unknown): f is FoodEntry {
+  const x = f as Partial<FoodEntry> | null;
+  return !!x && typeof x.id === "number" && typeof x.name === "string" && typeof x.calories === "number" &&
+    typeof x.protein === "number" && typeof x.carbs === "number" && typeof x.fat === "number" && typeof x.state === "string";
+}
+
+// ─── CLOUD SYNC · Google Drive (private "app data" folder) ─────────────────────
+// Browser-only: Google Identity Services gives a short-lived access token, the Drive REST API
+// stores one small JSON file per recipe / client plus one for My Foods. Nothing passes through a server.
+interface GoogleTokenResponse { access_token?: string; expires_in?: number | string; error?: string; error_description?: string; }
+interface GoogleTokenClient { requestAccessToken: (cfg?: { prompt?: string; hint?: string }) => void; }
+interface GoogleOAuth2 {
+  initTokenClient: (cfg: {
+    client_id: string; scope: string; callback: (r: GoogleTokenResponse) => void;
+    error_callback?: (e: { type?: string; message?: string }) => void;
+  }) => GoogleTokenClient;
+  revoke?: (token: string, done?: () => void) => void;
+}
+declare global { interface Window { google?: { accounts?: { oauth2?: GoogleOAuth2 } } } }
+
+const CLOUD_SCOPE = "https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.email";
+const CLOUD_LS = { clientId: "cloud_google_client_id", connected: "cloud_connected", account: "cloud_account", auto: "cloud_auto", state: "cloud_sync_state_v1" };
+const DRIVE_API = "https://www.googleapis.com/drive/v3";
+const DRIVE_UPLOAD = "https://www.googleapis.com/upload/drive/v3";
+const MAX_CLOUD_FILE_BYTES = 4.5 * 1024 * 1024;   // Drive multipart upload limit is 5 MB
+
+type CloudStatus = "disconnected" | "needs-auth" | "idle" | "syncing" | "error";
+type SyncMode = "merge" | "push-all" | "pull-all";
+type CloudChoice = "local" | "cloud" | "both";
+
+interface SyncRecord { hash: string; fileId: string }
+interface SyncState { account: string; items: Record<string, SyncRecord>; tomb: string[]; lastSyncAt: string }
+interface LocalCloudItem { key: string; hash: string; data: object; label: string }
+interface RemoteCloudItem { key: string; fileId: string; hash: string; modified: string }
+type CloudAction =
+  | { type: "upload"; key: string }
+  | { type: "download"; key: string; asCopy?: boolean }
+  | { type: "deleteRemote"; key: string }
+  | { type: "deleteLocal"; key: string }
+  | { type: "adopt"; key: string }
+  | { type: "forget"; key: string };
+interface CloudConflict { key: string; label: string; kind: "recipe" | "client" | "foods"; remoteModified: string }
+interface CloudBatch { recipesUp: CustomRecipe[]; recipesDel: Set<number>; clientsUp: Client[]; clientsDel: Set<number>; foods: FoodEntry[] | null }
+
+function lsGet(k: string): string { try { return localStorage.getItem(k) ?? ""; } catch { return ""; } }
+function lsSet(k: string, v: string) { try { if (v === "") localStorage.removeItem(k); else localStorage.setItem(k, v); } catch {} }
+function emptyState(account = ""): SyncState { return { account, items: {}, tomb: [], lastSyncAt: "" }; }
+function emptyBatch(): CloudBatch { return { recipesUp: [], recipesDel: new Set(), clientsUp: [], clientsDel: new Set(), foods: null }; }
+function cloudKind(key: string): CloudConflict["kind"] { return key.startsWith("recipe-") ? "recipe" : key.startsWith("client-") ? "client" : "foods"; }
+
+function isClientLike(c: unknown): c is Client {
+  const x = c as Partial<Client> | null;
+  return !!x && typeof x.id === "number" && typeof x.name === "string" && Array.isArray(x.checkIns) && Array.isArray(x.dietPlans);
+}
+
+// ── change detection: content hash of a canonical (key-sorted) JSON string ──
+function stableStringify(v: unknown): string {
+  if (v === null || typeof v !== "object") return JSON.stringify(v) ?? "null";
+  if (Array.isArray(v)) return "[" + v.map(stableStringify).join(",") + "]";
+  const o = v as Record<string, unknown>;
+  return "{" + Object.keys(o).filter(k => o[k] !== undefined).sort().map(k => JSON.stringify(k) + ":" + stableStringify(o[k])).join(",") + "}";
+}
+async function sha256Hex(s: string): Promise<string> {
+  try {
+    if (typeof crypto !== "undefined" && crypto.subtle) {
+      const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+      return "s:" + Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+    }
+  } catch {}
+  let h1 = 0xdeadbeef ^ s.length, h2 = 0x41c6ce57 ^ s.length;           // fallback (insecure context)
+  for (let i = 0; i < s.length; i++) { const c = s.charCodeAt(i); h1 = Math.imul(h1 ^ c, 2654435761); h2 = Math.imul(h2 ^ c, 1597334677); }
+  h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+  h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+  return "f:" + (h2 >>> 0).toString(16).padStart(8, "0") + (h1 >>> 0).toString(16).padStart(8, "0");
+}
+const hashCache = new WeakMap<object, string>();
+async function hashItem(data: object): Promise<string> {
+  const hit = hashCache.get(data);
+  if (hit) return hit;
+  const h = await sha256Hex(stableStringify(data));
+  hashCache.set(data, h);
+  return h;
+}
+
+async function buildLocalSnapshot(recipes: CustomRecipe[], clients: Client[], foods: FoodEntry[]): Promise<Map<string, LocalCloudItem>> {
+  const m = new Map<string, LocalCloudItem>();
+  for (const r of recipes) { const key = `recipe-${r.id}`; m.set(key, { key, data: r, hash: await hashItem(r), label: r.name || "Untitled recipe" }); }
+  for (const c of clients) { const key = `client-${c.id}`; m.set(key, { key, data: c, hash: await hashItem(c), label: c.name || "Client" }); }
+  if (foods.length) { const blob = { foods }; m.set("foods", { key: "foods", data: blob, hash: await hashItem(blob), label: "My Foods" }); }
+  return m;
+}
+
+/** Decides what to upload / download / delete. Pure function (no I/O) so it can be tested on its own.
+ *  `state` = what both sides looked like at the last successful sync. */
+function planSync(local: Map<string, LocalCloudItem>, remote: Map<string, RemoteCloudItem>, state: SyncState): { actions: CloudAction[]; conflicts: CloudConflict[] } {
+  const actions: CloudAction[] = [];
+  const conflicts: CloudConflict[] = [];
+  const keys = new Set<string>([...local.keys(), ...remote.keys(), ...Object.keys(state.items)]);
+  const cloudHasData = remote.size > 0;      // if the cloud is completely empty we never treat that as "deleted everywhere"
+  keys.forEach(key => {
+    const L = local.get(key), R = remote.get(key), S = state.items[key];
+    if (L && R) {
+      if (L.hash === R.hash) { actions.push({ type: "adopt", key }); return; }
+      if (!S) { conflicts.push({ key, label: L.label, kind: cloudKind(key), remoteModified: R.modified }); return; }
+      const localChanged = L.hash !== S.hash, cloudChanged = R.hash !== S.hash;
+      if (localChanged && cloudChanged) conflicts.push({ key, label: L.label, kind: cloudKind(key), remoteModified: R.modified });
+      else if (localChanged) actions.push({ type: "upload", key });
+      else if (cloudChanged) actions.push({ type: "download", key });
+      else actions.push({ type: "adopt", key });
+      return;
+    }
+    if (L && !R) {
+      // gone from the cloud: deleted on another device (propagate) — unless edited here, or the cloud looks wiped (restore it)
+      if (S && cloudHasData && L.hash === S.hash && key !== "foods") actions.push({ type: "deleteLocal", key });
+      else actions.push({ type: "upload", key });
+      return;
+    }
+    if (!L && R) {
+      // missing here: only an explicit delete made on this device (tombstone) may remove it from the cloud
+      if (S && state.tomb.includes(key) && R.hash === S.hash) actions.push({ type: "deleteRemote", key });
+      else actions.push({ type: "download", key });
+      return;
+    }
+    actions.push({ type: "forget", key });
+  });
+  return { actions, conflicts };
+}
+
+// ── Drive REST helpers ──
+class DriveError extends Error {
+  status: number;
+  constructor(status: number, message: string) { super(message); this.status = status; }
+}
+class CloudAuthError extends Error {}
+
+async function driveFetch(token: string, url: string, init?: RequestInit): Promise<Response> {
+  const res = await fetch(url, { ...init, headers: { ...(init?.headers || {}), Authorization: `Bearer ${token}` } });
+  if (!res.ok) {
+    let body = ""; try { body = await res.text(); } catch {}
+    throw new DriveError(res.status, body.slice(0, 300) || `Drive error ${res.status}`);
+  }
+  return res;
+}
+async function driveUserEmail(token: string): Promise<string> {
+  const res = await driveFetch(token, "https://www.googleapis.com/oauth2/v3/userinfo");
+  const j = await res.json() as { email?: string };
+  return j.email || "";
+}
+async function driveList(token: string): Promise<RemoteCloudItem[]> {
+  const out: RemoteCloudItem[] = [];
+  let pageToken = "";
+  do {
+    const fields = encodeURIComponent("nextPageToken,files(id,name,modifiedTime,appProperties)");
+    const url = `${DRIVE_API}/files?spaces=appDataFolder&pageSize=1000&fields=${fields}&q=${encodeURIComponent("trashed=false")}` + (pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : "");
+    const j = await (await driveFetch(token, url)).json() as { nextPageToken?: string; files?: { id: string; name: string; modifiedTime?: string; appProperties?: Record<string, string> }[] };
+    (j.files || []).forEach(f => {
+      const m = /^(recipe-\d+|client-\d+|foods)\.json$/.exec(f.name);
+      if (m) out.push({ key: m[1], fileId: f.id, hash: f.appProperties?.h || "", modified: f.modifiedTime || "" });
+    });
+    pageToken = j.nextPageToken || "";
+  } while (pageToken);
+  return out;
+}
+async function driveDownload(token: string, fileId: string): Promise<unknown> {
+  return (await driveFetch(token, `${DRIVE_API}/files/${fileId}?alt=media`)).json();
+}
+async function driveUpload(token: string, key: string, content: string, hash: string, existingId?: string): Promise<{ id: string }> {
+  const boundary = "msr" + Math.random().toString(36).slice(2);
+  const build = (update: boolean) => {
+    const meta = update ? { appProperties: { h: hash } } : { name: `${key}.json`, parents: ["appDataFolder"], mimeType: "application/json", appProperties: { h: hash } };
+    return `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(meta)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${content}\r\n--${boundary}--`;
+  };
+  const send = async (update: boolean) => {
+    const body = build(update);
+    if (new Blob([body]).size > MAX_CLOUD_FILE_BYTES) throw new Error(`"${key}" is too large to sync (over 4.5 MB) — remove a few photos`);
+    const url = update ? `${DRIVE_UPLOAD}/files/${existingId}?uploadType=multipart&fields=id` : `${DRIVE_UPLOAD}/files?uploadType=multipart&fields=id`;
+    const res = await driveFetch(token, url, { method: update ? "PATCH" : "POST", headers: { "Content-Type": `multipart/related; boundary=${boundary}` }, body });
+    return await res.json() as { id: string };
+  };
+  if (!existingId) return send(false);
+  try { return await send(true); }
+  catch (e) { if (e instanceof DriveError && e.status === 404) return send(false); throw e; }   // cloud copy vanished → recreate
+}
+async function driveDelete(token: string, fileId: string): Promise<void> {
+  try { await driveFetch(token, `${DRIVE_API}/files/${fileId}`, { method: "DELETE" }); }
+  catch (e) { if (!(e instanceof DriveError && e.status === 404)) throw e; }
+}
+
+/** Runs the planned actions. Mutates `state` and `batch`; returns per-item error messages. A 401 aborts the whole run. */
+async function executeCloudActions(token: string, actions: CloudAction[], local: Map<string, LocalCloudItem>, remote: Map<string, RemoteCloudItem>, state: SyncState, batch: CloudBatch): Promise<string[]> {
+  const errors: string[] = [];
+  let copyN = 0;
+  const untomb = (key: string) => { state.tomb = state.tomb.filter(k => k !== key); };
+  for (const a of actions) {
+    try {
+      if (a.type === "upload") {
+        const L = local.get(a.key); if (!L) continue;
+        const { id } = await driveUpload(token, a.key, JSON.stringify(L.data), L.hash, remote.get(a.key)?.fileId);
+        state.items[a.key] = { hash: L.hash, fileId: id }; untomb(a.key);
+      } else if (a.type === "download") {
+        const R = remote.get(a.key); if (!R) continue;
+        const data = await driveDownload(token, R.fileId);
+        const kind = cloudKind(a.key);
+        if (kind === "recipe") {
+          if (!isRecipeLike(data)) throw new Error("not a valid recipe file");
+          batch.recipesUp.push(a.asCopy ? { ...data, id: Date.now() + (++copyN), name: data.name + " (cloud copy)" } : data);
+        } else if (kind === "client") {
+          if (!isClientLike(data)) throw new Error("not a valid client file");
+          batch.clientsUp.push(a.asCopy ? { ...data, id: Date.now() + (++copyN), name: data.name + " (cloud copy)" } : data);
+        } else {
+          const foods = (data as { foods?: unknown })?.foods;
+          if (!Array.isArray(foods)) throw new Error("not a valid foods file");
+          batch.foods = foods.filter(isFoodLike);
+        }
+        if (!a.asCopy) state.items[a.key] = { hash: R.hash || await hashItem(data as object), fileId: R.fileId };
+      } else if (a.type === "deleteRemote") {
+        const R = remote.get(a.key); if (R) await driveDelete(token, R.fileId);
+        delete state.items[a.key]; untomb(a.key);
+      } else if (a.type === "deleteLocal") {
+        const kind = cloudKind(a.key); const id = Number(a.key.split("-")[1]);
+        if (kind === "recipe") batch.recipesDel.add(id); else if (kind === "client") batch.clientsDel.add(id); else batch.foods = [];
+        delete state.items[a.key];
+      } else if (a.type === "adopt") {
+        const L = local.get(a.key), R = remote.get(a.key);
+        if (L && R) state.items[a.key] = { hash: L.hash, fileId: R.fileId };
+      } else {
+        delete state.items[a.key]; untomb(a.key);
+      }
+    } catch (e) {
+      if (e instanceof DriveError && e.status === 401) throw e;
+      errors.push(`${a.key}: ${e instanceof Error ? e.message : "failed"}`);
+    }
+  }
+  return errors;
+}
+
+function loadGis(): Promise<GoogleOAuth2> {
+  return new Promise((resolve, reject) => {
+    const ready = () => window.google?.accounts?.oauth2;
+    const now = ready();
+    if (now) { resolve(now); return; }
+    let s = document.querySelector<HTMLScriptElement>("script[data-gis]");
+    if (!s) {
+      s = document.createElement("script");
+      s.src = "https://accounts.google.com/gsi/client"; s.async = true; s.setAttribute("data-gis", "1");
+      document.head.appendChild(s);
+    }
+    s.addEventListener("load", () => { const o = ready(); if (o) resolve(o); else reject(new Error("Google sign-in library did not start")); });
+    s.addEventListener("error", () => reject(new Error("Could not load Google sign-in (offline, or blocked by an ad-blocker?)")));
+  });
+}
+
+interface CloudApi {
+  clientId: string; saveClientId: (id: string) => void;
+  connected: boolean; account: string; status: CloudStatus; message: string; lastSyncAt: string;
+  auto: boolean; setAuto: (v: boolean) => void; dirty: boolean;
+  conflicts: CloudConflict[]; conflictOpen: boolean; setConflictOpen: (v: boolean) => void;
+  connect: () => Promise<void>; disconnect: (forgetClientId: boolean) => void;
+  syncNow: () => Promise<void>; replaceCloud: () => Promise<void>; replaceLocal: () => Promise<void>;
+  resolveConflicts: (c: Record<string, CloudChoice>) => Promise<void>; resume: () => void;
+}
+
+function useCloudSync(args: {
+  ready: boolean; recipes: CustomRecipe[]; clients: Client[]; foods: FoodEntry[];
+  setRecipes: React.Dispatch<React.SetStateAction<CustomRecipe[]>>;
+  setClients: React.Dispatch<React.SetStateAction<Client[]>>;
+  setFoods: React.Dispatch<React.SetStateAction<FoodEntry[]>>;
+}): CloudApi {
+  const { ready, recipes, clients, foods, setRecipes, setClients, setFoods } = args;
+  const [clientId, setClientId] = useState("");
+  const [connected, setConnected] = useState(false);
+  const [account, setAccount] = useState("");
+  const [auto, setAutoState] = useState(true);
+  const [status, setStatus] = useState<CloudStatus>("disconnected");
+  const [message, setMessage] = useState("");
+  const [lastSyncAt, setLastSyncAt] = useState("");
+  const [conflicts, setConflicts] = useState<CloudConflict[]>([]);
+  const [conflictOpen, setConflictOpen] = useState(false);
+  const [dirty, setDirty] = useState(false);
+
+  const clientIdRef = useRef(""); const connectedRef = useRef(false); const accountRef = useRef(""); const autoRef = useRef(true);
+  const tokenRef = useRef<{ token: string; exp: number } | null>(null);
+  const expTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const syncingRef = useRef(false); const queuedRef = useRef(false);
+  const stateRef = useRef<SyncState>(emptyState());
+  const readyRef = useRef(ready); readyRef.current = ready;
+  const latestRef = useRef({ recipes, clients, foods });
+  latestRef.current = { recipes, clients, foods };
+  const prevKeysRef = useRef<Set<string> | null>(null);
+  const skipTombRef = useRef(false);
+  const changeSeqRef = useRef(0);
+  const firstChangeRef = useRef(true);
+  const runSyncRef = useRef<(mode: SyncMode, interactive: boolean) => Promise<void>>(async () => {});
+
+  // restore settings after mount (not during render → no server/client mismatch)
+  useEffect(() => {
+    const id = lsGet(CLOUD_LS.clientId); const conn = lsGet(CLOUD_LS.connected) === "1";
+    const acc = lsGet(CLOUD_LS.account); const au = lsGet(CLOUD_LS.auto) !== "0";
+    let st = emptyState(acc);
+    try { const raw = lsGet(CLOUD_LS.state); if (raw) { const p = JSON.parse(raw) as SyncState; if (p && p.items) st = { ...emptyState(acc), ...p, tomb: p.tomb || [] }; } } catch {}
+    stateRef.current = st;
+    clientIdRef.current = id; connectedRef.current = conn; accountRef.current = acc; autoRef.current = au;
+    setClientId(id); setConnected(conn); setAccount(acc); setAutoState(au); setLastSyncAt(st.lastSyncAt);
+    if (conn) { setStatus("needs-auth"); setMessage("Click Resume to continue syncing with Google Drive."); }
+    if (id) loadGis().catch(() => {});      // preload so a later click can open the sign-in popup immediately
+  }, []);
+
+  const saveState = (s: SyncState) => { stateRef.current = s; lsSet(CLOUD_LS.state, JSON.stringify(s)); };
+  const tokenValid = () => !!tokenRef.current && Date.now() < tokenRef.current.exp - 60_000;
+
+  const getToken = async (interactive: boolean): Promise<string> => {
+    if (tokenRef.current && tokenValid()) return tokenRef.current.token;
+    if (!interactive) throw new CloudAuthError("Google sign-in expired — click Resume to keep syncing.");
+    const id = clientIdRef.current;
+    if (!id) throw new Error("Add your Google Client ID first.");
+    const oauth = await loadGis();
+    return new Promise<string>((resolve, reject) => {
+      const timer = setTimeout(() => reject(new CloudAuthError("The Google sign-in window was closed or timed out.")), 120_000);
+      const client = oauth.initTokenClient({
+        client_id: id, scope: CLOUD_SCOPE,
+        callback: r => {
+          clearTimeout(timer);
+          if (r.error || !r.access_token) { reject(new CloudAuthError(r.error_description || r.error || "Google sign-in failed.")); return; }
+          const ms = (Number(r.expires_in) || 3600) * 1000;
+          tokenRef.current = { token: r.access_token, exp: Date.now() + ms };
+          if (expTimerRef.current) clearTimeout(expTimerRef.current);
+          expTimerRef.current = setTimeout(() => {
+            if (connectedRef.current && !syncingRef.current) { setStatus("needs-auth"); setMessage("Google sign-in expired (they last about an hour). Click Resume to keep syncing."); }
+          }, Math.max(0, ms - 60_000));
+          resolve(r.access_token);
+        },
+        error_callback: e => {
+          clearTimeout(timer);
+          reject(new CloudAuthError(e?.type === "popup_failed_to_open" ? "The sign-in popup was blocked — allow popups for this site and try again."
+            : e?.type === "popup_closed" ? "The Google sign-in window was closed." : (e?.message || "Google sign-in failed.")));
+        },
+      });
+      client.requestAccessToken({ prompt: "", hint: accountRef.current || undefined });
+    });
+  };
+
+  const applyBatch = (b: CloudBatch) => {
+    if (!b.recipesUp.length && !b.recipesDel.size && !b.clientsUp.length && !b.clientsDel.size && b.foods === null) return;
+    skipTombRef.current = true;     // these removals come from the cloud, they are not user deletions
+    if (b.recipesUp.length || b.recipesDel.size) setRecipes(prev => {
+      const m = new Map(prev.map(r => [r.id, r] as const));
+      b.recipesUp.forEach(r => m.set(r.id, r)); b.recipesDel.forEach(id => m.delete(id));
+      return Array.from(m.values());
+    });
+    if (b.clientsUp.length || b.clientsDel.size) setClients(prev => {
+      const m = new Map(prev.map(c => [c.id, c] as const));
+      b.clientsUp.forEach(c => m.set(c.id, c)); b.clientsDel.forEach(id => m.delete(id));
+      return Array.from(m.values());
+    });
+    if (b.foods !== null) setFoods(b.foods);
+  };
+
+  const listRemote = async (token: string) => {
+    const files = await driveList(token);
+    const remote = new Map<string, RemoteCloudItem>(); const dups: RemoteCloudItem[] = [];
+    files.forEach(f => {
+      const prev = remote.get(f.key);
+      if (!prev) remote.set(f.key, f);
+      else if (f.modified > prev.modified) { dups.push(prev); remote.set(f.key, f); } else dups.push(f);
+    });
+    for (const d of dups) { try { await driveDelete(token, d.fileId); } catch {} }   // two devices created the same file at once
+    return remote;
+  };
+
+  const beginState = async (token: string): Promise<SyncState> => {
+    if (!accountRef.current) {
+      try {
+        const email = await driveUserEmail(token);
+        if (email) { accountRef.current = email; setAccount(email); lsSet(CLOUD_LS.account, email); }
+      } catch {}
+    }
+    let st = stateRef.current;
+    if (st.account && accountRef.current && st.account !== accountRef.current) st = emptyState(accountRef.current);   // different Google account → start fresh
+    return { ...st, account: accountRef.current, items: { ...st.items }, tomb: [...st.tomb] };
+  };
+
+  const syncWithToken = async (token: string, mode: SyncMode) => {
+    const state = await beginState(token);
+    const remote = await listRemote(token);
+    const cur = latestRef.current;
+    const local = await buildLocalSnapshot(cur.recipes, cur.clients, cur.foods);
+    let actions: CloudAction[] = []; let found: CloudConflict[] = [];
+    if (mode === "push-all") {
+      local.forEach((_, key) => actions.push({ type: "upload", key }));
+      remote.forEach((_, key) => { if (!local.has(key)) actions.push({ type: "deleteRemote", key }); });
+    } else if (mode === "pull-all") {
+      remote.forEach((_, key) => actions.push({ type: "download", key }));
+      local.forEach((_, key) => { if (!remote.has(key)) actions.push({ type: "deleteLocal", key }); });
+    } else {
+      const p = planSync(local, remote, state); actions = p.actions; found = p.conflicts;
+    }
+    const batch = emptyBatch();
+    const errors = await executeCloudActions(token, actions, local, remote, state, batch);
+    applyBatch(batch);
+    state.lastSyncAt = new Date().toISOString();
+    saveState(state); setLastSyncAt(state.lastSyncAt);
+    return { errors, conflicts: found };
+  };
+
+  const resolveWithToken = async (token: string, choices: Record<string, CloudChoice>) => {
+    const state = await beginState(token);
+    const remote = await listRemote(token);
+    const cur = latestRef.current;
+    const local = await buildLocalSnapshot(cur.recipes, cur.clients, cur.foods);
+    const actions: CloudAction[] = [];
+    Object.entries(choices).forEach(([key, choice]) => {
+      const L = local.get(key), R = remote.get(key);
+      if (choice === "local") { if (L) actions.push({ type: "upload", key }); else if (R) actions.push({ type: "deleteRemote", key }); }
+      else if (choice === "cloud") { if (R) actions.push({ type: "download", key }); }
+      else { if (R && cloudKind(key) !== "foods") actions.push({ type: "download", key, asCopy: true }); if (L) actions.push({ type: "upload", key }); }   // copy first: the upload overwrites the cloud file
+    });
+    const batch = emptyBatch();
+    const errors = await executeCloudActions(token, actions, local, remote, state, batch);
+    applyBatch(batch);
+    state.lastSyncAt = new Date().toISOString();
+    saveState(state); setLastSyncAt(state.lastSyncAt);
+    return { errors, conflicts: [] as CloudConflict[] };
+  };
+
+  /** Runs one task at a time; a request that arrives meanwhile is queued and re-run afterwards. */
+  const runTask = async (task: (token: string) => Promise<{ errors: string[]; conflicts: CloudConflict[] }>, interactive: boolean) => {
+    if (!readyRef.current) { setStatus(connectedRef.current ? "idle" : "disconnected"); setMessage("Still loading local data — try again in a moment."); return; }
+    if (syncingRef.current) { queuedRef.current = true; return; }
+    syncingRef.current = true; setStatus("syncing"); setMessage("");
+    const seq = changeSeqRef.current;
+    try {
+      const token = await getToken(interactive);
+      const res = await task(token);
+      setConflicts(prev => { const same = prev.length === res.conflicts.length && prev.every((c, i) => c.key === res.conflicts[i].key); if (!same && res.conflicts.length) setConflictOpen(true); return res.conflicts; });
+      if (res.errors.length) { setStatus("error"); setMessage(`${res.errors.length} item(s) could not sync — ${res.errors[0]}`); }
+      else { setStatus("idle"); setMessage(res.conflicts.length ? `${res.conflicts.length} item(s) changed on two devices — choose which version to keep.` : ""); }
+      if (changeSeqRef.current === seq && !res.conflicts.length && !res.errors.length) setDirty(false);
+    } catch (e) {
+      if (e instanceof CloudAuthError) { setStatus("needs-auth"); setMessage(e.message); }
+      else if (e instanceof DriveError && e.status === 401) { tokenRef.current = null; setStatus("needs-auth"); setMessage("Google session expired — click Resume."); }
+      else if (e instanceof DriveError && e.status === 403 && /accessNotConfigured|has not been used|disabled/i.test(e.message)) { setStatus("error"); setMessage("The Google Drive API isn't enabled for your Google Cloud project — enable it (setup step 2), wait a minute, then retry."); }
+      else if (e instanceof DriveError && e.status === 403 && /storageQuota|quota/i.test(e.message)) { setStatus("error"); setMessage("Your Google Drive storage is full."); }
+      else if (e instanceof TypeError) { setStatus("error"); setMessage("Couldn't reach Google (offline?). Changes are safe on this device and will sync when you're back online."); }
+      else { setStatus("error"); setMessage(e instanceof Error ? e.message : "Sync failed."); }
+    } finally {
+      syncingRef.current = false;
+      if (queuedRef.current) { queuedRef.current = false; setTimeout(() => { void runSyncRef.current("merge", false); }, 400); }
+    }
+  };
+
+  const runSync = (mode: SyncMode, interactive: boolean) => runTask(token => syncWithToken(token, mode), interactive);
+  runSyncRef.current = runSync;
+
+  // ── tombstones: remember deletions the user makes on THIS device so they can be propagated safely ──
+  useEffect(() => {
+    if (!ready) return;
+    const keys = new Set<string>([...recipes.map(r => `recipe-${r.id}`), ...clients.map(c => `client-${c.id}`), ...(foods.length ? ["foods"] : [])]);
+    const prev = prevKeysRef.current;
+    if (prev && !skipTombRef.current && connectedRef.current) {
+      const s = stateRef.current;
+      const added = Array.from(prev).filter(k => !keys.has(k) && s.items[k] && !s.tomb.includes(k));
+      if (added.length) saveState({ ...s, tomb: [...s.tomb, ...added] });
+    }
+    skipTombRef.current = false;
+    prevKeysRef.current = keys;
+  }, [ready, recipes, clients, foods]);
+
+  // ── mark unsynced changes + auto-sync a few seconds after the last edit ──
+  useEffect(() => {
+    if (!ready) return;
+    if (firstChangeRef.current) { firstChangeRef.current = false; return; }
+    changeSeqRef.current += 1; setDirty(true);
+  }, [ready, recipes, clients, foods]);
+  useEffect(() => {
+    if (!ready || !connected || !auto) return;
+    const t = setTimeout(() => { if (tokenValid()) void runSyncRef.current("merge", false); }, 4000);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, recipes, clients, foods, connected, auto]);
+  useEffect(() => {
+    if (!ready || !connected) return;
+    const tick = () => { if (autoRef.current && tokenValid()) void runSyncRef.current("merge", false); };
+    window.addEventListener("focus", tick);
+    const iv = setInterval(tick, 5 * 60_000);
+    return () => { window.removeEventListener("focus", tick); clearInterval(iv); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, connected]);
+
+  const saveClientId = (id: string) => { const v = id.trim(); clientIdRef.current = v; setClientId(v); lsSet(CLOUD_LS.clientId, v); if (v) loadGis().catch(() => {}); };
+  const setAuto = (v: boolean) => { autoRef.current = v; setAutoState(v); lsSet(CLOUD_LS.auto, v ? "1" : "0"); };
+
+  const connect = async () => {
+    try {
+      setStatus("syncing"); setMessage("");
+      await getToken(true);
+    } catch (e) { setStatus(connectedRef.current ? "needs-auth" : "disconnected"); setMessage(e instanceof Error ? e.message : "Could not connect."); return; }
+    connectedRef.current = true; setConnected(true); lsSet(CLOUD_LS.connected, "1");
+    await runSync("merge", false);
+  };
+  const disconnect = (forgetClientId: boolean) => {
+    const t = tokenRef.current?.token;
+    if (t) { try { window.google?.accounts?.oauth2?.revoke?.(t, () => {}); } catch {} }
+    tokenRef.current = null; if (expTimerRef.current) clearTimeout(expTimerRef.current);
+    connectedRef.current = false; accountRef.current = ""; setConnected(false); setAccount(""); setStatus("disconnected"); setMessage(""); setConflicts([]); setConflictOpen(false);
+    lsSet(CLOUD_LS.connected, ""); lsSet(CLOUD_LS.account, ""); lsSet(CLOUD_LS.state, ""); stateRef.current = emptyState();
+    if (forgetClientId) { clientIdRef.current = ""; setClientId(""); lsSet(CLOUD_LS.clientId, ""); }
+  };
+  const resume = () => { if (connectedRef.current) void runSync("merge", !tokenValid()); };
+  const syncNow = async () => { await runSync("merge", true); };
+  const replaceCloud = async () => { await runSync("push-all", true); };
+  const replaceLocal = async () => { await runSync("pull-all", true); };
+  const resolveConflicts = async (choices: Record<string, CloudChoice>) => { setConflictOpen(false); await runTask(token => resolveWithToken(token, choices), true); };
+
+  return { clientId, saveClientId, connected, account, status, message, lastSyncAt, auto, setAuto, dirty, conflicts, conflictOpen, setConflictOpen,
+    connect, disconnect, syncNow, replaceCloud, replaceLocal, resolveConflicts, resume };
+}
+
+function fmtWhen(iso: string) {
+  if (!iso) return "never";
+  const d = new Date(iso);
+  return isNaN(d.getTime()) ? "never" : d.toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+/** Small status button in the header. */
+function CloudChip({ cloud, onOpen }: { cloud: CloudApi; onOpen: () => void }) {
+  const s = cloud.status;
+  const needsClick = cloud.connected && s === "needs-auth";
+  const label = !cloud.connected ? "Cloud off" : s === "syncing" ? "Syncing…" : needsClick ? "Resume sync" : s === "error" ? "Sync error"
+    : cloud.conflicts.length ? "Conflicts" : cloud.dirty ? "Unsynced" : "Synced";
+  const tone = !cloud.connected ? "bg-gray-100 dark:bg-gray-800 text-gray-500"
+    : s === "error" || needsClick || cloud.conflicts.length ? "bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300"
+    : s === "syncing" ? "bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300"
+    : cloud.dirty ? "bg-sky-100 dark:bg-sky-900/40 text-sky-700 dark:text-sky-300" : "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300";
+  return (
+    <button onClick={() => (needsClick ? cloud.resume() : onOpen())} title={cloud.message || (cloud.connected ? `Google Drive · ${cloud.account || "connected"} · last sync ${fmtWhen(cloud.lastSyncAt)}` : "Back up to Google Drive")}
+      className={cn("flex items-center gap-1 px-2 py-1.5 rounded-lg text-xs font-medium transition-colors print:hidden", tone)}>
+      {!cloud.connected ? <CloudOff size={14} /> : s === "syncing" ? <RefreshCw size={14} className="animate-spin" /> : <Cloud size={14} />}
+      <span className="hidden sm:inline">{label}</span>
+    </button>
+  );
+}
+
+/** "Cloud" section of the Recipes tab: connect, status, sync controls, setup steps. */
+function CloudPanel({ cloud, counts }: { cloud: CloudApi; counts: { recipes: number; clients: number; foods: number } }) {
+  const [idInput, setIdInput] = useState(cloud.clientId);
+  const [origin, setOrigin] = useState("");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => { setOrigin(window.location.origin); }, []);
+  useEffect(() => { setIdInput(cloud.clientId); }, [cloud.clientId]);
+  const run = async (fn: () => Promise<void>) => { setBusy(true); try { await fn(); } finally { setBusy(false); } };
+  const idOk = /\.apps\.googleusercontent\.com$/.test(idInput.trim());
+  const inputCls = "w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800";
+  const btn = "text-xs px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 disabled:opacity-40";
+  const syncing = cloud.status === "syncing";
+  return (
+    <div className="space-y-4">
+      <div className="rounded-xl border border-gray-200 dark:border-gray-700 p-3 space-y-2">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Cloud size={16} className="text-blue-600" />
+          <span className="font-semibold text-sm">Google Drive backup</span>
+          <span className={cn("text-[11px] px-2 py-0.5 rounded-full", cloud.connected ? "bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300" : "bg-gray-100 dark:bg-gray-800 text-gray-500")}>
+            {cloud.connected ? "Connected" : "Not connected"}
+          </span>
+        </div>
+        <p className="text-xs text-gray-500">Recipes (with photos), saved clients &amp; diet plans, and My Foods are copied to a <b>private folder in your own Google Drive</b> that only this site can open. Local export / import still works exactly as before.</p>
+
+        {!cloud.connected && (
+          <div className="space-y-2">
+            <label className="text-xs text-gray-500">Google OAuth Client ID</label>
+            <div className="flex gap-2" dir="ltr">
+              <input value={idInput} onChange={e => setIdInput(e.target.value)} placeholder="1234567890-abc123.apps.googleusercontent.com" className={inputCls} />
+              <button onClick={() => cloud.saveClientId(idInput)} disabled={!idOk || idInput.trim() === cloud.clientId} className={btn}>Save</button>
+            </div>
+            {idInput.trim() && !idOk && <p className="text-[11px] text-amber-600">A Client ID ends with “.apps.googleusercontent.com”.</p>}
+            <button onClick={() => run(cloud.connect)} disabled={busy || !cloud.clientId}
+              className="w-full bg-blue-600 text-white rounded-xl py-2 text-sm font-semibold hover:bg-blue-700 disabled:opacity-40 flex items-center justify-center gap-2">
+              <Cloud size={15} />{busy || syncing ? "Connecting..." : "Connect Google Drive"}
+            </button>
+            {!cloud.clientId && <p className="text-[11px] text-gray-400">Paste your Client ID above and press Save first — the steps below show how to get one (about 5 minutes, one time).</p>}
+          </div>
+        )}
+
+        {cloud.connected && (
+          <div className="space-y-2">
+            <div className="text-xs flex flex-wrap gap-x-4 gap-y-1" dir="ltr">
+              <span>Account: <b>{cloud.account || "—"}</b></span>
+              <span>Last sync: <b>{fmtWhen(cloud.lastSyncAt)}</b></span>
+              <span>{counts.recipes} recipes · {counts.clients} clients · {counts.foods} foods</span>
+            </div>
+            {cloud.message && (
+              <div className={cn("text-xs rounded-lg px-3 py-2 border", cloud.status === "error" || cloud.status === "needs-auth" || cloud.conflicts.length
+                ? "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200" : "bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300")}>{cloud.message}</div>
+            )}
+            {cloud.status === "idle" && !cloud.message && !cloud.dirty && <div className="text-xs text-green-700 dark:text-green-300">✅ Everything is backed up.</div>}
+            {cloud.dirty && cloud.status !== "syncing" && <div className="text-xs text-sky-700 dark:text-sky-300">Changes on this device haven&apos;t been backed up yet{cloud.auto ? " — they sync automatically in a few seconds." : "."}</div>}
+            {cloud.conflicts.length > 0 && <button onClick={() => cloud.setConflictOpen(true)} className="text-xs px-3 py-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600">Review {cloud.conflicts.length} conflict(s)</button>}
+            <div className="flex flex-wrap gap-2">
+              <button onClick={() => run(cloud.status === "needs-auth" ? async () => cloud.resume() : cloud.syncNow)} disabled={busy || syncing}
+                className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40">
+                <RefreshCw size={13} className={syncing ? "animate-spin" : ""} />{cloud.status === "needs-auth" ? "Resume sync" : "Sync now"}
+              </button>
+              <label className="flex items-center gap-1.5 text-xs cursor-pointer px-2">
+                <input type="checkbox" checked={cloud.auto} onChange={e => cloud.setAuto(e.target.checked)} className="accent-blue-600" />Auto-sync
+              </label>
+              <button onClick={() => { if (window.confirm("Disconnect from Google Drive?\n\nYour data stays on this device and in your Drive; syncing just stops.")) cloud.disconnect(false); }} className={btn}>Disconnect</button>
+            </div>
+            <details className="text-xs">
+              <summary className="cursor-pointer text-gray-500">Advanced</summary>
+              <div className="mt-2 flex flex-wrap gap-2">
+                <button disabled={busy || syncing} className={btn}
+                  onClick={() => { if (window.confirm("Replace the cloud copy with what is on THIS device?\n\nAnything that only exists in the cloud will be deleted.")) run(cloud.replaceCloud); }}>Replace cloud with this device</button>
+                <button disabled={busy || syncing} className={btn}
+                  onClick={() => { if (window.confirm("Replace THIS device with the cloud copy?\n\nRecipes, clients and foods that only exist on this device will be deleted. Export a backup first if unsure.")) run(cloud.replaceLocal); }}>Replace this device with cloud</button>
+              </div>
+            </details>
+          </div>
+        )}
       </div>
 
-      {/* saved recipes list */}
-      {customRecipes.length > 0 && (
+      <details className="rounded-xl border border-gray-200 dark:border-gray-700 p-3 text-xs" open={!cloud.clientId}>
+        <summary className="cursor-pointer font-semibold text-sm">How to get a Client ID (one-time setup)</summary>
+        <ol className="list-decimal ps-5 mt-2 space-y-1.5 text-gray-600 dark:text-gray-300" dir="ltr">
+          <li>Open <b>console.cloud.google.com</b>, sign in with the Google account that will store the backup, and create a project (any name).</li>
+          <li><b>APIs &amp; Services → Library</b> → search <b>Google Drive API</b> → <b>Enable</b>.</li>
+          <li><b>Google Auth Platform</b> (or “OAuth consent screen”): set an app name and your email; Audience = <b>External</b>. Add your own Gmail under <b>Test users</b> (or click <b>Publish app</b> to avoid the test-user limit).</li>
+          <li><b>Data Access → Add or remove scopes</b>: add <code className="px-1 rounded bg-gray-100 dark:bg-gray-800">…/auth/drive.appdata</code> and <code className="px-1 rounded bg-gray-100 dark:bg-gray-800">…/auth/userinfo.email</code>.</li>
+          <li><b>Clients → Create client → Web application</b>. Under <b>Authorized JavaScript origins</b> add exactly: <code className="px-1 rounded bg-gray-100 dark:bg-gray-800 select-all">{origin || "https://your-site-address"}</code> (and <code className="px-1 rounded bg-gray-100 dark:bg-gray-800">http://localhost:3000</code> if you also run it locally). No path, no trailing slash.</li>
+          <li>Create, copy the <b>Client ID</b> (not the secret), paste it above, <b>Save</b>, then <b>Connect Google Drive</b>. Google may say the app is “unverified” — choose <b>Advanced → Continue</b> (it&apos;s your own app). Origin changes can take a few minutes to apply.</li>
+        </ol>
+        <p className="mt-2 text-gray-500">Use the same Client ID on every device so they all see the same folder. The Client ID is not secret.</p>
+      </details>
+
+      <div className="text-[11px] text-gray-400 space-y-1">
+        <p>🔒 Client data (including health notes) is stored only in your private Drive app folder. It is not encrypted by this site, so keep that Google account secure.</p>
+        <p>⏱ Google&apos;s browser sign-in lasts about an hour. After that, auto-sync pauses and the header shows <b>Resume sync</b> — one click continues. Signing in to this site also resumes it.</p>
+      </div>
+    </div>
+  );
+}
+
+/** Shown when the same recipe/client/foods changed on two devices since the last sync. */
+function CloudConflictDialog({ conflicts, onApply, onClose }: { conflicts: CloudConflict[]; onApply: (c: Record<string, CloudChoice>) => void; onClose: () => void }) {
+  const [choices, setChoices] = useState<Record<string, CloudChoice>>(() => Object.fromEntries(conflicts.map(c => [c.key, "local" as CloudChoice])));
+  const kindLabel = { recipe: "Recipe", client: "Client", foods: "My Foods" } as const;
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4 print:hidden" role="dialog" aria-modal="true">
+      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl w-full max-w-lg max-h-[85vh] overflow-y-auto p-4 space-y-3">
+        <h3 className="font-bold text-base">Changed on two devices</h3>
+        <p className="text-xs text-gray-500">These items were edited here <i>and</i> in the cloud since the last sync. Pick which version to keep — nothing is overwritten until you press Apply.</p>
         <div className="space-y-2">
-          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Saved Recipes ({customRecipes.length})</div>
-          {customRecipes.map(r => {
-            const rTotals = r.ingredients.reduce((acc, ing) => {
-              const fd = allFoods.find(f => f.id === ing.foodId);
-              if (!fd) return acc;
-              const mult = isPerPiece(fd.state) ? ing.grams : ing.grams / 100;
-              return { calories: acc.calories + fd.calories * mult, protein: acc.protein + fd.protein * mult };
-            }, { calories: 0, protein: 0 });
+          {conflicts.map(c => (
+            <div key={c.key} className="border border-gray-200 dark:border-gray-700 rounded-xl p-2.5 space-y-1.5">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-sm font-medium truncate">{c.label}</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-gray-500 shrink-0">{kindLabel[c.kind]}</span>
+              </div>
+              <div className="text-[11px] text-gray-400" dir="ltr">Cloud version saved {fmtWhen(c.remoteModified)}</div>
+              <div className="flex gap-1 text-xs">
+                {([["local", "Keep this device"], ["cloud", "Use cloud"], ...(c.kind !== "foods" ? [["both", "Keep both"]] : [])] as [CloudChoice, string][]).map(([v, l]) => (
+                  <button key={v} onClick={() => setChoices(p => ({ ...p, [c.key]: v }))}
+                    className={cn("flex-1 py-1.5 rounded-lg border", choices[c.key] === v ? "bg-blue-600 text-white border-blue-600" : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300")}>{l}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2 justify-end">
+          <button onClick={onClose} className="text-sm px-4 py-2 rounded-xl border border-gray-300 dark:border-gray-600">Decide later</button>
+          <button onClick={() => onApply(choices)} className="text-sm px-4 py-2 rounded-xl bg-blue-600 text-white font-semibold hover:bg-blue-700">Apply</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── RECIPES TAB ───────────────────────────────────────────────────────────────
+interface RecipeStudioProps {
+  allFoods: FoodEntry[];                 // database + saved custom foods (NOT recipes — avoids recursion)
+  customFoods: FoodEntry[];
+  setCustomFoods: React.Dispatch<React.SetStateAction<FoodEntry[]>>;
+  recipes: CustomRecipe[];
+  setRecipes: React.Dispatch<React.SetStateAction<CustomRecipe[]>>;
+  onAddAsMeal: (r: CustomRecipe) => void;
+  storageError: string;
+  focusRecipeId: number | null;
+  onFocusHandled: () => void;
+  cloud: CloudApi;
+  clientCount: number;
+}
+function RecipeStudio({ allFoods, customFoods, setCustomFoods, recipes, setRecipes, onAddAsMeal, storageError, focusRecipeId, onFocusHandled, cloud, clientCount }: RecipeStudioProps) {
+  const [section, setSection] = useState<"recipes" | "foods" | "cloud">("recipes");
+  const [mode, setMode] = useState<"library" | "editor">("library");
+  const [draft, setDraft] = useState<CustomRecipe>(newRecipe());
+  const [search, setSearch] = useState("");
+  const [cat, setCat] = useState("All");
+  const [ingSearch, setIngSearch] = useState("");
+  const [showNewIngredient, setShowNewIngredient] = useState(false);
+  const [previewServings, setPreviewServings] = useState<number | null>(null);
+  const [imgBusy, setImgBusy] = useState(false);
+  const [imgError, setImgError] = useState("");
+  const [toast, setToast] = useState("");
+  const [foodSearch, setFoodSearch] = useState("");
+  const [foodForm, setFoodForm] = useState<null | "new" | number>(null);
+  const importRef = useRef<HTMLInputElement>(null);
+  const photoRef = useRef<HTMLInputElement>(null);
+  const inputCls = "w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800";
+
+  function flash(msg: string) { setToast(msg); setTimeout(() => setToast(""), 3500); }
+
+  function openEditor(r?: CustomRecipe) {
+    if (r) {
+      const copy: CustomRecipe = JSON.parse(JSON.stringify(r));
+      setDraft({ ...copy, steps: copy.steps && copy.steps.length ? copy.steps : [""], images: copy.images || [] });
+    } else {
+      setDraft(newRecipe());
+    }
+    setPreviewServings(null); setIngSearch(""); setShowNewIngredient(false); setImgError("");
+    setSection("recipes"); setMode("editor");
+  }
+
+  useEffect(() => {
+    if (focusRecipeId === null) return;
+    const r = recipes.find(x => x.id === focusRecipeId);
+    if (r) openEditor(r);
+    onFocusHandled();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [focusRecipeId]);
+
+  const isExisting = recipes.some(r => r.id === draft.id);
+  const canSave = draft.name.trim().length > 0 && draft.ingredients.length > 0;
+
+  function saveRecipe(asCopy = false) {
+    if (!canSave) return;
+    const final: CustomRecipe = {
+      ...draft,
+      id: asCopy ? Date.now() : draft.id,
+      name: draft.name.trim() + (asCopy ? " (copy)" : ""),
+      serves: Math.max(1, draft.serves || 1),
+      steps: (draft.steps || []).map(s => s.trim()).filter(Boolean),
+      updatedAt: new Date().toISOString(),
+    };
+    setRecipes(prev => (prev.some(r => r.id === final.id) ? prev.map(r => (r.id === final.id ? final : r)) : [...prev, final]));
+    flash(`Saved "${final.name}" ✓ — it is now also a food item in the Planner (category: Recipes).`);
+    setMode("library");
+  }
+  function deleteRecipe(r: CustomRecipe) {
+    if (!window.confirm(`Delete recipe "${r.name}"? This cannot be undone (export a backup first if unsure).`)) return;
+    setRecipes(prev => prev.filter(x => x.id !== r.id));
+  }
+  function duplicateRecipe(r: CustomRecipe) {
+    setRecipes(prev => [...prev, { ...r, id: Date.now(), name: r.name + " (copy)" }]);
+  }
+
+  // ── photos ──
+  async function handlePhotos(files: FileList | null) {
+    if (!files || files.length === 0) return;
+    setImgError(""); setImgBusy(true);
+    try {
+      const room = MAX_RECIPE_IMAGES - (draft.images || []).length;
+      const picked = Array.from(files).slice(0, Math.max(0, room));
+      if (files.length > room) setImgError(`Max ${MAX_RECIPE_IMAGES} photos per recipe — extra files were skipped.`);
+      const out: string[] = [];
+      for (const f of picked) {
+        try { out.push(await compressImage(f)); }
+        catch (err) { setImgError(`${f.name}: ${err instanceof Error ? err.message : "could not be added"}`); }
+      }
+      if (out.length) setDraft(p => ({ ...p, images: [...(p.images || []), ...out] }));
+    } finally {
+      setImgBusy(false);
+      if (photoRef.current) photoRef.current.value = "";
+    }
+  }
+  function makeCover(i: number) {
+    setDraft(p => { const imgs = [...(p.images || [])]; const [x] = imgs.splice(i, 1); return { ...p, images: [x, ...imgs] }; });
+  }
+
+  // ── steps ──
+  function setStep(i: number, v: string) { setDraft(p => ({ ...p, steps: (p.steps || []).map((s, j) => (j === i ? v : s)) })); }
+  function moveStep(i: number, dir: -1 | 1) {
+    setDraft(p => {
+      const s = [...(p.steps || [])]; const j = i + dir;
+      if (j < 0 || j >= s.length) return p;
+      [s[i], s[j]] = [s[j], s[i]];
+      return { ...p, steps: s };
+    });
+  }
+
+  // ── ingredients ──
+  function addIngredient(f: FoodEntry) {
+    setDraft(p => p.ingredients.some(i => i.foodId === f.id) ? p
+      : { ...p, ingredients: [...p.ingredients, { foodId: f.id, grams: isPerPiece(f.state) ? 1 : 100 }] });
+    setIngSearch("");
+  }
+  const q = normalizeAr(ingSearch.trim());
+  const ingResults = q.length > 1 ? allFoods.filter(f => normalizeAr(f.name).includes(q)).slice(0, 8) : [];
+
+  const batch = recipeBatch(draft, allFoods);
+  const s = Math.max(1, draft.serves || 1);
+  const viewServings = previewServings && previewServings > 0 ? previewServings : s;
+  const scale = viewServings / s;
+
+  // ── backup ──
+  function exportBackup() {
+    const payload = { app: "msr-planner", version: 1, exportedAt: new Date().toISOString(), recipes, customFoods };
+    const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `msr-recipes-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    flash(`Exported ${recipes.length} recipes and ${customFoods.length} custom foods.`);
+  }
+  async function importBackup(file: File) {
+    try {
+      const data: unknown = JSON.parse(await file.text());
+      const obj = (data && typeof data === "object" ? data : {}) as { recipes?: unknown; customFoods?: unknown };
+      const recs = Array.isArray(obj.recipes) ? obj.recipes.filter(isRecipeLike) : [];
+      const foods = Array.isArray(obj.customFoods) ? obj.customFoods.filter(isFoodLike) : [];
+      if (recs.length === 0 && foods.length === 0) { flash("That file has no recipes or foods in the expected format."); return; }
+      setRecipes(prev => { const m = new Map(prev.map(r => [r.id, r] as const)); recs.forEach(r => m.set(r.id, r)); return Array.from(m.values()); });
+      setCustomFoods(prev => { const m = new Map(prev.map(f => [f.id, f] as const)); foods.forEach(f => m.set(f.id, f)); return Array.from(m.values()); });
+      flash(`Imported ${recs.length} recipes and ${foods.length} custom foods (existing ones with the same id were updated).`);
+    } catch {
+      flash("Could not read that file — is it a backup exported from this app?");
+    } finally {
+      if (importRef.current) importRef.current.value = "";
+    }
+  }
+
+  // ── my foods ──
+  function saveFoodFromManager(food: Omit<FoodEntry, "id">) {
+    if (typeof foodForm === "number") {
+      setCustomFoods(prev => prev.map(f => (f.id === foodForm ? { ...f, ...food } : f)));
+    } else {
+      setCustomFoods(prev => [...prev, { ...food, id: Date.now() }]);
+    }
+    setFoodForm(null);
+  }
+  function deleteFood(f: FoodEntry) {
+    const used = recipes.filter(r => r.ingredients.some(i => i.foodId === f.id)).length;
+    const msg = used > 0
+      ? `"${displayName(f.name, "en")}" is used in ${used} recipe(s). Deleting it will leave a missing ingredient there. Delete anyway?`
+      : `Delete "${displayName(f.name, "en")}" from your food database?`;
+    if (window.confirm(msg)) setCustomFoods(prev => prev.filter(x => x.id !== f.id));
+  }
+
+  // ═════════════ RENDER ═════════════
+  const header = (
+    <div className="flex items-center justify-between flex-wrap gap-2">
+      <h2 className="font-bold text-base flex items-center gap-2"><BookOpen size={18} className="text-purple-600" />Recipes - وصفات</h2>
+      <div className="flex gap-1 text-xs">
+        {([["recipes", "Recipes"], ["foods", "My Foods"], ["cloud", "☁ Cloud"]] as const).map(([v, l]) => (
+          <button key={v} onClick={() => { setSection(v); if (v === "recipes") setMode("library"); }}
+            className={cn("px-3 py-1.5 rounded-lg font-medium", section === v ? "bg-purple-600 text-white" : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700")}>{l}</button>
+        ))}
+      </div>
+    </div>
+  );
+
+  const banner = (
+    <>
+      {toast && <div className="text-xs rounded-lg px-3 py-2 bg-green-50 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-200 dark:border-green-800">{toast}</div>}
+      {storageError && <div className="text-xs rounded-lg px-3 py-2 bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 border border-red-200 dark:border-red-800">⚠️ {storageError}</div>}
+    </>
+  );
+
+  // ── CLOUD ──
+  if (section === "cloud") {
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3">
+        {header}{banner}
+        <CloudPanel cloud={cloud} counts={{ recipes: recipes.length, clients: clientCount, foods: customFoods.length }} />
+      </div>
+    );
+  }
+
+  // ── MY FOODS ──
+  if (section === "foods") {
+    const fq = normalizeAr(foodSearch.trim());
+    const list = customFoods.filter(f => !fq || normalizeAr(f.name).includes(fq));
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3">
+        {header}{banner}
+        <p className="text-xs text-gray-400">Foods you saved are searchable in every meal (category “Custom”) and can be used as recipe ingredients. Editing a food updates recipes that use it; meals you already built keep the values they were added with.</p>
+        <div className="flex gap-2">
+          <input value={foodSearch} onChange={e => setFoodSearch(e.target.value)} placeholder="🔍 Search my foods..." className={inputCls} />
+          <button onClick={() => setFoodForm("new")} className="shrink-0 flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700"><Plus size={14} />New</button>
+        </div>
+        {foodForm !== null && (
+          <CustomFoodForm key={String(foodForm)} initial={typeof foodForm === "number" ? customFoods.find(f => f.id === foodForm) : undefined}
+            submitLabel="Save food ✓" onSubmit={f => saveFoodFromManager(f)} onCancel={() => setFoodForm(null)} />
+        )}
+        {customFoods.length === 0 && foodForm === null && <p className="text-sm text-gray-400 text-center py-6">No saved foods yet. Add one here, or tick “Save to my food database” when you add a custom food in the Planner.</p>}
+        <div className="space-y-1">
+          {list.map(f => {
+            const chk = calorieCheck(f.protein, f.carbs, f.fat, f.calories);
             return (
-              <div key={r.id} className="flex items-center justify-between bg-purple-50 dark:bg-purple-950/30 rounded-xl px-3 py-2">
+              <div key={f.id} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-3 py-2">
                 <div className="flex-1 min-w-0">
-                  <div className="font-medium text-sm truncate">{r.name}</div>
-                  <div className="text-xs text-gray-400">
-                    {r.ingredients.length} ingredients · {(rTotals.calories / r.serves).toFixed(0)} kcal · {(rTotals.protein / r.serves).toFixed(0)}g P per serving
+                  <div className="text-sm font-medium truncate">{f.name}</div>
+                  <div className="text-xs text-gray-500 flex flex-wrap gap-x-3" dir="ltr">
+                    <span>{f.state}</span><span className="font-semibold">{f.calories} kcal</span>
+                    <span className="text-blue-600">P {f.protein}</span><span className="text-yellow-600">C {f.carbs}</span><span className="text-red-500">F {f.fat}</span>
                   </div>
+                  {chk.mismatch && <div className="text-[11px] text-amber-600" dir="ltr">⚠️ macros add up to {chk.calc} kcal ({chk.pct.toFixed(0)}% off)</div>}
                 </div>
-                <div className="flex gap-1 shrink-0 ml-2">
-                  <button onClick={() => onAddAsMeal(r)} className="text-xs bg-teal-600 text-white px-2 py-1 rounded-lg hover:bg-teal-700">+ Meal</button>
-                  <button onClick={() => loadForEdit(r)} className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-1 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800">Edit</button>
-                  <button onClick={() => deleteRecipe(r.id)} className="text-red-400 hover:text-red-600 p-1"><Trash2 size={14} /></button>
+                <button onClick={() => setFoodForm(f.id)} className="text-xs text-blue-600 hover:underline">Edit</button>
+                <button onClick={() => deleteFood(f)} className="text-red-400 hover:text-red-600"><Trash2 size={14} /></button>
+              </div>
+            );
+          })}
+        </div>
+        <div className="flex gap-2 pt-1">
+          <button onClick={exportBackup} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><Download size={13} />Export backup</button>
+          <button onClick={() => importRef.current?.click()} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><Upload size={13} />Import backup</button>
+          <input ref={importRef} type="file" accept="application/json,.json" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) importBackup(f); }} />
+        </div>
+      </div>
+    );
+  }
+
+  // ── LIBRARY ──
+  if (mode === "library") {
+    const rq = normalizeAr(search.trim());
+    const categories = ["All", ...Array.from(new Set(recipes.map(r => r.category).filter(Boolean)))];
+    const list = recipes.filter(r => (cat === "All" || r.category === cat) && (!rq || normalizeAr(r.name).includes(rq) || normalizeAr(r.category || "").includes(rq)));
+    return (
+      <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3">
+        {header}{banner}
+        <div className="flex gap-2">
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="🔍 Search recipes..." className={inputCls} />
+          <button onClick={() => openEditor()} className="shrink-0 flex items-center gap-1 px-3 py-1.5 bg-purple-600 text-white rounded-lg text-sm hover:bg-purple-700"><Plus size={14} />New recipe</button>
+        </div>
+        {categories.length > 2 && (
+          <div className="flex gap-1 flex-wrap">
+            {categories.map(c => (
+              <button key={c} onClick={() => setCat(c)} className={cn("text-xs px-2.5 py-1 rounded-full border", cat === c ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300")}>{c}</button>
+            ))}
+          </div>
+        )}
+        {recipes.length === 0 && (
+          <div className="text-center py-10 text-gray-400 text-sm space-y-2">
+            <BookOpen size={36} className="mx-auto opacity-40" />
+            <p>No recipes yet.</p>
+            <p className="text-xs">Create one with ingredients, photos and step-by-step instructions. It becomes a food item you can drop into any meal, and it can be printed in your client&apos;s PDF.</p>
+          </div>
+        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {list.map(r => {
+            const f = recipeToFood(r, allFoods);
+            const total = (r.prepMin || 0) + (r.cookMin || 0);
+            const missing = recipeBatch(r, allFoods).missing;
+            return (
+              <div key={r.id} className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-800 flex flex-col">
+                {r.images && r.images[0]
+                  // eslint-disable-next-line @next/next/no-img-element
+                  ? <img src={r.images[0]} alt={r.name} className="w-full h-32 object-cover" />
+                  : <div className="w-full h-20 flex items-center justify-center bg-purple-50 dark:bg-purple-950/30 text-purple-300"><BookOpen size={28} /></div>}
+                <div className="p-3 space-y-1.5 flex-1 flex flex-col">
+                  <div className="font-semibold text-sm leading-snug">{r.name}</div>
+                  <div className="text-[11px] text-gray-500 flex flex-wrap gap-x-2 items-center" dir="ltr">
+                    {r.category && <span className="px-1.5 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300">{r.category}</span>}
+                    <span>{r.serves} serving{r.serves > 1 ? "s" : ""}</span>
+                    {total > 0 && <span className="flex items-center gap-0.5"><Clock size={11} />{total} min</span>}
+                    {r.difficulty && <span>{r.difficulty}</span>}
+                  </div>
+                  <div className="text-xs flex flex-wrap gap-x-3" dir="ltr">
+                    <span className="font-bold">{f.calories} kcal</span>
+                    <span className="text-blue-600">P {f.protein}</span><span className="text-yellow-600">C {f.carbs}</span><span className="text-red-500">F {f.fat}</span>
+                    <span className="text-gray-400">/ serving</span>
+                  </div>
+                  <div className="text-[11px] text-gray-400">{r.ingredients.length} ingredients · {(r.steps || []).filter(Boolean).length} steps{(r.images || []).length ? ` · ${(r.images || []).length} photo(s)` : ""}</div>
+                  {missing > 0 && <div className="text-[11px] text-red-500">⚠️ {missing} ingredient(s) no longer exist — open and fix.</div>}
+                  <div className="flex gap-1 flex-wrap mt-auto pt-1">
+                    <button onClick={() => onAddAsMeal(r)} className="text-xs bg-teal-600 text-white px-2 py-1 rounded-lg hover:bg-teal-700">+ Add as meal</button>
+                    <button onClick={() => openEditor(r)} className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-1 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-800">Open / Edit</button>
+                    <button onClick={() => duplicateRecipe(r)} title="Duplicate" className="text-gray-400 hover:text-blue-500 px-1"><Copy size={14} /></button>
+                    <button onClick={() => deleteRecipe(r)} title="Delete" className="text-red-400 hover:text-red-600 px-1"><Trash2 size={14} /></button>
+                  </div>
                 </div>
               </div>
             );
           })}
         </div>
-      )}
-
-      {/* builder form */}
-      <div className="space-y-3 border-t border-gray-100 dark:border-gray-800 pt-3">
-        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
-          {editId ? "✏️ Editing Recipe" : "New Recipe"}
-        </div>
-        <div className="grid grid-cols-2 gap-2">
-          <input value={rbName} onChange={e => setRbName(e.target.value)} placeholder="Recipe name..."
-            className="col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800" />
-          <div>
-            <label className="text-xs text-gray-500">Category</label>
-            <input value={rbCategory} onChange={e => setRbCategory(e.target.value)} placeholder="Meal / Snack / Breakfast..."
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
+        {recipes.length > 0 && list.length === 0 && <p className="text-sm text-gray-400 text-center py-4">No recipes match.</p>}
+        <div className="border-t border-gray-100 dark:border-gray-800 pt-3 space-y-2">
+          <p className="text-[11px] text-gray-400">💾 Recipes and photos are stored on <b>this computer</b> (your browser&apos;s local database) — not online. Clearing browser data erases them, so export a backup now and then.</p>
+          <div className="flex gap-2">
+            <button onClick={exportBackup} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><Download size={13} />Export backup</button>
+            <button onClick={() => importRef.current?.click()} className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800"><Upload size={13} />Import backup</button>
+            <input ref={importRef} type="file" accept="application/json,.json" className="hidden" onChange={e => { const f = e.target.files?.[0]; if (f) importBackup(f); }} />
           </div>
-          <div>
-            <label className="text-xs text-gray-500">Servings</label>
-            <input type="number" min="1" value={rbServes} onChange={e => setRbServes(Math.max(1, +e.target.value))}
-              className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
-          </div>
-          <textarea value={rbNotes} onChange={e => setRbNotes(e.target.value)} placeholder="Prep instructions / notes..." rows={2}
-            className="col-span-2 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 resize-none" />
         </div>
+      </div>
+    );
+  }
 
-        {/* ingredient search */}
+  // ── EDITOR ──
+  const perServing = { kcal: Math.round(batch.calories / s), p: round1(batch.protein / s), c: round1(batch.carbs / s), f: round1(batch.fat / s) };
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-4">
+      {header}{banner}
+      <div className="flex items-center justify-between">
+        <button onClick={() => setMode("library")} className="flex items-center gap-1 text-xs text-gray-500 hover:text-gray-700"><ArrowLeft size={14} />Back to recipes</button>
+        <span className="text-xs font-semibold text-purple-600">{isExisting ? "✏️ Editing recipe" : "✨ New recipe"}</span>
+      </div>
+
+      {/* basics */}
+      <div className="grid grid-cols-2 gap-2">
+        <input value={draft.name} onChange={e => setDraft(p => ({ ...p, name: e.target.value }))} dir="auto"
+          placeholder="Recipe name — e.g. Protein Pancakes - بان كيك بروتين" className={cn(inputCls, "col-span-2 font-medium")} />
+        <div>
+          <label className="text-xs text-gray-500">Category</label>
+          <input list="recipe-cats" value={draft.category} onChange={e => setDraft(p => ({ ...p, category: e.target.value }))} className={cn(inputCls, "mt-1")} />
+          <datalist id="recipe-cats">{RECIPE_CATEGORIES.map(c => <option key={c} value={c} />)}</datalist>
+        </div>
+        <div>
+          <label className="text-xs text-gray-500">Servings (makes)</label>
+          <input type="number" min="1" value={draft.serves} onChange={e => setDraft(p => ({ ...p, serves: Math.max(1, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
+        </div>
+        <div>
+          <label className="text-xs text-gray-500">Prep time (min)</label>
+          <input type="number" min="0" value={draft.prepMin || ""} onChange={e => setDraft(p => ({ ...p, prepMin: Math.max(0, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
+        </div>
+        <div>
+          <label className="text-xs text-gray-500">Cook time (min)</label>
+          <input type="number" min="0" value={draft.cookMin || ""} onChange={e => setDraft(p => ({ ...p, cookMin: Math.max(0, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
+        </div>
+        <div className="col-span-2">
+          <label className="text-xs text-gray-500">Difficulty</label>
+          <div className="flex gap-1 mt-1">
+            {(["Easy", "Medium", "Hard"] as const).map(dv => (
+              <button key={dv} onClick={() => setDraft(p => ({ ...p, difficulty: dv }))}
+                className={cn("flex-1 text-xs py-1.5 rounded-lg border", draft.difficulty === dv ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300")}>{dv}</button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* photos */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Photos ({(draft.images || []).length}/{MAX_RECIPE_IMAGES})</div>
+          <button onClick={() => photoRef.current?.click()} disabled={imgBusy || (draft.images || []).length >= MAX_RECIPE_IMAGES}
+            className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 hover:bg-purple-200 disabled:opacity-40">
+            <ImagePlus size={14} />{imgBusy ? "Processing..." : "Add photos"}
+          </button>
+          <input ref={photoRef} type="file" accept="image/*" multiple className="hidden" onChange={e => handlePhotos(e.target.files)} />
+        </div>
+        {imgError && <div className="text-xs text-red-500">{imgError}</div>}
+        {(draft.images || []).length === 0
+          ? <p className="text-xs text-gray-400">No photos yet. The first photo is the cover shown in the library and at the top of the recipe page in the PDF.</p>
+          : (
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+              {(draft.images || []).map((src, i) => (
+                <div key={i} className="relative rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 group">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={src} alt={`photo ${i + 1}`} className="w-full h-24 object-cover" />
+                  {i === 0 && <span className="absolute top-1 left-1 text-[10px] bg-purple-600 text-white px-1.5 rounded">Cover</span>}
+                  <button onClick={() => setDraft(p => ({ ...p, images: (p.images || []).filter((_, j) => j !== i) }))} title="Remove photo"
+                    className="absolute top-1 right-1 bg-black/60 text-white rounded-full p-0.5 hover:bg-red-600"><X size={12} /></button>
+                  {i !== 0 && <button onClick={() => makeCover(i)} className="absolute bottom-1 left-1 text-[10px] bg-black/60 text-white px-1.5 rounded hover:bg-purple-600">Make cover</button>}
+                </div>
+              ))}
+            </div>
+          )}
+      </div>
+
+      {/* ingredients */}
+      <div className="space-y-2">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ingredients ({draft.ingredients.length})</div>
+          <label className="flex items-center gap-1 text-[11px] text-gray-500" dir="ltr">
+            Preview for
+            <input type="number" min="1" value={previewServings ?? ""} placeholder={String(s)} onChange={e => setPreviewServings(e.target.value ? Math.max(1, +e.target.value) : null)}
+              className="w-12 text-center text-xs border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 bg-white dark:bg-gray-800" />
+            servings
+          </label>
+        </div>
         <div className="relative">
-          <label className="text-xs text-gray-500">Search &amp; add ingredient</label>
-          <input value={rbSearch} onChange={e => setRbSearch(e.target.value)} placeholder="Type food name..."
-            className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
-          {rbSearched.length > 0 && (
-            <div className="mt-1 border border-gray-200 dark:border-gray-700 rounded-lg max-h-40 overflow-y-auto bg-white dark:bg-gray-800 shadow z-10">
-              {rbSearched.slice(0, 8).map(f => (
-                <button key={f.id}
-                  onClick={() => {
-                    if (!rbIngredients.find(i => i.foodId === f.id))
-                      setRbIngredients(p => [...p, { foodId: f.id, grams: isPerPiece(f.state) ? 1 : 100 }]);
-                    setRbSearch("");
-                  }}
-                  className="w-full text-left px-3 py-1.5 text-xs hover:bg-purple-50 dark:hover:bg-purple-950/30 border-b border-gray-100 dark:border-gray-700 last:border-0 flex justify-between items-center">
-                  <span className="font-medium">{f.name.split(" - ")[0]}</span>
-                  <span className="text-gray-400 text-[10px]">{f.category} · {f.state}</span>
+          <input value={ingSearch} onChange={e => setIngSearch(e.target.value)} placeholder="🔍 Search a food to add as an ingredient..." className={inputCls} />
+          {ingResults.length > 0 && (
+            <div className="mt-1 border border-gray-200 dark:border-gray-700 rounded-lg max-h-48 overflow-y-auto bg-white dark:bg-gray-800 shadow">
+              {ingResults.map(f => (
+                <button key={f.id} onClick={() => addIngredient(f)}
+                  className="w-full text-start px-3 py-1.5 text-xs hover:bg-purple-50 dark:hover:bg-purple-950/30 border-b border-gray-100 dark:border-gray-700 last:border-0 flex justify-between items-center gap-2">
+                  <span className="font-medium">{displayName(f.name, "both")}</span>
+                  <span className="text-gray-400 text-[10px] shrink-0" dir="ltr">{f.category} · {f.state}</span>
                 </button>
               ))}
             </div>
           )}
+          {q.length > 1 && ingResults.length === 0 && <p className="text-xs text-gray-400 mt-1">No match — create it below as a custom ingredient.</p>}
         </div>
-
-        {/* ingredient list */}
-        {rbIngredients.length > 0 && (
-          <div className="space-y-1">
-            <div className="text-xs text-gray-500 font-semibold">Ingredients ({rbIngredients.length})</div>
-            {rbIngredients.map((ing, idx) => {
-              const fd = allFoods.find(f => f.id === ing.foodId);
-              if (!fd) return null;
-              const mult = isPerPiece(fd.state) ? ing.grams : ing.grams / 100;
-              const kcal = (fd.calories * mult).toFixed(0);
-              return (
-                <div key={ing.foodId} className="flex items-center gap-2 bg-gray-50 dark:bg-gray-800 rounded-lg px-2 py-1.5">
+        <button onClick={() => setShowNewIngredient(v => !v)} className="text-xs text-purple-600 hover:underline">{showNewIngredient ? "Hide custom ingredient form" : "➕ Can't find it? Create a custom ingredient"}</button>
+        {showNewIngredient && (
+          <CustomFoodForm submitLabel="Save & add to recipe ✓"
+            onSubmit={food => {
+              const entry: FoodEntry = { ...food, id: Date.now() + Math.floor(Math.random() * 1000) };
+              setCustomFoods(prev => [...prev, entry]);
+              setDraft(p => ({ ...p, ingredients: [...p.ingredients, { foodId: entry.id, grams: isPerPiece(entry.state) ? 1 : 100 }] }));
+              setShowNewIngredient(false);
+              flash(`"${displayName(entry.name, "en")}" was saved to My Foods and added to this recipe.`);
+            }}
+            onCancel={() => setShowNewIngredient(false)} />
+        )}
+        {draft.ingredients.length === 0 && <p className="text-xs text-gray-400">Add the ingredients for the <b>whole batch</b> — amounts are divided by the number of servings automatically.</p>}
+        <div className="space-y-1">
+          {draft.ingredients.map((ing, idx) => {
+            const fd = allFoods.find(f => f.id === ing.foodId);
+            if (!fd) return (
+              <div key={`${ing.foodId}-${idx}`} className="flex items-center justify-between text-xs bg-red-50 dark:bg-red-900/20 text-red-600 rounded-lg px-3 py-2">
+                <span>⚠️ Missing ingredient (the food was deleted)</span>
+                <button onClick={() => setDraft(p => ({ ...p, ingredients: p.ingredients.filter((_, i) => i !== idx) }))}><Trash2 size={13} /></button>
+              </div>
+            );
+            const unit = getUnitInfo(fd.state);
+            const m = foodMult(fd, ing.grams);
+            return (
+              <div key={ing.foodId} className="bg-gray-50 dark:bg-gray-800 rounded-lg px-2 py-1.5">
+                <div className="flex items-center gap-2">
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-medium truncate">{fd.name.split(" - ")[0]}</div>
-                    <div className="text-xs text-gray-400">{kcal} kcal · {(fd.protein * mult).toFixed(1)}g P</div>
+                    <div className="text-xs font-medium truncate">{displayName(fd.name, "both")}</div>
+                    <div className="text-[11px] text-gray-400" dir="ltr">{Math.round(fd.calories * m)} kcal · {round1(fd.protein * m)}g P · {round1(fd.carbs * m)}g C · {round1(fd.fat * m)}g F</div>
                   </div>
-                  <input type="number" min="0" step={isPerPiece(fd.state) ? "1" : "5"} value={ing.grams}
-                    onChange={e => setRbIngredients(p => p.map((x, i) => i === idx ? { ...x, grams: +e.target.value } : x))}
-                    className="w-14 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 bg-white dark:bg-gray-700" />
-                  <span className="text-xs text-gray-400 w-5">{isPerPiece(fd.state) ? "pcs" : "g"}</span>
-                  {!isPerPiece(fd.state) && (
-                    <div className="flex gap-0.5">
-                      {[50, 100, 150, 200].map(g => (
-                        <button key={g} onClick={() => setRbIngredients(p => p.map((x, i) => i === idx ? { ...x, grams: g } : x))}
-                          className={`text-[10px] px-1 py-0.5 rounded border ${ing.grams === g ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 text-gray-500 hover:border-purple-500 hover:text-purple-600"}`}>
-                          {g}
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                  <button onClick={() => setRbIngredients(p => p.filter((_, i) => i !== idx))} className="text-red-400 hover:text-red-600 shrink-0"><Trash2 size={13} /></button>
+                  <div className="flex items-center gap-1" dir="ltr">
+                    <input type="number" min="0" step="any" value={ing.grams || ""}
+                      onChange={e => setDraft(p => ({ ...p, ingredients: p.ingredients.map((x, i) => (i === idx ? { ...x, grams: Math.max(0, +e.target.value) } : x)) }))}
+                      className="w-16 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 bg-white dark:bg-gray-700" />
+                    <span className="text-xs text-gray-500 w-7">{unit.label}</span>
+                  </div>
+                  <button onClick={() => setDraft(p => ({ ...p, ingredients: p.ingredients.filter((_, i) => i !== idx) }))} className="text-red-400 hover:text-red-600 shrink-0"><Trash2 size={13} /></button>
                 </div>
-              );
-            })}
-            {/* macro totals */}
-            <div className="flex flex-wrap gap-3 text-xs bg-purple-50 dark:bg-purple-950/30 rounded-lg px-3 py-2 font-medium">
-              <span>Total: <b>{rbTotals.calories.toFixed(0)} kcal</b></span>
-              <span className="text-blue-600">{rbTotals.protein.toFixed(1)}g P</span>
-              <span className="text-yellow-600">{rbTotals.carbs.toFixed(1)}g C</span>
-              <span className="text-red-500">{rbTotals.fat.toFixed(1)}g F</span>
-              {rbServes > 1 && (
-                <span className="text-gray-400">· per serving: <b>{(rbTotals.calories / rbServes).toFixed(0)}</b> kcal / {(rbTotals.protein / rbServes).toFixed(1)}g P</span>
-              )}
-            </div>
+                <div className="flex items-center justify-between gap-2 mt-1" dir="ltr">
+                  <div className="flex gap-0.5">
+                    {!isPerPiece(fd.state) && [50, 100, 150, 200].map(g => (
+                      <button key={g} onClick={() => setDraft(p => ({ ...p, ingredients: p.ingredients.map((x, i) => (i === idx ? { ...x, grams: g } : x)) }))}
+                        className={cn("text-[10px] px-1.5 py-0.5 rounded border", ing.grams === g ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 text-gray-500 hover:border-purple-500")}>{g}</button>
+                    ))}
+                  </div>
+                  <div className="text-[11px] text-gray-400 text-right">
+                    {fmtAmt(ing.grams / s)} {unit.label} / serving
+                    {scale !== 1 && <span className="text-purple-600 font-semibold"> · {fmtAmt(ing.grams * scale)} {unit.label} for {viewServings}</span>}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {draft.ingredients.length > 0 && (
+          <div className="bg-purple-50 dark:bg-purple-950/30 rounded-lg px-3 py-2 text-xs space-y-0.5" dir="ltr">
+            <div className="font-medium">Whole recipe ({s} serving{s > 1 ? "s" : ""}): <b>{Math.round(batch.calories)} kcal</b> · <span className="text-blue-600">{round1(batch.protein)}g P</span> · <span className="text-yellow-600">{round1(batch.carbs)}g C</span> · <span className="text-red-500">{round1(batch.fat)}g F</span></div>
+            <div className="font-semibold text-purple-700 dark:text-purple-300">Per serving: {perServing.kcal} kcal · {perServing.p}g P · {perServing.c}g C · {perServing.f}g F</div>
           </div>
         )}
+      </div>
 
-        <div className="flex gap-2">
-          <button onClick={saveRecipe} disabled={!rbName.trim() || rbIngredients.length === 0}
-            className="flex-1 bg-purple-600 text-white rounded-xl py-2 text-sm font-semibold hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-            {editId ? "Update Recipe ✓" : "Save Recipe ✓"}
-          </button>
-          {editId && (
-            <button onClick={clearForm} className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-              Cancel
-            </button>
-          )}
+      {/* instructions */}
+      <div className="space-y-2">
+        <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Instructions - طريقة التحضير</div>
+        {(draft.steps || []).map((st, i) => (
+          <div key={i} className="flex gap-2 items-start">
+            <div className="w-6 h-6 mt-1 rounded-full bg-purple-600 text-white text-xs font-bold flex items-center justify-center shrink-0">{i + 1}</div>
+            <textarea value={st} dir="auto" rows={2} onChange={e => setStep(i, e.target.value)} placeholder={`Step ${i + 1}...`}
+              className="flex-1 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 resize-y" />
+            <div className="flex flex-col gap-0.5 shrink-0">
+              <button onClick={() => moveStep(i, -1)} disabled={i === 0} className="text-gray-400 hover:text-gray-700 disabled:opacity-30"><ChevronUp size={14} /></button>
+              <button onClick={() => moveStep(i, 1)} disabled={i === (draft.steps || []).length - 1} className="text-gray-400 hover:text-gray-700 disabled:opacity-30"><ChevronDown size={14} /></button>
+              <button onClick={() => setDraft(p => ({ ...p, steps: (p.steps || []).length > 1 ? (p.steps || []).filter((_, j) => j !== i) : [""] }))} className="text-red-400 hover:text-red-600"><Trash2 size={13} /></button>
+            </div>
+          </div>
+        ))}
+        <button onClick={() => setDraft(p => ({ ...p, steps: [...(p.steps || []), ""] }))} className="flex items-center gap-1 text-xs text-purple-600 hover:underline"><Plus size={13} />Add step</button>
+        <textarea value={draft.notes} dir="auto" rows={2} onChange={e => setDraft(p => ({ ...p, notes: e.target.value }))}
+          placeholder="Tips, storage, swaps (optional) — printed under the steps" className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 resize-none" />
+      </div>
+
+      <div className="flex gap-2 flex-wrap">
+        <button onClick={() => saveRecipe(false)} disabled={!canSave}
+          className="flex-1 bg-purple-600 text-white rounded-xl py-2 text-sm font-semibold hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed">{isExisting ? "Update recipe ✓" : "Save recipe ✓"}</button>
+        {isExisting && <button onClick={() => saveRecipe(true)} disabled={!canSave} className="px-4 py-2 border border-purple-300 text-purple-600 rounded-xl text-sm hover:bg-purple-50 dark:hover:bg-purple-950/30 disabled:opacity-40">Save as copy</button>}
+        <button onClick={() => setMode("library")} className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-xl text-sm hover:bg-gray-100 dark:hover:bg-gray-800">Cancel</button>
+      </div>
+      {!canSave && <p className="text-xs text-gray-400">A recipe needs a name and at least one ingredient to be saved.</p>}
+    </div>
+  );
+}
+
+// ─── PLANNER: QUICK RECIPE PANEL (keeps the original "add recipe as a meal" flow) ───
+function RecipeQuickAdd({ recipes, foods, onAddAsMeal, onOpen, onManage, onClose }: {
+  recipes: CustomRecipe[]; foods: FoodEntry[]; onAddAsMeal: (r: CustomRecipe) => void;
+  onOpen: (id: number) => void; onManage: () => void; onClose: () => void;
+}) {
+  return (
+    <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow-sm space-y-3 border-2 border-purple-100 dark:border-purple-900 print:hidden">
+      <div className="flex items-center justify-between">
+        <h3 className="font-bold text-sm flex items-center gap-2"><BookOpen size={16} className="text-purple-600" />Recipes - وصفات</h3>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-lg leading-none">✕</button>
+      </div>
+      <p className="text-xs text-gray-400">Add a recipe as a ready-made <b>meal</b> (ingredients listed one by one) — or search for it inside any meal to add it as a <b>single food item</b> (category “Recipes”).</p>
+      {recipes.length === 0 && <p className="text-sm text-gray-400 text-center py-3">No recipes yet.</p>}
+      <div className="space-y-1.5">
+        {recipes.map(r => {
+          const f = recipeToFood(r, foods);
+          return (
+            <div key={r.id} className="flex items-center gap-2 bg-purple-50 dark:bg-purple-950/30 rounded-xl px-3 py-2">
+              {r.images && r.images[0]
+                // eslint-disable-next-line @next/next/no-img-element
+                ? <img src={r.images[0]} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" /> : null}
+              <div className="flex-1 min-w-0">
+                <div className="font-medium text-sm truncate">{r.name}</div>
+                <div className="text-xs text-gray-400" dir="ltr">{f.calories} kcal · {f.protein}g P / serving</div>
+              </div>
+              <button onClick={() => onAddAsMeal(r)} className="text-xs bg-teal-600 text-white px-2 py-1 rounded-lg hover:bg-teal-700 shrink-0">+ Meal</button>
+              <button onClick={() => onOpen(r.id)} className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-2 py-1 rounded-lg shrink-0">Open</button>
+            </div>
+          );
+        })}
+      </div>
+      <button onClick={onManage} className="w-full text-xs border border-purple-300 text-purple-600 rounded-xl py-1.5 hover:bg-purple-50 dark:hover:bg-purple-950/30">Create / manage recipes in the Recipes tab →</button>
+    </div>
+  );
+}
+
+// ─── PDF: ONE FULL PAGE PER RECIPE (print-only; target of the clickable links) ──
+function RecipePdfPage({ recipe, foods, printLang, clientName, showBackLink }: {
+  recipe: CustomRecipe; foods: FoodEntry[]; printLang: "ar" | "en" | "both"; clientName: string; showBackLink: boolean;
+}) {
+  const ar = printLang === "ar";
+  const both = printLang === "both";
+  const t = (en: string, arS: string) => (ar ? arS : both ? `${en} · ${arS}` : en);
+  const arFont = { fontFamily: "'Noto Sans Arabic',sans-serif" };
+  const b = recipeBatch(recipe, foods);
+  const s = Math.max(1, recipe.serves || 1);
+  const per = { kcal: Math.round(b.calories / s), p: round1(b.protein / s), c: round1(b.carbs / s), f: round1(b.fat / s) };
+  const imgs = recipe.images || [];
+  const steps = (recipe.steps || []).filter(x => x.trim());
+  const total = (recipe.prepMin || 0) + (recipe.cookMin || 0);
+  const diffAr: Record<string, string> = { Easy: "سهل", Medium: "متوسط", Hard: "صعب" };
+  return (
+    <div id={`recipe-${recipe.id}`} dir={ar || both ? "rtl" : "ltr"} className="pdf-recipe pdf-break hidden print:block">
+      <div className="pdf-page-header">
+        <div className="pdf-page-header-logo">
+          <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
+          <div className="pdf-page-header-name">MSR Coach Mohamed Saed</div>
         </div>
+        <div className="pdf-page-header-right">{t("Recipe", "وصفة")} &nbsp;·&nbsp; <span>{clientName}</span></div>
+      </div>
+      <div className="pdf-recipe-body">
+        {showBackLink && <a href="#pdf-meals" className="pdf-recipe-back">← {t("Back to meals", "الرجوع للوجبات")}</a>}
+        <div className="pdf-section-label">{recipe.category || t("Recipe", "وصفة")}</div>
+        <div className="pdf-recipe-title" style={ar ? arFont : undefined}>{displayName(recipe.name, printLang)}</div>
+        <div className="pdf-recipe-meta">
+          <span>🍽 {s} {t(s > 1 ? "servings" : "serving", "حصص")}</span>
+          {(recipe.prepMin || 0) > 0 && <span>⏱ {t("Prep", "تحضير")} {recipe.prepMin} {t("min", "د")}</span>}
+          {(recipe.cookMin || 0) > 0 && <span>🔥 {t("Cook", "طهي")} {recipe.cookMin} {t("min", "د")}</span>}
+          {total > 0 && <span>⏳ {t("Total", "الإجمالي")} {total} {t("min", "د")}</span>}
+          {recipe.difficulty && <span>📊 {ar ? diffAr[recipe.difficulty] : both ? `${recipe.difficulty} · ${diffAr[recipe.difficulty]}` : recipe.difficulty}</span>}
+        </div>
+        {imgs.length > 0 && (
+          <div className="pdf-recipe-photos">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={imgs[0]} alt="" className="pdf-recipe-cover" />
+            {imgs.length > 1 && (
+              <div className="pdf-recipe-thumbs">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                {imgs.slice(1, 4).map((src, i) => <img key={i} src={src} alt="" />)}
+              </div>
+            )}
+          </div>
+        )}
+        <div className="pdf-recipe-macros">
+          <div><b>{per.kcal}</b><span>kcal</span></div>
+          <div><b>{per.p}g</b><span>{t("Protein", "بروتين")}</span></div>
+          <div><b>{per.c}g</b><span>{t("Carbs", "كارب")}</span></div>
+          <div><b>{per.f}g</b><span>{t("Fat", "دهون")}</span></div>
+          <div className="pdf-recipe-macros-note">{t("per serving", "للحصة الواحدة")}</div>
+        </div>
+        <div className="pdf-recipe-h">{t("Ingredients", "المكونات")}</div>
+        <table className="pdf-recipe-table">
+          <thead><tr><th style={{ textAlign: "start" }}>{t("Ingredient", "المكوّن")}</th><th>{t("Per serving", "للحصة")}</th>{s > 1 && <th>{t(`Whole recipe (${s})`, `الوصفة كاملة (${s})`)}</th>}</tr></thead>
+          <tbody>
+            {recipe.ingredients.map((ing, i) => {
+              const fd = foods.find(f => f.id === ing.foodId);
+              if (!fd) return null;
+              const unit = getUnitInfo(fd.state).label;
+              return (
+                <tr key={i}>
+                  <td style={ar ? arFont : undefined}>{displayName(fd.name, printLang)}</td>
+                  <td><bdi dir="ltr">{fmtAmt(ing.grams / s)} {unit}</bdi></td>
+                  {s > 1 && <td><bdi dir="ltr">{fmtAmt(ing.grams)} {unit}</bdi></td>}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {steps.length > 0 && (
+          <>
+            <div className="pdf-recipe-h">{t("Instructions", "طريقة التحضير")}</div>
+            <div className="pdf-recipe-steps">
+              {steps.map((st, i) => (
+                <div key={i} className="pdf-recipe-step">
+                  <div className="pdf-recipe-step-num">{i + 1}</div>
+                  <div className="pdf-recipe-step-text" dir="auto">{st}</div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+        {recipe.notes.trim() && (
+          <div className="pdf-recipe-notes" dir="auto">💡 {recipe.notes}</div>
+        )}
       </div>
     </div>
   );
@@ -1114,7 +2467,7 @@ function RecipeBuilder({ allFoods, customRecipes, setCustomRecipes, onAddAsMeal,
 // ─── MAIN COMPONENT ────────────────────────────────────────────────────────────
 export default function MealPlanner() {
   const [dark, setDark] = useState(false);
-  const [tab, setTab] = useState<"planner" | "calculator" | "clients" | "micros">("planner");
+  const [tab, setTab] = useState<"planner" | "calculator" | "clients" | "micros" | "recipes">("planner");
   const [microsClientId, setMicrosClientId] = useState<number | null>(null);
   const [lang, setLang] = useState<"ar" | "en" | "both">("both");
   const [printLang, setPrintLang] = useState<"ar" | "en" | "both">("en");
@@ -1175,10 +2528,79 @@ export default function MealPlanner() {
   const [customFoods, setCustomFoods] = useState<FoodEntry[]>(() => {
     try { const s = localStorage.getItem("custom_foods_v1"); return s ? JSON.parse(s) : []; } catch { return []; }
   });
-  const [customRecipes, setCustomRecipes] = useState<CustomRecipe[]>(() => {
-    try { const s = localStorage.getItem("custom_recipes_v1"); return s ? JSON.parse(s) : []; } catch { return []; }
-  });
+  // Recipes (with photos) live in IndexedDB on this computer; loaded after mount.
+  const [customRecipes, setCustomRecipes] = useState<CustomRecipe[]>([]);
+  const [recipesLoaded, setRecipesLoaded] = useState(false);
+  const [storageError, setStorageError] = useState("");
   const [showRecipeBuilder, setShowRecipeBuilder] = useState(false);
+  const [focusRecipeId, setFocusRecipeId] = useState<number | null>(null);
+  // Which recipes get a full page in the PDF: explicit tick overrides "is it used in the plan?"
+  const [pdfRecipeOverride, setPdfRecipeOverride] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      let loaded: CustomRecipe[] | null = null;
+      try {
+        const stored = await idbGet<CustomRecipe[]>("recipes_v2");
+        if (Array.isArray(stored)) loaded = stored.filter(isRecipeLike);
+      } catch {
+        setStorageError("Your browser's local database isn't available (private window?). Recipes will work this session but won't be kept — use Export backup.");
+      }
+      if (loaded === null) {
+        // one-time migration of recipes saved by the previous version (localStorage)
+        try {
+          const legacy = localStorage.getItem("custom_recipes_v1");
+          const parsed: unknown = legacy ? JSON.parse(legacy) : [];
+          loaded = Array.isArray(parsed) ? parsed.filter(isRecipeLike) : [];
+        } catch { loaded = []; }
+      }
+      if (!cancelled) { setCustomRecipes(loaded); setRecipesLoaded(true); }
+      try { await navigator.storage?.persist?.(); } catch {}
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  useEffect(() => {
+    if (!recipesLoaded) return;
+    idbSet("recipes_v2", customRecipes)
+      .then(() => setStorageError(""))
+      .catch(() => setStorageError("Couldn't save recipes to the browser database (storage full or blocked). Export a backup now so nothing is lost."));
+  }, [customRecipes, recipesLoaded]);
+
+  // Saved custom foods (small, plain JSON) stay in localStorage as before.
+  const customFoodsReady = useRef(false);
+  useEffect(() => {
+    if (!customFoodsReady.current) { customFoodsReady.current = true; return; }
+    try { localStorage.setItem("custom_foods_v1", JSON.stringify(customFoods)); } catch {}
+  }, [customFoods]);
+
+  const cloud = useCloudSync({
+    ready: recipesLoaded && authenticated, recipes: customRecipes, clients, foods: customFoods,
+    setRecipes: setCustomRecipes, setClients, setFoods: setCustomFoods,
+  });
+
+  /** Recipes behave like foods: searchable in any meal, macros/micros per serving. */
+  const recipeFoods = useMemo(() => {
+    const base = [...FOOD_DATABASE, ...customFoods];
+    return customRecipes.map(r => recipeToFood(r, base));
+  }, [customRecipes, customFoods]);
+
+  /** Remove a saved custom food from the database (meals already built keep their copy). */
+  function deleteCustomFood(f: FoodEntry) {
+    const used = customRecipes.filter(r => r.ingredients.some(i => i.foodId === f.id)).length;
+    const name = displayName(f.name, "en");
+    const msg = used > 0
+      ? `"${name}" is used in ${used} recipe(s). Removing it will leave a missing ingredient there. Remove anyway?`
+      : `Remove "${name}" from your food database?\n\nMeals you already built keep it; it just won't appear in searches any more.`;
+    if (window.confirm(msg)) setCustomFoods(prev => prev.filter(x => x.id !== f.id));
+  }
+
+  function saveCustomFood(food: Omit<FoodEntry, "id">): FoodEntry {
+    const entry: FoodEntry = { ...food, id: Date.now() + Math.floor(Math.random() * 1000) };
+    setCustomFoods(prev => [...prev, entry]);
+    return entry;
+  }
   // Micronutrient manual overrides: clientId → { key → value }
   const [microOverrides, setMicroOverrides] = useState<Record<number, Record<string, number>>>({});
   // Calculator state
@@ -1372,19 +2794,44 @@ export default function MealPlanner() {
   const totals = grandTotals(meals);
   const selectedClient = clients.find(c => c.id === selectedClientId) || null;
 
-  const allFoodsForTracking = [...FOOD_DATABASE, ...customFoods];
+  const allFoodsForTracking = [...FOOD_DATABASE, ...customFoods, ...recipeFoods];
   const planTracking = meals.reduce((acc, meal) => {
     meal.items.forEach(item => {
       const fd = allFoodsForTracking.find(f => f.id === item.id);
-      if (!fd || !fd.micros) return;
-      const mult = isPerPiece(fd.state) ? item.grams : item.grams / 100;
-      acc.fiber += (fd.micros.fiber || 0) * mult;
-      acc.saturatedFat += (fd.micros.saturatedFat || 0) * mult;
-      acc.omega3 += (fd.micros.omega3 || 0) * mult;
-      acc.omega6 += (fd.micros.omega6 || 0) * mult;
+      const micros = fd?.micros ?? item.micros;   // unsaved custom foods carry their own micros
+      if (!micros) return;
+      const mult = isPerPiece(fd?.state ?? item.state) ? item.grams : item.grams / 100;
+      acc.fiber += (micros.fiber || 0) * mult;
+      acc.saturatedFat += (micros.saturatedFat || 0) * mult;
+      acc.omega3 += (micros.omega3 || 0) * mult;
+      acc.omega6 += (micros.omega6 || 0) * mult;
     });
     return acc;
   }, { fiber: 0, saturatedFat: 0, omega3: 0, omega6: 0 });
+
+  // Recipes: which ones are used in the plan / printed in the PDF
+  const usedRecipeIds = new Set<number>();
+  meals.forEach(m => {
+    if (m.recipeId !== undefined) usedRecipeIds.add(m.recipeId);
+    m.items.forEach(i => { if (i.recipeId !== undefined) usedRecipeIds.add(i.recipeId); });
+  });
+  const recipeInPdf = (id: number) => pdfRecipeOverride[id] ?? usedRecipeIds.has(id);
+  const pdfRecipes = customRecipes.filter(r => recipeInPdf(r.id));
+  const pdfRecipeIdSet = new Set(pdfRecipes.map(r => r.id));
+
+  /** Original "add recipe as a meal" flow — still available. The meal remembers its recipe so the PDF can link it. */
+  function addRecipeAsMeal(r: CustomRecipe) {
+    const foods = [...FOOD_DATABASE, ...customFoods];
+    const sv = Math.max(1, r.serves || 1);
+    const items: FoodItem[] = r.ingredients.flatMap(ing => {
+      const fd = foods.find(f => f.id === ing.foodId);
+      if (!fd) return [];
+      return [{ ...fd, grams: round1(ing.grams / sv), instId: `ri-${Date.now()}-${Math.random()}` }];
+    });
+    const hasSteps = (r.steps || []).some(x => x.trim());
+    setMeals(prev => [...prev, { id: `m${Date.now()}`, name: r.name, items, notes: hasSteps ? "" : r.notes, recipeId: r.id }]);
+  }
+  function openRecipeFromPlanner(id: number) { setFocusRecipeId(id); setTab("recipes"); }
 
   // Client helpers
   function addClient() {
@@ -1472,10 +2919,10 @@ export default function MealPlanner() {
           <h1 className="text-2xl font-bold text-center">🥗 MSR Nutrition</h1>
           <p className="text-center text-gray-500 text-sm">Pro Nutrition Planner</p>
           <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)}
-            onKeyDown={e => { if (e.key === "Enter") { if (password === "admin123") setAuthenticated(true); else setAuthError("Wrong password"); } }}
+            onKeyDown={e => { if (e.key === "Enter") { if (password === "admin123") { setAuthenticated(true); cloud.resume(); } else setAuthError("Wrong password"); } }}
             className="w-full border border-gray-300 rounded-xl px-4 py-2 text-sm outline-none" />
           {authError && <p className="text-red-500 text-xs text-center">{authError}</p>}
-          <button onClick={() => { if (password === "admin123") setAuthenticated(true); else setAuthError("Wrong password"); }}
+          <button onClick={() => { if (password === "admin123") { setAuthenticated(true); cloud.resume(); } else setAuthError("Wrong password"); }}
             className="w-full bg-blue-600 text-white rounded-xl py-2 text-sm font-semibold hover:bg-blue-700">
             Login
           </button>
@@ -1494,7 +2941,7 @@ export default function MealPlanner() {
           @page { margin: 0; size: A4; }
           @page :first { margin: 0; }
           html, body { height: auto !important; min-height: 0 !important; }
-          .min-h-screen { min-height: 0 !important; }
+          .min-h-screen { min-height: 0 !important; background: #ffffff !important; }
           .pdf-main { max-width: none !important; margin: 0 !important; padding: 0 !important; }
           .pdf-main > *, .pdf-planner > * { margin-top: 0 !important; margin-bottom: 0 !important; }
           .pdf-break { break-before: page !important; page-break-before: always !important; }
@@ -1610,6 +3057,34 @@ export default function MealPlanner() {
           .pdf-shopping-name { flex: 1 !important; font-size: 13px !important; color: #374151 !important; }
           .pdf-shopping-qty { font-size: 13px !important; font-weight: 700 !important; color: #0b1f38 !important; white-space: nowrap !important; }
 
+          /* ── RECIPE PAGES + LINKS ───────────────────────────────── */
+          a.pdf-recipe-link { color: #0d7a5f !important; text-decoration: underline !important; text-decoration-thickness: 1px !important; text-underline-offset: 2px !important; }
+          .pdf-recipe-hint { font-size: 9px !important; color: #0d7a5f !important; margin-top: 2px !important; }
+          .pdf-recipe-back { display: inline-block !important; font-size: 11px !important; color: #0d7a5f !important; text-decoration: none !important; margin-bottom: 14px !important; font-weight: 600 !important; }
+          .pdf-recipe-body { padding: 0 40px 30px !important; }
+          .pdf-recipe-title { font-size: 28px !important; font-weight: 900 !important; color: #0b1f38 !important; line-height: 1.15 !important; margin-bottom: 10px !important; }
+          .pdf-recipe-meta { display: flex !important; flex-wrap: wrap !important; gap: 6px 16px !important; font-size: 11px !important; color: #4b5563 !important; margin-bottom: 16px !important; }
+          .pdf-recipe-photos { margin-bottom: 16px !important; }
+          .pdf-recipe-cover { width: 100% !important; max-height: 78mm !important; object-fit: cover !important; border-radius: 8px !important; display: block !important; }
+          .pdf-recipe-thumbs { display: flex !important; gap: 8px !important; margin-top: 8px !important; }
+          .pdf-recipe-thumbs img { flex: 1 1 0 !important; min-width: 0 !important; height: 26mm !important; object-fit: cover !important; border-radius: 6px !important; }
+          .pdf-recipe-macros { display: flex !important; align-items: stretch !important; gap: 0 !important; border: 1px solid #e5e7eb !important; border-radius: 8px !important; margin-bottom: 18px !important; overflow: hidden !important; }
+          .pdf-recipe-macros > div { flex: 1 !important; text-align: center !important; padding: 8px 4px !important; border-right: 1px solid #e5e7eb !important; display: flex !important; flex-direction: column !important; }
+          .pdf-recipe-macros b { font-size: 16px !important; color: #0b1f38 !important; font-weight: 900 !important; }
+          .pdf-recipe-macros span { font-size: 9px !important; text-transform: uppercase !important; letter-spacing: 1px !important; color: #6b7280 !important; }
+          .pdf-recipe-macros .pdf-recipe-macros-note { background: #f0fdf9 !important; justify-content: center !important; font-size: 9px !important; color: #0d7a5f !important; text-transform: uppercase !important; letter-spacing: 1px !important; border-right: none !important; }
+          .pdf-recipe-h { font-size: 10px !important; letter-spacing: 3px !important; text-transform: uppercase !important; color: #0d7a5f !important; font-weight: 800 !important; margin: 4px 0 8px !important; }
+          .pdf-recipe-table { width: 100% !important; border-collapse: collapse !important; margin-bottom: 18px !important; font-size: 12px !important; }
+          .pdf-recipe-table th { font-size: 9px !important; text-transform: uppercase !important; letter-spacing: 1px !important; color: #6b7280 !important; text-align: end !important; padding: 4px 6px !important; border-bottom: 2px solid #0b1f38 !important; }
+          .pdf-recipe-table td { padding: 6px !important; border-bottom: 1px dashed #e5e7eb !important; text-align: end !important; font-weight: 600 !important; color: #374151 !important; }
+          .pdf-recipe-table td:first-child, .pdf-recipe-table th:first-child { text-align: start !important; font-weight: 500 !important; }
+          .pdf-recipe-table tr { break-inside: avoid !important; }
+          .pdf-recipe-steps { margin-bottom: 14px !important; }
+          .pdf-recipe-step { display: flex !important; gap: 12px !important; padding: 8px 0 !important; break-inside: avoid !important; page-break-inside: avoid !important; }
+          .pdf-recipe-step-num { width: 24px !important; height: 24px !important; border-radius: 50% !important; background: #0d7a5f !important; color: white !important; font-size: 12px !important; font-weight: 900 !important; display: flex !important; align-items: center !important; justify-content: center !important; flex-shrink: 0 !important; }
+          .pdf-recipe-step-text { font-size: 13px !important; line-height: 1.6 !important; color: #374151 !important; white-space: pre-wrap !important; flex: 1 !important; padding-top: 2px !important; }
+          .pdf-recipe-notes { background: #fefce8 !important; border-left: 3px solid #eab308 !important; padding: 10px 14px !important; font-size: 12px !important; color: #92400e !important; border-radius: 0 6px 6px 0 !important; white-space: pre-wrap !important; break-inside: avoid !important; }
+
           /* ── FOOTER ─────────────────────────────────────────────── */
           .pdf-footer { position: fixed !important; bottom: 16px !important; left: 40px !important; right: 40px !important; display: flex !important; justify-content: space-between !important; font-size: 9px !important; color: #9ca3af !important; border-top: 1px solid #f3f4f6 !important; padding-top: 8px !important; }
 
@@ -1626,18 +3101,22 @@ export default function MealPlanner() {
           <span className="font-bold text-lg">MSR Nutrition Planner</span>
         </div>
         <div className="flex gap-1">
-          {([["planner", <UtensilsCrossed size={16} />, "Planner"], ["calculator", <Calculator size={16} />, "Calc"], ["clients", <Users size={16} />, "Clients"], ["micros", <BarChart2 size={16} />, "Micros"]] as const).map(([t, icon, label]) => (
+          {([["planner", <UtensilsCrossed size={16} />, "Planner"], ["calculator", <Calculator size={16} />, "Calc"], ["clients", <Users size={16} />, "Clients"], ["micros", <BarChart2 size={16} />, "Micros"], ["recipes", <BookOpen size={16} />, "Recipes"]] as const).map(([t, icon, label]) => (
             <button key={t} onClick={() => setTab(t as typeof tab)}
               className={cn("flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors", tab === t ? "bg-blue-600 text-white" : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700")}>
               {icon}{label}
             </button>
           ))}
+          <CloudChip cloud={cloud} onOpen={() => setTab("recipes")} />
           <button onClick={toggleDark} className="p-2 rounded-lg bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700">
             {dark ? <Sun size={16} /> : <Moon size={16} />}
           </button>
         </div>
       </header>
 
+      {cloud.conflictOpen && cloud.conflicts.length > 0 && (
+        <CloudConflictDialog key={cloud.conflicts.map(c => c.key).join("|")} conflicts={cloud.conflicts} onApply={cloud.resolveConflicts} onClose={() => cloud.setConflictOpen(false)} />
+      )}
       <main className="pdf-main max-w-4xl mx-auto p-4 space-y-4">
         {/* ── PLANNER TAB ── */}
         {tab === "planner" && (
@@ -1720,7 +3199,7 @@ export default function MealPlanner() {
                   </div>
 
                   {/* MEALS PAGES */}
-                  {showMealsInPdf && <div className="hidden print:block" style={{pageBreakBefore:"always"}}>
+                  {showMealsInPdf && <div id="pdf-meals" className="hidden print:block" style={{pageBreakBefore:"always"}}>
                     <div className="pdf-page-header">
                       <div className="pdf-page-header-logo">
                         <div className="pdf-page-header-logo-icon"><span className="pdf-logo-msr-sm">MSR</span></div>
@@ -1743,7 +3222,9 @@ export default function MealPlanner() {
                         <div key={meal.id} className="pdf-meal-block">
                           <div className="pdf-meal-title-row">
                             <div className="pdf-meal-num">{mi + 1}</div>
-                            <div className="pdf-meal-name">{displayName(meal.name, printLang)}</div>
+                            <div className="pdf-meal-name">{meal.recipeId !== undefined && pdfRecipeIdSet.has(meal.recipeId)
+                              ? <a className="pdf-recipe-link" href={`#recipe-${meal.recipeId}`}>{displayName(meal.name, printLang)}</a>
+                              : displayName(meal.name, printLang)}</div>
                             <div className="pdf-meal-kcal">{mt.calories.toFixed(0)} kcal</div>
                           </div>
                           {meal.items.map(item => {
@@ -1754,11 +3235,14 @@ export default function MealPlanner() {
                             const amt = isPerPiece(item.state) ? `${item.grams} ${unitLbl}` : `${item.grams} ${unitLbl}`;
                             const showEn = printLang === "en" || printLang === "both";
                             const showAr = printLang === "ar" || printLang === "both";
+                            const linkTo = item.recipeId !== undefined && pdfRecipeIdSet.has(item.recipeId) ? `#recipe-${item.recipeId}` : null;
+                            const wrap = (node: React.ReactNode) => linkTo ? <a className="pdf-recipe-link" href={linkTo}>{node}</a> : node;
                             return (
                               <div key={item.instId} className="pdf-food-item">
                                 <div>
-                                  {showEn && <div className="pdf-food-en">{enName}</div>}
-                                  {showAr && arName && <div className={showEn ? "pdf-food-ar" : "pdf-food-en"} style={showEn ? {} : {fontFamily:"'Noto Sans Arabic',sans-serif", direction:"rtl"}}>{arName}</div>}
+                                  {showEn && <div className="pdf-food-en">{wrap(enName)}</div>}
+                                  {showAr && arName && <div className={showEn ? "pdf-food-ar" : "pdf-food-en"} style={showEn ? {} : {fontFamily:"'Noto Sans Arabic',sans-serif", direction:"rtl"}}>{showEn ? arName : wrap(arName)}</div>}
+                                  {linkTo && <div className="pdf-recipe-hint">📖 {pdfT("Recipe & instructions — tap the name", "الوصفة وطريقة التحضير — اضغط على الاسم")}</div>}
                                 </div>
                                 <div className="pdf-food-amt">{amt}</div>
                               </div>
@@ -1858,14 +3342,27 @@ export default function MealPlanner() {
                   {/* SHOPPING LIST PAGE */}
                   {(() => {
                     const allFoodsDB = [...FOOD_DATABASE, ...customFoods];
-                    const shoppingMap: Record<string, { name: string; category: string; grams: number }> = {};
+                    const shoppingMap: Record<string, { name: string; category: string; grams: number; unit: string }> = {};
+                    const addShop = (food: FoodEntry | undefined, fallbackName: string, id: number, amount: number) => {
+                      const name = food?.name ?? fallbackName;
+                      const key = id + "_" + name;
+                      const unit = food && isPerPiece(food.state) ? getUnitInfo(food.state).label : "g";
+                      if (!shoppingMap[key]) shoppingMap[key] = { name, category: food?.category || "Other", grams: 0, unit };
+                      shoppingMap[key].grams += amount;
+                    };
                     meals.forEach(meal => {
                       meal.items.forEach(item => {
-                        const fd = allFoodsDB.find(f => f.id === item.id);
-                        const cat = fd?.category || "Other";
-                        const key = item.id + "_" + item.name;
-                        if (!shoppingMap[key]) shoppingMap[key] = { name: item.name, category: cat, grams: 0 };
-                        shoppingMap[key].grams += item.grams;
+                        const rec = item.recipeId !== undefined ? customRecipes.find(r => r.id === item.recipeId) : undefined;
+                        if (rec) {
+                          // a recipe item is N servings → shop for its ingredients
+                          const sv = Math.max(1, rec.serves || 1);
+                          rec.ingredients.forEach(ing => {
+                            const f = allFoodsDB.find(x => x.id === ing.foodId);
+                            if (f) addShop(f, f.name, f.id, (ing.grams * item.grams) / sv);
+                          });
+                        } else {
+                          addShop(allFoodsDB.find(f => f.id === item.id), item.name, item.id, item.grams);
+                        }
                       });
                     });
                     const items = Object.values(shoppingMap);
@@ -1900,7 +3397,7 @@ export default function MealPlanner() {
                                   <div key={idx} className="pdf-shopping-item">
                                     <div className="pdf-shopping-check" />
                                     <div className="pdf-shopping-name" style={pdfAr ? {fontFamily:"'Noto Sans Arabic',sans-serif", direction:"rtl"} : {}}>{shName}</div>
-                                    <div className="pdf-shopping-qty">{weekly}g</div>
+                                    <div className="pdf-shopping-qty">{weekly}{it.unit === "g" ? "g" : ` ${it.unit}`}</div>
                                   </div>
                                 );
                               })}
@@ -1910,6 +3407,12 @@ export default function MealPlanner() {
                       </div>
                     );
                   })()}
+
+                  {/* RECIPE PAGES — one full page per selected recipe; the meal list links here */}
+                  {pdfRecipes.map(r => (
+                    <RecipePdfPage key={r.id} recipe={r} foods={[...FOOD_DATABASE, ...customFoods]}
+                      printLang={printLang} clientName={planClientName} showBackLink={showMealsInPdf} />
+                  ))}
                 </>
               );
             })()}
@@ -2093,7 +3596,10 @@ export default function MealPlanner() {
                             const copy = { ...JSON.parse(JSON.stringify(meal)), id: `m${Date.now()}`, name: meal.name + " (copy)" };
                             setMeals(prev => { const i = prev.findIndex(m => m.id === meal.id); const next = [...prev]; next.splice(i + 1, 0, copy); return next; });
                           }}
-                          extraFoods={customFoods}
+                          extraFoods={[...customFoods, ...recipeFoods]}
+                          onSaveCustomFood={saveCustomFood}
+                          onDeleteCustomFood={deleteCustomFood}
+                          onOpenRecipe={openRecipeFromPlanner}
                           dragHandleProps={dragHandleProps}
                         />
                       )}
@@ -2113,22 +3619,16 @@ export default function MealPlanner() {
               </button>
             </div>
 
-            {/* ── RECIPE BUILDER ───────────────────────────────────────────── */}
+            {/* ── RECIPES QUICK PANEL ──────────────────────────────────────── */}
             {showRecipeBuilder && (
-              <div className="print:hidden"><RecipeBuilder
-                allFoods={[...FOOD_DATABASE, ...customFoods]}
-                customRecipes={customRecipes}
-                setCustomRecipes={setCustomRecipes}
-                onAddAsMeal={r => {
-                  const items = r.ingredients.flatMap(ing => {
-                    const fd = [...FOOD_DATABASE, ...customFoods].find(f => f.id === ing.foodId);
-                    if (!fd) return [];
-                    return [{ ...fd, grams: ing.grams / r.serves, instId: `ri-${Date.now()}-${Math.random()}` }];
-                  });
-                  setMeals(prev => [...prev, { id: `m${Date.now()}`, name: r.name, items, notes: r.notes, collapsed: false }]);
-                }}
+              <RecipeQuickAdd
+                recipes={customRecipes}
+                foods={[...FOOD_DATABASE, ...customFoods]}
+                onAddAsMeal={addRecipeAsMeal}
+                onOpen={openRecipeFromPlanner}
+                onManage={() => setTab("recipes")}
                 onClose={() => setShowRecipeBuilder(false)}
-              /></div>
+              />
             )}
 
             {/* plan notes (screen only — the PDF shows these in the "From Your Coach" box) */}
@@ -2163,6 +3663,25 @@ export default function MealPlanner() {
                   <input type="checkbox" id="showMealsInPdf" checked={showMealsInPdf} onChange={e => setShowMealsInPdf(e.target.checked)} className="rounded" />
                   <label htmlFor="showMealsInPdf" className="text-xs text-gray-500 cursor-pointer">Include meal details page in PDF</label>
                 </div>
+                {customRecipes.length > 0 && (
+                  <div className="col-span-2 border border-purple-200 dark:border-purple-800 rounded-xl p-2.5 space-y-1.5 bg-purple-50/50 dark:bg-purple-950/20">
+                    <div className="text-xs font-semibold text-purple-700 dark:text-purple-300 flex items-center gap-1"><BookOpen size={13} />Recipes in the PDF - وصفات في الـ PDF</div>
+                    <p className="text-[11px] text-gray-500">Ticked recipes get a full page (photos, ingredients, steps) at the end of the PDF, and their names become clickable links in the meal list. Recipes used in the plan are ticked automatically.</p>
+                    <div className="max-h-40 overflow-y-auto space-y-1">
+                      {customRecipes.map(r => (
+                        <label key={r.id} className="flex items-center gap-2 text-xs cursor-pointer">
+                          <input type="checkbox" className="accent-purple-600" checked={recipeInPdf(r.id)}
+                            onChange={e => setPdfRecipeOverride(prev => ({ ...prev, [r.id]: e.target.checked }))} />
+                          <span className="flex-1 truncate">{r.name}</span>
+                          {usedRecipeIds.has(r.id) && <span className="text-[10px] px-1.5 rounded-full bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300">in plan</span>}
+                        </label>
+                      ))}
+                    </div>
+                    {pdfRecipes.length > 0 && !showMealsInPdf && (
+                      <p className="text-[11px] text-amber-600">Tip: tick “Include meal details page in PDF” so clients can tap a recipe name in their meal list.</p>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="flex gap-2 flex-wrap">
                 <button onClick={copyPlan} className="flex items-center gap-1 px-3 py-2 bg-green-600 text-white rounded-xl text-sm hover:bg-green-700"><Copy size={14} /> Copy Plan</button>
@@ -2400,6 +3919,18 @@ export default function MealPlanner() {
               )}
             </div>
           </div>
+        )}
+        {/* ── RECIPES TAB ── */}
+        {tab === "recipes" && (
+          <RecipeStudio
+            allFoods={[...FOOD_DATABASE, ...customFoods]}
+            customFoods={customFoods} setCustomFoods={setCustomFoods}
+            recipes={customRecipes} setRecipes={setCustomRecipes}
+            onAddAsMeal={r => { addRecipeAsMeal(r); setTab("planner"); }}
+            storageError={storageError}
+            focusRecipeId={focusRecipeId} onFocusHandled={() => setFocusRecipeId(null)}
+            cloud={cloud} clientCount={clients.length}
+          />
         )}
         {/* ── CALCULATOR TAB ── */}
         {tab === "calculator" && (
