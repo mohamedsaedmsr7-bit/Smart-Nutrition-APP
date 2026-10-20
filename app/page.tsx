@@ -39,7 +39,6 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 107, name: "Salmon - سلمون", category: "Protein", state: "per 100g", carbs: 0, protein: 20, fat: 13, calories: 208, micros: { vitB12: 3.2, vitB3: 8.9, vitB6: 0.8, vitD: 11.1, selenium: 36, phosphorus: 240, potassium: 490, magnesium: 29, iron: 0.8, omega3: 2.3, saturatedFat: 3.2 } },
   { id: 108, name: "Tilapia - بلطي", category: "Protein", state: "per 100g", carbs: 0, protein: 26, fat: 2.7, calories: 128, micros: { vitB12: 1.6, vitB3: 3.9, vitB6: 0.2, vitD: 1.2, selenium: 40, phosphorus: 185, potassium: 380, magnesium: 28, saturatedFat: 0.9, omega3: 0.2, omega6: 0.15 } },
   { id: 109, name: "Shrimp - جمبري", category: "Protein", state: "per 100g", carbs: 0.9, protein: 24, fat: 0.3, calories: 99, micros: { vitB12: 1.1, vitB3: 2.6, selenium: 38, phosphorus: 205, iodine: 35, zinc: 1.3, iron: 2.4, potassium: 259, saturatedFat: 0.1, omega3: 0.27, omega6: 0.05 } },
-  { id: 110, name: "Turkey Breast - ديك رومي", category: "Protein", state: "per 100g", carbs: 0, protein: 29, fat: 1, calories: 135, micros: { vitB12: 1.1, vitB3: 11.8, vitB6: 0.9, selenium: 32, phosphorus: 240, potassium: 330, zinc: 2.0, magnesium: 28, saturatedFat: 0.3, omega3: 0.04, omega6: 0.3 } },
   { id: 111, name: "Sardines - سردين", category: "Protein", state: "per 100g", carbs: 0, protein: 21, fat: 11, calories: 185, micros: { vitB12: 8.9, vitD: 4.8, vitB3: 5.2, calcium: 382, phosphorus: 490, selenium: 53, iron: 2.9, zinc: 1.3, potassium: 397, omega3: 1.4, saturatedFat: 2.5, omega6: 1.4 } },
   { id: 112, name: "Mullet (Boori) - بوري", category: "Protein", state: "per 100g cooked", carbs: 0, protein: 25.6, fat: 4.9, calories: 150, micros: { vitB12: 1.5, vitB3: 6.5, selenium: 45, phosphorus: 260, potassium: 420, magnesium: 35, iron: 1.0, omega3: 0.5, omega6: 0.4, saturatedFat: 1.3 } },
   { id: 113, name: "Mackerel - ماكريل", category: "Protein", state: "per 100g cooked", carbs: 0, protein: 24, fat: 18, calories: 260, micros: { vitB12: 19, vitD: 16, vitB3: 9.1, selenium: 51, phosphorus: 217, potassium: 520, magnesium: 97, iron: 1.6, calcium: 15, omega3: 3.0, omega6: 0.4, saturatedFat: 4.2 } },
@@ -79,7 +78,6 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 415, name: "Almarai Protein Milk - حليب ألمراي بروتين", category: "Milk", state: "per 100ml", carbs: 5.0, protein: 5.0, fat: 0.2, calories: 42, micros: { calcium: 130, vitB12: 0.5, vitD: 1.0, potassium: 160, saturatedFat: 0.1 } },
   { id: 416, name: "Oat Milk - حليب الشوفان", category: "Milk", state: "per 100ml", carbs: 7.0, protein: 1.0, fat: 1.5, calories: 45, micros: { calcium: 120, fiber: 0.8, saturatedFat: 0.2 } },
   { id: 417, name: "Almond Milk (unsweetened) - حليب اللوز", category: "Milk", state: "per 100ml", carbs: 1.2, protein: 0.4, fat: 1.5, calories: 20, micros: { calcium: 150, fiber: 0.4, saturatedFat: 0.1 } },
-  { id: 9401, name: "Almond Milk (sweetened) - حليب لوز بالسكر", category: "Milk", state: "per 100ml", carbs: 6.5, protein: 0.4, fat: 1.1, calories: 38, micros: { calcium: 120, fiber: 0.3, vitE: 1.5, saturatedFat: 0.1 } },
   { id: 9402, name: "Lactose-Free Milk, Full-Fat - حليب خالي اللاكتوز كامل الدسم", category: "Milk", state: "per 100ml", carbs: 4.7, protein: 3.3, fat: 3.5, calories: 61, micros: { calcium: 120, vitB12: 0.45, vitB2: 0.17, saturatedFat: 2.3 } },
   { id: 9403, name: "Lactose-Free Milk, Semi-Skim - حليب خالي اللاكتوز نصف دسم", category: "Milk", state: "per 100ml", carbs: 4.8, protein: 3.4, fat: 1.6, calories: 47, micros: { calcium: 120, vitB12: 0.45, vitB2: 0.17, saturatedFat: 1.0 } },
   { id: 9404, name: "Lactose-Free Milk, Skim - حليب خالي اللاكتوز خالي الدسم", category: "Milk", state: "per 100ml", carbs: 5, protein: 3.5, fat: 0.1, calories: 35, micros: { calcium: 125, vitB12: 0.5, vitB2: 0.17, saturatedFat: 0.1 } },
@@ -172,6 +170,99 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 803, name: "Baking Powder - بيكنج باودر", category: "Pantry", state: "per 100g", carbs: 27.7, protein: 0, fat: 0, calories: 53 },
   { id: 804, name: "Corn Starch (Cornstarch) - نشا ذرة", category: "Pantry", state: "per 100g", carbs: 91, protein: 0.3, fat: 0.1, calories: 381 },
   { id: 805, name: "Cocoa Powder (Coco, unsweetened) - كاكاو بودرة", category: "Pantry", state: "per 100g", carbs: 57.9, protein: 19.6, fat: 13.7, calories: 228, micros: { iron: 13.9, magnesium: 499, phosphorus: 734, potassium: 1524, zinc: 6.8, copper: 3788, manganese: 3.8, calcium: 128, selenium: 14.3, fiber: 33.2, saturatedFat: 8.1, omega6: 0.4 } },
+  { id: 9701, name: "Dates, Yellow (Balah) - بلح أصفر", category: "Fruits", state: "per 100g", carbs: 25, protein: 1, fat: 0.2, calories: 105, micros: { fiber: 3.5, potassium: 330, magnesium: 22, saturatedFat: 0.1 } },
+  { id: 9702, name: "Dates, Red (Balah) - بلح أحمر", category: "Fruits", state: "per 100g", carbs: 30, protein: 1.2, fat: 0.2, calories: 127, micros: { fiber: 3.8, potassium: 380, magnesium: 25, saturatedFat: 0.1 } },
+  { id: 9703, name: "Dates, Brown (Balah, ripe) - بلح أسمر", category: "Fruits", state: "per 100g", carbs: 42, protein: 1.5, fat: 0.2, calories: 175, micros: { fiber: 4.5, potassium: 450, magnesium: 30, saturatedFat: 0.1 } },
+  { id: 9704, name: "Fresh Dates, Rutab (soft) - تمر رطب", category: "Fruits", state: "per 100g", carbs: 54, protein: 1.8, fat: 0.2, calories: 225, micros: { fiber: 6, potassium: 560, magnesium: 40, saturatedFat: 0.1 } },
+  { id: 9801, name: "Cerelac Wheat & Milk (dry powder) - سيريلاك قمح وحليب", category: "Carbs", state: "per 100g dry", carbs: 71, protein: 14, fat: 9, calories: 420, micros: { fiber: 2.5, calcium: 450, iron: 8, saturatedFat: 3.5 } },
+  { id: 9802, name: "Cerelac Rice (dry powder) - سيريلاك أرز", category: "Carbs", state: "per 100g dry", carbs: 78, protein: 9, fat: 6, calories: 400, micros: { fiber: 1.5, calcium: 300, iron: 8, saturatedFat: 1.5 } },
+  { id: 9803, name: "Cerelac Wheat (dry powder) - سيريلاك قمح", category: "Carbs", state: "per 100g dry", carbs: 76, protein: 12, fat: 4.5, calories: 395, micros: { fiber: 3, calcium: 300, iron: 8, saturatedFat: 1.2 } },
+  { id: 9901, name: "Abu Auf Protein Bar, Coffee & Chocolate 70g - بروتين بار أبو عوف بالقهوة والشوكولاتة", category: "Supplements", state: "per piece (70g)", carbs: 25, protein: 22, fat: 6, calories: 234 },
+  { id: 9902, name: "Abu Auf Protein Bar, Hazelnut 70g - بروتين بار أبو عوف بالبندق", category: "Supplements", state: "per piece (70g)", carbs: 26, protein: 22, fat: 8, calories: 264 },
+  { id: 9903, name: "Abu Auf Protein Bar, Cashew & Banana 70g - بروتين بار أبو عوف بالكاجو والموز", category: "Supplements", state: "per piece (70g)", carbs: 27, protein: 22, fat: 7, calories: 259 },
+  { id: 9904, name: "Abu Auf Protein Bar, Brownies 70g - بروتين بار أبو عوف بالبراونيز", category: "Supplements", state: "per piece (70g)", carbs: 29, protein: 22, fat: 6, calories: 258 },
+  { id: 9905, name: "Abu Auf Protein Bar, Original 70g - بروتين بار أبو عوف", category: "Supplements", state: "per piece (70g)", carbs: 29, protein: 22, fat: 6, calories: 258 },
+  { id: 9906, name: "Abu Auf Protein Bar, Cinnamon 70g - بروتين بار أبو عوف قرفة", category: "Supplements", state: "per piece (70g)", carbs: 28, protein: 24, fat: 7, calories: 271 },
+  { id: 9907, name: "Protein Bar KEEP GOING - بروتين بار كيب جوينج", category: "Supplements", state: "per piece", carbs: 21, protein: 19, fat: 7, calories: 226 },
+  { id: 9811, name: "Corn Flakes - كورن فليكس", category: "Carbs", state: "per 100g", carbs: 84, protein: 7.5, fat: 0.4, calories: 357, micros: { fiber: 3, sodium: 600, iron: 8, saturatedFat: 0.1 } },
+  { id: 9812, name: "Fitness Cereal (Nestle Fitness flakes) - سيريال فيتنس", category: "Carbs", state: "per 100g", carbs: 76, protein: 8, fat: 1.6, calories: 372, micros: { fiber: 8, sodium: 400, iron: 8, saturatedFat: 0.4 } },
+  { id: 9631, name: "Roast Beef (sliced, per 100g) - روست بيف", category: "Protein", state: "per 100g", carbs: 1, protein: 21, fat: 3.5, calories: 120, micros: { sodium: 600, saturatedFat: 1.4, vitB12: 2, iron: 2.2, zinc: 4 } },
+  { id: 9632, name: "Roast Beef (1 slice ~25g) - روست بيف شريحة", category: "Protein", state: "per piece (~25g)", carbs: 0.3, protein: 5.3, fat: 0.9, calories: 30, micros: { sodium: 150, saturatedFat: 0.35, vitB12: 0.5, iron: 0.55, zinc: 1 } },
+  { id: 9641, name: "Turkey Meat - فصوص تركي", category: "Protein", state: "per 100g", carbs: 2, protein: 29.3, fat: 5, calories: 170 },
+  { id: 9642, name: "Turkey Breast, Skin Removed Before Cooking - صدر ديك رومي منزوع الجلد قبل الطهي", category: "Protein", state: "per 100g raw", carbs: 0, protein: 30.1, fat: 2.1, calories: 147 },
+  { id: 9643, name: "Sliced Turkey - شرائح الديك الرومي", category: "Protein", state: "per 100g", carbs: 3.5, protein: 16.3, fat: 1.8, calories: 95.5 },
+  { id: 9651, name: "Clotted Cream (Qishta) - قشطة", category: "Dairy", state: "per 100g", carbs: 3, protein: 2.5, fat: 35, calories: 337 },
+  { id: 9652, name: "Cooking Cream, Light - كريمة طبخ لايت", category: "Dairy", state: "per 100g", carbs: 4, protein: 2.5, fat: 15, calories: 160 },
+  { id: 9653, name: "Oat Cream, Plant-Based - كريمة شوفان نباتية", category: "Dairy", state: "per 100ml", carbs: 6, protein: 1, fat: 13, calories: 150 },
+  { id: 9654, name: "Whipping Cream (Heavy) - كريمة خفق", category: "Dairy", state: "per 100g", carbs: 2.7, protein: 2.8, fat: 36, calories: 340 },
+  { id: 9655, name: "Creatine PEAK - كرياتين بيك", category: "Supplements", state: "per serving (1 scoop)", carbs: 0, protein: 0, fat: 0, calories: 0 },
+  { id: 9656, name: "Skimmed Cream Cheese - جبنة كريمي منزوعة الدسم", category: "Dairy", state: "per 100g", carbs: 7.7, protein: 15.7, fat: 1, calories: 105 },
+  { id: 9657, name: "Kiri Creamy Labneh - لبنة كريمي (كيري)", category: "Dairy", state: "per 100g", carbs: 3, protein: 5.5, fat: 22, calories: 230 },
+  { id: 9658, name: "Light Cream Cheese (Kremy) - جبنة كريمي لايت", category: "Dairy", state: "per 100g", carbs: 8.1, protein: 7.8, fat: 15.3, calories: 208 },
+  { id: 9659, name: "Cream Cheese, Light or Low Fat - جبنة كريمي قليلة الدسم", category: "Dairy", state: "per 100g", carbs: 6.7, protein: 7.8, fat: 16.7, calories: 208 },
+  { id: 9711, name: "Orange, Navel - برتقال أبو سرة", category: "Fruits", state: "per 100g", carbs: 11.8, protein: 0.9, fat: 0.1, calories: 47, micros: { vitC: 53, fiber: 2.4, potassium: 181, saturatedFat: 0.05 } },
+  { id: 9712, name: "Orange, Valencia - برتقال فالنسيا", category: "Fruits", state: "per 100g", carbs: 11.7, protein: 1, fat: 0.2, calories: 48, micros: { vitC: 45, fiber: 2.2, potassium: 179, saturatedFat: 0.05 } },
+  { id: 9713, name: "Mandarin / Tangerine (Yousfi) - يوسفي", category: "Fruits", state: "per 100g", carbs: 13.3, protein: 0.8, fat: 0.3, calories: 53, micros: { vitC: 27, fiber: 1.8, potassium: 166, saturatedFat: 0.05 } },
+  { id: 9714, name: "Lime - ليمون أخضر", category: "Fruits", state: "per 100g", carbs: 10.5, protein: 0.7, fat: 0.2, calories: 30, micros: { vitC: 29, fiber: 2.8, potassium: 102, saturatedFat: 0.05 } },
+  { id: 9715, name: "Dates, Semi-Dry - بلح نصف جاف", category: "Fruits", state: "per 100g", carbs: 62, protein: 2, fat: 0.2, calories: 255, micros: { vitC: 0, fiber: 7, potassium: 650, saturatedFat: 0.05 } },
+  { id: 9716, name: "Dates, Dry (Tamr) - تمر جاف", category: "Fruits", state: "per 100g", carbs: 75, protein: 2.5, fat: 0.4, calories: 282, micros: { vitC: 0, fiber: 8, potassium: 696, saturatedFat: 0.05 } },
+  { id: 9717, name: "Apple, Imported (Red/Gala) - تفاح مستورد", category: "Fruits", state: "per 100g", carbs: 13.8, protein: 0.3, fat: 0.2, calories: 52, micros: { vitC: 4.6, fiber: 2.4, potassium: 107, saturatedFat: 0.05 } },
+  { id: 9718, name: "Apple, Local Baladi - تفاح بلدي", category: "Fruits", state: "per 100g", carbs: 13, protein: 0.3, fat: 0.2, calories: 50, micros: { vitC: 5, fiber: 2.3, potassium: 105, saturatedFat: 0.05 } },
+  { id: 9719, name: "Mango, Fass - مانجو فص", category: "Fruits", state: "per 100g", carbs: 16.3, protein: 0.8, fat: 0.3, calories: 65, micros: { vitC: 36, fiber: 1.6, potassium: 168, saturatedFat: 0.05 } },
+  { id: 9720, name: "Mango, Ewais - مانجو عويس", category: "Fruits", state: "per 100g", carbs: 17.5, protein: 0.8, fat: 0.3, calories: 70, micros: { vitC: 36, fiber: 1.6, potassium: 168, saturatedFat: 0.05 } },
+  { id: 9721, name: "Mango, Zebda - مانجو زبدة", category: "Fruits", state: "per 100g", carbs: 18, protein: 0.8, fat: 0.3, calories: 72, micros: { vitC: 36, fiber: 1.6, potassium: 168, saturatedFat: 0.05 } },
+  { id: 9722, name: "Mango, Awees - مانجو أويس", category: "Fruits", state: "per 100g", carbs: 17, protein: 0.8, fat: 0.3, calories: 68, micros: { vitC: 36, fiber: 1.6, potassium: 168, saturatedFat: 0.05 } },
+  { id: 9723, name: "Mango, Keitt - مانجو كيت", category: "Fruits", state: "per 100g", carbs: 15, protein: 0.8, fat: 0.3, calories: 60, micros: { vitC: 30, fiber: 1.6, potassium: 168, saturatedFat: 0.05 } },
+  { id: 9724, name: "Mango, Sugary (Sukkari) - مانجو سكري", category: "Fruits", state: "per 100g", carbs: 18.8, protein: 0.8, fat: 0.3, calories: 75, micros: { vitC: 36, fiber: 1.6, potassium: 168, saturatedFat: 0.05 } },
+  { id: 9725, name: "Cantaloupe (Kantaloub) - كانتالوب", category: "Fruits", state: "per 100g", carbs: 8.2, protein: 0.8, fat: 0.2, calories: 34, micros: { vitC: 36, fiber: 0.9, potassium: 267, saturatedFat: 0.05 } },
+  { id: 9726, name: "Sweet Melon - شمام", category: "Fruits", state: "per 100g", carbs: 9, protein: 0.5, fat: 0.1, calories: 36, micros: { vitC: 18, fiber: 0.8, potassium: 228, saturatedFat: 0.05 } },
+  { id: 9727, name: "Grapes, Red - عنب أحمر", category: "Fruits", state: "per 100g", carbs: 18.1, protein: 0.7, fat: 0.2, calories: 69, micros: { vitC: 3, fiber: 0.9, potassium: 191, saturatedFat: 0.05 } },
+  { id: 9728, name: "Grapes, Black - عنب أسود", category: "Fruits", state: "per 100g", carbs: 18.2, protein: 0.7, fat: 0.2, calories: 70, micros: { vitC: 4, fiber: 0.9, potassium: 191, saturatedFat: 0.05 } },
+  { id: 9729, name: "Grapes, Green Seedless - عنب أخضر بدون بذر", category: "Fruits", state: "per 100g", carbs: 17.2, protein: 0.7, fat: 0.2, calories: 67, micros: { vitC: 3, fiber: 0.9, potassium: 191, saturatedFat: 0.05 } },
+  { id: 9730, name: "Plums (Barkooq) - برقوق", category: "Fruits", state: "per 100g", carbs: 11.4, protein: 0.7, fat: 0.3, calories: 46, micros: { vitC: 9.5, fiber: 1.4, potassium: 157, saturatedFat: 0.05 } },
+  { id: 9731, name: "Apricots (Mishmish) - مشمش", category: "Fruits", state: "per 100g", carbs: 11.1, protein: 1.4, fat: 0.4, calories: 48, micros: { vitC: 10, fiber: 2, potassium: 259, saturatedFat: 0.05 } },
+  { id: 9732, name: "Guava (Gawafa) - جوافة", category: "Fruits", state: "per 100g", carbs: 14.3, protein: 2.6, fat: 1, calories: 68, micros: { vitC: 228, fiber: 5.4, potassium: 417, saturatedFat: 0.05 } },
+  { id: 9733, name: "Persimmon (Kaka) - كاكا", category: "Fruits", state: "per 100g", carbs: 18.6, protein: 0.6, fat: 0.2, calories: 70, micros: { vitC: 7.5, fiber: 3.6, potassium: 161, saturatedFat: 0.05 } },
+  { id: 9734, name: "Blueberries - توت أزرق", category: "Fruits", state: "per 100g", carbs: 14.5, protein: 0.7, fat: 0.3, calories: 57, micros: { vitC: 9.7, fiber: 2.4, potassium: 77, saturatedFat: 0.05 } },
+  { id: 9735, name: "Loquat (Eskadanya) - اسكدنيا", category: "Fruits", state: "per 100g", carbs: 12.1, protein: 0.4, fat: 0.2, calories: 47, micros: { vitC: 1, fiber: 1.7, potassium: 266, saturatedFat: 0.05 } },
+  { id: 9736, name: "Peanut Butter Powder - مسحوق زبدة الفول السوداني", category: "Fats", state: "per 100g", carbs: 40, protein: 48, fat: 13, calories: 475, micros: { fiber: 14, saturatedFat: 2 } },
+  { id: 9737, name: "Greek Yogurt with Fruit - زبادي يوناني بالفواكه", category: "Dairy", state: "per 100g", carbs: 12.3, protein: 7.3, fat: 3, calories: 106 },
+  { id: 9738, name: "Lean Minced Meat (fat trimmed) - لحمة مفرومة متشفية من غير دهون", category: "Protein", state: "per 100g", carbs: 0, protein: 26.4, fat: 4.5, calories: 153 },
+  { id: 9739, name: "Minced Molokhia - ملوخية مفرومة", category: "Vegetables", state: "per 100g", carbs: 11, protein: 4, fat: 0.8, calories: 68 },
+  { id: 9740, name: "Lean Red Meat (raw) - لحمة حمراء قليلة الدسم", category: "Protein", state: "per 100g raw", carbs: 0, protein: 21.5, fat: 5, calories: 133 },
+  { id: 9741, name: "Beef Burger 90% Lean / 10% Fat (raw) - برجر لحم بقري 90% قليل الدسم", category: "Protein", state: "per 100g raw", carbs: 0, protein: 20, fat: 10, calories: 176 },
+  { id: 9742, name: "Ground Beef 95% Lean / 5% Fat (raw) - لحم مفروم 95% قليل الدسم", category: "Protein", state: "per 100g raw", carbs: 0, protein: 21.4, fat: 5, calories: 137 },
+  { id: 9751, name: "Whole Wheat Flour - دقيق قمح كامل الحبة", category: "Carbs", state: "per 100g", carbs: 72, protein: 13.2, fat: 2.5, calories: 340, micros: { fiber: 10.7, saturatedFat: 0.4, iron: 3.9, magnesium: 138 } },
+  { id: 9752, name: "White Flour - دقيق أبيض", category: "Carbs", state: "per 100g", carbs: 76.3, protein: 10.3, fat: 1, calories: 364, micros: { fiber: 2.7, saturatedFat: 0.2, iron: 1.2, magnesium: 22 } },
+  { id: 9753, name: "Oat Flour - دقيق الشوفان", category: "Carbs", state: "per 100g", carbs: 65.7, protein: 14.7, fat: 9.1, calories: 404, micros: { fiber: 6.5, saturatedFat: 1.6, iron: 4, magnesium: 138 } },
+  // ── ADDED FOODS ─────────────────────────────────────────────────────
+  { id: 9601, name: "Pecans - بيكان", category: "Fats", state: "per 100g", carbs: 13.9, protein: 9.2, fat: 72, calories: 691, micros: { fiber: 9.6, saturatedFat: 6.2, omega3: 1.0, omega6: 20.6, magnesium: 121, zinc: 4.5, manganese: 4.5 } },
+  { id: 9602, name: "Pistachios - فستق", category: "Fats", state: "per 100g", carbs: 27.2, protein: 20.2, fat: 45.3, calories: 560, micros: { fiber: 10.6, saturatedFat: 5.9, omega3: 0.25, omega6: 13.7, potassium: 1025, vitB6: 1.7, magnesium: 121 } },
+  { id: 9603, name: "Hazelnuts - بندق", category: "Fats", state: "per 100g", carbs: 16.7, protein: 15, fat: 60.8, calories: 628, micros: { fiber: 9.7, saturatedFat: 4.5, omega3: 0.09, omega6: 7.8, magnesium: 163, manganese: 6.2, vitB6: 0.6 } },
+  { id: 9604, name: "Sesame Seeds (dried, hulled) - سمسم مقشر مجفف", category: "Fats", state: "per 100g", carbs: 23.5, protein: 17.7, fat: 49.7, calories: 580, micros: { fiber: 11.8, saturatedFat: 7.0, omega3: 0.4, omega6: 21.0, calcium: 125, magnesium: 346, zinc: 7.8, iron: 14.6 } },
+  { id: 9605, name: "Sesame Oil - زيت سمسم", category: "Fats", state: "per 100g", carbs: 0, protein: 0, fat: 100, calories: 884, micros: { saturatedFat: 14.2, omega3: 0.3, omega6: 41.3 } },
+  { id: 9606, name: "Sweet Corn (canned, drained) - ذرة حلوة معلبة", category: "Carbs", state: "per 100g", carbs: 17.5, protein: 2.5, fat: 1.2, calories: 85, micros: { fiber: 2.0, vitC: 5, potassium: 160, saturatedFat: 0.2 } },
+  { id: 9607, name: "Sante Granola - جرانولا سانتي", category: "Carbs", state: "per 100g", carbs: 63, protein: 8, fat: 16.5, calories: 435, micros: { fiber: 7, saturatedFat: 4.5 } },
+  { id: 9608, name: "Greek Yogurt (fat-free) - زبادي يوناني خالي الدسم", category: "Dairy", state: "per 100g", carbs: 3.6, protein: 10, fat: 0.2, calories: 56, micros: { calcium: 110, vitB12: 0.75, saturatedFat: 0.1 } },
+  { id: 9609, name: "Greek Yogurt (regular, 2%) - زبادي يوناني عادي", category: "Dairy", state: "per 100g", carbs: 3.9, protein: 9.9, fat: 2, calories: 73, micros: { calcium: 110, vitB12: 0.75, saturatedFat: 1.3 } },
+  { id: 9610, name: "Light Tuna in Oil (drained) - تونة لايت في زيت (مصفاة)", category: "Protein", state: "per 100g", carbs: 0, protein: 29, fat: 8.2, calories: 190, micros: { sodium: 350, saturatedFat: 1.4, omega3: 0.3, omega6: 2.2, vitB12: 2.2, selenium: 76 } },
+  { id: 9611, name: "Tuna in Oil (not drained) - تونة في زيت (غير مصفاة)", category: "Protein", state: "per 100g", carbs: 0, protein: 24, fat: 14.5, calories: 226, micros: { sodium: 400, saturatedFat: 2.4, omega3: 0.3, omega6: 5.0, vitB12: 2.0, selenium: 65 } },
+  { id: 9612, name: "Tuna in Brine / Salt Water (drained) - تونة في ماء وملح", category: "Protein", state: "per 100g", carbs: 0, protein: 25, fat: 1, calories: 109, micros: { sodium: 400, saturatedFat: 0.3, omega3: 0.25, omega6: 0.05, vitB12: 2.2, selenium: 80 } },
+  { id: 9613, name: "Digestive Biscuits (plain) - بسكويت دايجستف", category: "Carbs", state: "per 100g", carbs: 65, protein: 7, fat: 21, calories: 480, micros: { fiber: 3.5, saturatedFat: 10 } },
+  { id: 9614, name: "Digestive Biscuits (chocolate) - بسكويت دايجستف بالشوكولاتة", category: "Carbs", state: "per 100g", carbs: 64, protein: 6.5, fat: 24, calories: 495, micros: { fiber: 3, saturatedFat: 12 } },
+  { id: 9615, name: "Rice Cake (plain puffed) - رايس كيك", category: "Carbs", state: "per 100g", carbs: 82, protein: 8, fat: 2.8, calories: 387, micros: { fiber: 3.4, saturatedFat: 0.6 } },
+  { id: 9616, name: "Rice Cake (1 piece ~9g) - رايس كيك قطعة", category: "Carbs", state: "per piece (~9g)", carbs: 7.4, protein: 0.7, fat: 0.3, calories: 35, micros: { fiber: 0.3, saturatedFat: 0.05 } },
+  { id: 9617, name: "Oat Pasta (dry) - مكرونة شوفان جافة", category: "Carbs", state: "per 100g dry", carbs: 65, protein: 12, fat: 5, calories: 355, micros: { fiber: 8, saturatedFat: 1.0 } },
+  { id: 9618, name: "Oat Pasta (boiled) - مكرونة شوفان مسلوقة", category: "Carbs", state: "per 100g cooked", carbs: 25, protein: 5, fat: 2, calories: 140, micros: { fiber: 3, saturatedFat: 0.4 } },
+  { id: 9619, name: "Reef Bread, Oats & Barley (per 100g) - عيش ريف شوفان وشعير", category: "Carbs", state: "per 100g", carbs: 42, protein: 10, fat: 4, calories: 245, micros: { fiber: 7, saturatedFat: 0.8 } },
+  { id: 9620, name: "Reef Bread, Oats & Barley (1 slice ~30g) - عيش ريف شوفان وشعير شريحة", category: "Carbs", state: "per piece (~30g)", carbs: 12.6, protein: 3, fat: 1.2, calories: 74, micros: { fiber: 2.1, saturatedFat: 0.2 } },
+  { id: 9621, name: "Vermicelli (dry) - شعرية جافة", category: "Carbs", state: "per 100g dry", carbs: 74, protein: 11.5, fat: 1.5, calories: 360, micros: { fiber: 3, saturatedFat: 0.3 } },
+  { id: 9622, name: "Vermicelli (boiled) - شعرية مسلوقة", category: "Carbs", state: "per 100g cooked", carbs: 30.5, protein: 5.8, fat: 0.9, calories: 156, micros: { fiber: 1.5, saturatedFat: 0.2 } },
+  { id: 9623, name: "Orzo / Lisan Asfour (dry) - لسان عصفور جاف", category: "Carbs", state: "per 100g dry", carbs: 75, protein: 13, fat: 1.5, calories: 365, micros: { fiber: 3, saturatedFat: 0.3 } },
+  { id: 9624, name: "Orzo / Lisan Asfour (boiled) - لسان عصفور مسلوق", category: "Carbs", state: "per 100g cooked", carbs: 27.5, protein: 5, fat: 0.8, calories: 137, micros: { fiber: 1.5, saturatedFat: 0.15 } },
+  { id: 9625, name: "Cream of Rice Powder (dry) - كريم أوف رايس بودرة", category: "Carbs", state: "per 100g dry", carbs: 82, protein: 7, fat: 0.5, calories: 366, micros: { fiber: 0.5, saturatedFat: 0.1 } },
+  { id: 9626, name: "Fresh Tomato Sauce (homemade) - صلصة طماطم طازجة منزلية", category: "Vegetables", state: "per 100g", carbs: 7, protein: 1.5, fat: 1.5, calories: 47, micros: { fiber: 1.8, vitC: 12, potassium: 300, saturatedFat: 0.2 } },
+  { id: 9627, name: "Tomato Paste - معجون طماطم", category: "Pantry", state: "per 100g", carbs: 18.9, protein: 4.3, fat: 0.5, calories: 82, micros: { fiber: 4.1, vitC: 21, potassium: 1014, saturatedFat: 0.1 } },
   // ── SUPPLEMENTS ───────────────────────────────────────────────────────────
   { id: 901, name: "Whey Protein - بروتين مصل اللبن", category: "Supplements", state: "per 30g scoop", carbs: 3, protein: 24, fat: 1.5, calories: 120 },
   { id: 9501, name: "Whey Protein Isolate - بروتين مصل اللبن ايزوليت", category: "Supplements", state: "per 30g scoop", carbs: 1, protein: 27, fat: 0.5, calories: 117 },
@@ -442,6 +533,29 @@ interface CustomRecipe {
 
 const EMPTY_MEASUREMENTS: BodyMeasurements = { weight: 0, height: 0, bodyFat: 0, arms: 0, thighs: 0, waist: 0, hip: 0, highHip: 0, neck: 0 };
 
+/** Number field that lets you type "0.1", ".5", "0,5" naturally (a plain controlled type=number input swallows the "0." while typing). */
+function NumInput(props: Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">) {
+  const { value, onChange, min: _min, max: _max, step: _step, ...rest } = props;
+  const ext = value === undefined || value === null || value === "" ? NaN : Number(value);
+  const [txt, setTxt] = useState(Number.isNaN(ext) ? "" : String(ext));
+  useEffect(() => {
+    const cur = txt === "" || txt === "." || txt === "-" ? NaN : parseFloat(txt);
+    const same = cur === ext || (Number.isNaN(cur) && (Number.isNaN(ext) || ext === 0)) || (cur === 0 && Number.isNaN(ext));
+    if (!same) setTxt(Number.isNaN(ext) ? "" : String(ext));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+  return (
+    <input {...rest} type="text" inputMode="decimal" autoComplete="off" value={txt}
+      onChange={e => {
+        const v = e.target.value.replace(",", ".").replace(/[\u0660-\u0669]/g, d => String(d.charCodeAt(0) - 0x0660));
+        if (!/^-?\d*\.?\d*$/.test(v)) return;
+        setTxt(v);
+        const num = v === "" || v === "." || v === "-" ? "" : v;
+        onChange?.({ target: { value: num }, currentTarget: { value: num }, preventDefault() {}, stopPropagation() {} } as unknown as React.ChangeEvent<HTMLInputElement>);
+      }} />
+  );
+}
+
 function displayName(fullName: string, lang: "ar" | "en" | "both"): string {
   const parts = fullName.split(" - ");
   if (parts.length === 2) {
@@ -466,7 +580,18 @@ function isPerPiece(state: string) {
 }
 
 /** Returns a short unit label and sensible quick-pick values for a food state string */
-function getUnitInfo(state: string): { label: string; picks: number[] } {
+const FAT_RE = /\b(oil|ghee|butter|margarine|mayonnaise|lard|shortening)\b/i;
+const NUT_RE = /\b(almonds?|walnuts?|cashews?|peanuts?|pecans?|pistachios?|hazelnuts?|nuts?|seeds?|tahini|peanut butter|granola)\b/i;
+/** Oils / ghee / butter are never eaten by the hundred grams, nor are nuts and seeds — give them realistic quick picks. */
+function quickPicksFor(name?: string): number[] | null {
+  if (!name) return null;
+  const en = name.split(" - ")[0];
+  if (/peanut butter|nut butter|almond butter/i.test(en)) return [10, 20, 30, 50];
+  if (FAT_RE.test(en)) return [5, 10, 15, 20];
+  if (NUT_RE.test(en)) return [10, 20, 30, 50];
+  return null;
+}
+function getUnitInfo(state: string, name?: string): { label: string; picks: number[] } {
   if (state.startsWith("per cup"))      return { label: "cup",    picks: [1, 2, 3, 4] };
   if (state.startsWith("per shot"))     return { label: "shot",   picks: [1, 2, 3, 4] };
   if (state.startsWith("per serving"))  return { label: "srv",    picks: [1, 2, 3, 4] };
@@ -478,8 +603,9 @@ function getUnitInfo(state: string): { label: string; picks: number[] } {
   if (state.startsWith("per teaspoon")) return { label: "tsp",    picks: [1, 2, 3, 4] };
   if (state.startsWith("per scoop"))    return { label: "scoop",  picks: [1, 2, 3, 4] };
   if (state.startsWith("per piece"))    return { label: "×",      picks: [1, 2, 3, 4] };
-  if (state.includes("100ml"))          return { label: "ml",     picks: [50, 100, 150, 200] };
-  return { label: "g", picks: [50, 100, 150, 200] };
+  const special = quickPicksFor(name);
+  if (state.includes("100ml"))          return { label: "ml",     picks: special || [50, 100, 150, 200] };
+  return { label: "g", picks: special || [50, 100, 150, 200] };
 }
 
 function calcMacros(item: FoodItem) {
@@ -670,8 +796,8 @@ function TargetEditor({ value, defaultValue, unit, onChange }: {
   const isCustom = value !== null;
   return (
     <span className="inline-flex items-center gap-1" dir="ltr">
-      <input
-        type="number" min="0" step="0.5"
+      <NumInput
+         min="0" step="0.5"
         value={isCustom ? value : ""}
         placeholder={String(defaultValue)}
         title="Type a custom target, or leave empty to use the recommended value"
@@ -828,16 +954,16 @@ function SortableFoodItem({ item, onRemove, onGramsChange, lang, onOpenRecipe }:
       </div>
       <div className="flex flex-col items-end gap-1">
         <div className="flex items-center gap-1">
-          <input
-            type="number" min="0" step={isPerPiece(item.state) ? "1" : item.state.includes("100ml") ? "10" : "5"}
+          <NumInput
+             min="0" step={isPerPiece(item.state) ? "1" : item.state.includes("100ml") ? "10" : "5"}
             value={item.grams}
             onChange={e => onGramsChange(+e.target.value)}
             className="w-14 text-center border border-gray-300 dark:border-gray-600 rounded bg-white dark:bg-gray-700 px-1 py-0.5 text-xs"
           />
-          <span className="text-xs text-gray-500">{getUnitInfo(item.state).label}</span>
+          <span className="text-xs text-gray-500">{getUnitInfo(item.state, item.name).label}</span>
         </div>
         <div className="flex gap-0.5">
-          {getUnitInfo(item.state).picks.map(g => (
+          {getUnitInfo(item.state, item.name).picks.map(g => (
             <button key={g} onClick={() => onGramsChange(g)}
               className={`text-[10px] px-1.5 py-0.5 rounded border transition-colors ${item.grams === g ? "bg-teal-600 text-white border-teal-600" : "border-gray-300 dark:border-gray-600 text-gray-500 hover:border-teal-500 hover:text-teal-600"}`}>
               {g}
@@ -1068,10 +1194,14 @@ function CustomFoodForm({ initial, showAmount, showSaveToggle, submitLabel, onSu
 }) {
   const [d, setD] = useState<FoodDraft>(initial ? draftFromFood(initial) : EMPTY_FOOD_DRAFT);
   const [save, setSave] = useState(true);
+  const initParts = (initial?.name || "").split(" - ");
+  const [nameEn, setNameEn] = useState(initParts.length === 2 ? initParts[0] : /[\u0600-\u06FF]/.test(initial?.name || "") ? "" : initial?.name || "");
+  const [nameAr, setNameAr] = useState(initParts.length === 2 ? initParts[1] : /[\u0600-\u06FF]/.test(initial?.name || "") ? initial?.name || "" : "");
+  const fullName = [nameEn.trim(), nameAr.trim()].filter(Boolean).join(" - ");
   const set = (k: keyof FoodDraft) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setD(p => ({ ...p, [k]: Math.max(0, +e.target.value) }));
   const chk = calorieCheck(d.protein, d.carbs, d.fat, d.calories);
-  const canSubmit = d.name.trim().length > 0;
+  const canSubmit = nameEn.trim().length > 0;
   const inputCls = "w-full text-xs border border-gray-300 dark:border-gray-600 rounded px-1.5 py-1 bg-white dark:bg-gray-800";
 
   function submit() {
@@ -1082,7 +1212,7 @@ function CustomFoodForm({ initial, showAmount, showSaveToggle, submitLabel, onSu
     if (d.omega3) micros.omega3 = d.omega3;
     if (d.omega6) micros.omega6 = d.omega6;
     const food: Omit<FoodEntry, "id"> = {
-      name: d.name.trim(), category: "Custom", state: d.basis === "100g" ? "per 100g" : "per serving",
+      name: fullName, category: "Custom", state: d.basis === "100g" ? "per 100g" : "per serving",
       carbs: d.carbs, protein: d.protein, fat: d.fat,
       calories: d.calories > 0 ? d.calories : chk.calc,
       ...(Object.keys(micros).length ? { micros } : {}),
@@ -1093,8 +1223,11 @@ function CustomFoodForm({ initial, showAmount, showSaveToggle, submitLabel, onSu
   return (
     <div dir="ltr" className="border border-purple-200 dark:border-purple-800 rounded-xl bg-purple-50 dark:bg-purple-900/20 p-3 space-y-2 text-left">
       <p className="text-xs font-semibold text-purple-700 dark:text-purple-300">{initial ? "✏️ Edit food - تعديل" : "➕ Custom food - أكل مخصص"}</p>
-      <input value={d.name} onChange={e => setD(p => ({ ...p, name: e.target.value }))}
-        placeholder="Name — e.g. Protein Bar - بار بروتين" className={inputCls} />
+      <div className="grid grid-cols-2 gap-2">
+        <input value={nameEn} onChange={e => setNameEn(e.target.value)} placeholder="Name (English) — e.g. Protein Bar" className={inputCls} />
+        <input value={nameAr} onChange={e => setNameAr(e.target.value)} dir="rtl" placeholder="الاسم بالعربي — بار بروتين" className={inputCls} />
+      </div>
+      {!nameEn.trim() && nameAr.trim() && <p className="text-[11px] text-amber-600">Please add an English name too (shown in English PDFs and search).</p>}
       <div className="flex gap-1 text-xs">
         {([["100g", "Values per 100 g"], ["serving", "Values per serving / piece"]] as const).map(([v, lbl]) => (
           <button key={v} type="button"
@@ -1109,7 +1242,7 @@ function CustomFoodForm({ initial, showAmount, showSaveToggle, submitLabel, onSu
         {([["calories", "Calories"], ["protein", "Protein g"], ["carbs", "Carbs g"], ["fat", "Fat g"]] as const).map(([k, lbl]) => (
           <div key={k}>
             <label className="text-[11px] text-gray-500">{lbl}</label>
-            <input type="number" min="0" step="any" value={d[k] || ""} onChange={set(k)} className={inputCls} />
+            <NumInput  min="0" step="any" value={d[k] || ""} onChange={set(k)} className={inputCls} />
           </div>
         ))}
       </div>
@@ -1128,14 +1261,14 @@ function CustomFoodForm({ initial, showAmount, showSaveToggle, submitLabel, onSu
         {([["fiber", "Fiber g"], ["saturatedFat", "Sat. fat g"], ["omega3", "Omega-3 g"], ["omega6", "Omega-6 g"]] as const).map(([k, lbl]) => (
           <div key={k}>
             <label className="text-[11px] text-gray-400">{lbl}</label>
-            <input type="number" min="0" step="any" value={d[k] || ""} onChange={set(k)} className={inputCls} />
+            <NumInput  min="0" step="any" value={d[k] || ""} onChange={set(k)} className={inputCls} />
           </div>
         ))}
       </div>
       {showAmount && (
         <div className="w-32">
           <label className="text-[11px] text-gray-500">Amount to add ({d.basis === "100g" ? "g" : "servings"})</label>
-          <input type="number" min="0" step="any" value={d.amount || ""} onChange={set("amount")} className={inputCls} />
+          <NumInput  min="0" step="any" value={d.amount || ""} onChange={set("amount")} className={inputCls} />
         </div>
       )}
       {showSaveToggle && (
@@ -2176,15 +2309,15 @@ function RecipeStudio({ allFoods, customFoods, setCustomFoods, recipes, setRecip
         </div>
         <div>
           <label className="text-xs text-gray-500">Servings (makes)</label>
-          <input type="number" min="1" value={draft.serves} onChange={e => setDraft(p => ({ ...p, serves: Math.max(1, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
+          <NumInput  min="1" value={draft.serves} onChange={e => setDraft(p => ({ ...p, serves: Math.max(1, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
         </div>
         <div>
           <label className="text-xs text-gray-500">Prep time (min)</label>
-          <input type="number" min="0" value={draft.prepMin || ""} onChange={e => setDraft(p => ({ ...p, prepMin: Math.max(0, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
+          <NumInput  min="0" value={draft.prepMin || ""} onChange={e => setDraft(p => ({ ...p, prepMin: Math.max(0, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
         </div>
         <div>
           <label className="text-xs text-gray-500">Cook time (min)</label>
-          <input type="number" min="0" value={draft.cookMin || ""} onChange={e => setDraft(p => ({ ...p, cookMin: Math.max(0, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
+          <NumInput  min="0" value={draft.cookMin || ""} onChange={e => setDraft(p => ({ ...p, cookMin: Math.max(0, +e.target.value) }))} className={cn(inputCls, "mt-1")} />
         </div>
         <div className="col-span-2">
           <label className="text-xs text-gray-500">Difficulty</label>
@@ -2232,7 +2365,7 @@ function RecipeStudio({ allFoods, customFoods, setCustomFoods, recipes, setRecip
           <div className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Ingredients ({draft.ingredients.length})</div>
           <label className="flex items-center gap-1 text-[11px] text-gray-500" dir="ltr">
             Preview for
-            <input type="number" min="1" value={previewServings ?? ""} placeholder={String(s)} onChange={e => setPreviewServings(e.target.value ? Math.max(1, +e.target.value) : null)}
+            <NumInput  min="1" value={previewServings ?? ""} placeholder={String(s)} onChange={e => setPreviewServings(e.target.value ? Math.max(1, +e.target.value) : null)}
               className="w-12 text-center text-xs border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 bg-white dark:bg-gray-800" />
             servings
           </label>
@@ -2274,7 +2407,7 @@ function RecipeStudio({ allFoods, customFoods, setCustomFoods, recipes, setRecip
                 <button onClick={() => setDraft(p => ({ ...p, ingredients: p.ingredients.filter((_, i) => i !== idx) }))}><Trash2 size={13} /></button>
               </div>
             );
-            const unit = getUnitInfo(fd.state);
+            const unit = getUnitInfo(fd.state, fd.name);
             const m = foodMult(fd, ing.grams);
             return (
               <div key={ing.foodId} className="bg-gray-50 dark:bg-gray-800 rounded-lg px-2 py-1.5">
@@ -2284,7 +2417,7 @@ function RecipeStudio({ allFoods, customFoods, setCustomFoods, recipes, setRecip
                     <div className="text-[11px] text-gray-400" dir="ltr">{Math.round(fd.calories * m)} kcal · {round1(fd.protein * m)}g P · {round1(fd.carbs * m)}g C · {round1(fd.fat * m)}g F</div>
                   </div>
                   <div className="flex items-center gap-1" dir="ltr">
-                    <input type="number" min="0" step="any" value={ing.grams || ""}
+                    <NumInput  min="0" step="any" value={ing.grams || ""}
                       onChange={e => setDraft(p => ({ ...p, ingredients: p.ingredients.map((x, i) => (i === idx ? { ...x, grams: Math.max(0, +e.target.value) } : x)) }))}
                       className="w-16 text-xs text-center border border-gray-300 dark:border-gray-600 rounded px-1 py-0.5 bg-white dark:bg-gray-700" />
                     <span className="text-xs text-gray-500 w-7">{unit.label}</span>
@@ -2293,7 +2426,7 @@ function RecipeStudio({ allFoods, customFoods, setCustomFoods, recipes, setRecip
                 </div>
                 <div className="flex items-center justify-between gap-2 mt-1" dir="ltr">
                   <div className="flex gap-0.5">
-                    {!isPerPiece(fd.state) && [50, 100, 150, 200].map(g => (
+                    {!isPerPiece(fd.state) && unit.picks.map(g => (
                       <button key={g} onClick={() => setDraft(p => ({ ...p, ingredients: p.ingredients.map((x, i) => (i === idx ? { ...x, grams: g } : x)) }))}
                         className={cn("text-[10px] px-1.5 py-0.5 rounded border", ing.grams === g ? "bg-purple-600 text-white border-purple-600" : "border-gray-300 dark:border-gray-600 text-gray-500 hover:border-purple-500")}>{g}</button>
                     ))}
@@ -3492,7 +3625,7 @@ export default function MealPlanner() {
                 </div>
                 <div><label className="text-xs text-gray-500">الهدف - Goal</label><input value={planGoal} onChange={e => setPlanGoal(e.target.value)} placeholder="تنشيف..." className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div><label className="text-xs text-gray-500">التاريخ - Date</label><input type="date" value={planDate} onChange={e => setPlanDate(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
-                <div><label className="text-xs text-gray-500">هدف الماء (لتر)</label><input type="number" step="0.5" min="0" value={planWaterGoal} onChange={e => setPlanWaterGoal(+e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+                <div><label className="text-xs text-gray-500">هدف الماء (لتر)</label><NumInput  step="0.5" min="0" value={planWaterGoal} onChange={e => setPlanWaterGoal(+e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div><label className="text-xs text-gray-500">اسم الكوتش</label><input value={coachName} onChange={e => setCoachName(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
                 <div className="col-span-2 sm:col-span-1"><label className="text-xs text-gray-500">رقم التواصل</label><input value={coachPhone} onChange={e => setCoachPhone(e.target.value)} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
               </div>
@@ -3508,7 +3641,7 @@ export default function MealPlanner() {
                 {(["calories", "protein", "carbs", "fat"] as const).map(k => (
                   <div key={k}>
                     <label className="text-xs text-gray-500 capitalize">{k}</label>
-                    <input type="number" value={targetMacros[k]} onChange={e => setTargetMacros(prev => ({ ...prev, [k]: +e.target.value }))}
+                    <NumInput  value={targetMacros[k]} onChange={e => setTargetMacros(prev => ({ ...prev, [k]: +e.target.value }))}
                       className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800" />
                   </div>
                 ))}
@@ -3761,8 +3894,8 @@ export default function MealPlanner() {
                       Intake - المشروب (L)
                     </label>
                     <div className="flex items-center gap-1">
-                      <input
-                        type="number"
+                      <NumInput
+                        
                         step="0.1"
                         min="0"
                         value={waterLiters === 0 ? "" : waterLiters}
@@ -3783,8 +3916,8 @@ export default function MealPlanner() {
                       Daily Goal - الهدف (L)
                     </label>
                     <div className="flex items-center gap-1">
-                      <input
-                        type="number"
+                      <NumInput
+                        
                         step="0.5"
                         min="0.5"
                         value={planWaterGoal}
@@ -3961,12 +4094,12 @@ export default function MealPlanner() {
               </div>
               {calcData.formula === "katch" && (
                 <div className="col-span-2"><label className="text-xs text-gray-500">Body Fat % - نسبة الدهون</label>
-                  <input type="number" min="3" max="60" step="0.1" value={calcData.bodyFat} onChange={e => setCalcData(p => ({ ...p, bodyFat: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" />
+                  <NumInput  min="3" max="60" step="0.1" value={calcData.bodyFat} onChange={e => setCalcData(p => ({ ...p, bodyFat: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" />
                 </div>
               )}
-              <div><label className="text-xs text-gray-500">Age - العمر</label><input type="number" value={calcData.age} onChange={e => setCalcData(p => ({ ...p, age: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
-              <div><label className="text-xs text-gray-500">Weight (kg) - الوزن</label><input type="number" value={calcData.weight} onChange={e => setCalcData(p => ({ ...p, weight: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
-              <div><label className="text-xs text-gray-500">Height (cm) - الطول</label><input type="number" value={calcData.height} onChange={e => setCalcData(p => ({ ...p, height: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+              <div><label className="text-xs text-gray-500">Age - العمر</label><NumInput  value={calcData.age} onChange={e => setCalcData(p => ({ ...p, age: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+              <div><label className="text-xs text-gray-500">Weight (kg) - الوزن</label><NumInput  value={calcData.weight} onChange={e => setCalcData(p => ({ ...p, weight: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
+              <div><label className="text-xs text-gray-500">Height (cm) - الطول</label><NumInput  value={calcData.height} onChange={e => setCalcData(p => ({ ...p, height: +e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1" /></div>
               <div><label className="text-xs text-gray-500">Gender - الجنس</label>
                 <select value={calcData.gender} onChange={e => setCalcData(p => ({ ...p, gender: e.target.value }))} className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1 text-sm bg-white dark:bg-gray-800 mt-1">
                   <option value="male">Male - ذكر</option>
@@ -4068,7 +4201,7 @@ export default function MealPlanner() {
                     </div>
                     <div>
                       <label className="text-xs text-gray-500">Age</label>
-                      <input type="number" min="1" max="120" value={selectedClient.age || 30} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, age: +e.target.value } : c))}
+                      <NumInput  min="1" max="120" value={selectedClient.age || 30} onChange={e => setClients(prev => prev.map(c => c.id === selectedClient.id ? { ...c, age: +e.target.value } : c))}
                         className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
                     </div>
                     <div className="flex items-center gap-2 col-span-2 flex-wrap">
@@ -4248,8 +4381,8 @@ export default function MealPlanner() {
                                 <div className="text-xs w-20 text-right shrink-0" style={{ color }}>
                                   {got.toFixed(1)} / {target} {micro.unit}
                                 </div>
-                                <input
-                                  type="number" min="0" step="any"
+                                <NumInput
+                                   min="0" step="any"
                                   value={manualVal}
                                   placeholder="+add"
                                   onChange={e => setMicroOverrides(prev => ({
@@ -4283,8 +4416,8 @@ export default function MealPlanner() {
                                 <div className="text-xs w-20 text-right shrink-0" style={{ color }}>
                                   {got.toFixed(1)} / {target} {micro.unit}
                                 </div>
-                                <input
-                                  type="number" min="0" step="any"
+                                <NumInput
+                                   min="0" step="any"
                                   value={manualVal}
                                   placeholder="+add"
                                   onChange={e => setMicroOverrides(prev => ({
@@ -4318,7 +4451,7 @@ export default function MealPlanner() {
                     {(["weight", "height", "bodyFat", "arms", "thighs", "waist", "hip", "highHip", "neck"] as const).map(m => (
                       <div key={m}>
                         <label className="text-xs text-gray-500 capitalize">{m} {["weight", "height", "arms", "thighs", "waist", "hip", "highHip", "neck"].includes(m) ? (m === "height" ? "(cm)" : "(cm/kg)") : "(%)"}</label>
-                        <input type="number" step="0.1" value={newCheckIn.measurements[m] || ""} onChange={e => setNewCheckIn(p => ({ ...p, measurements: { ...p.measurements, [m]: +e.target.value } }))}
+                        <NumInput  step="0.1" value={newCheckIn.measurements[m] || ""} onChange={e => setNewCheckIn(p => ({ ...p, measurements: { ...p.measurements, [m]: +e.target.value } }))}
                           className="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-1.5 text-sm bg-white dark:bg-gray-800 mt-1" />
                       </div>
                     ))}
@@ -4434,8 +4567,8 @@ export default function MealPlanner() {
                                   <div className="text-xs w-24 text-right shrink-0 font-medium" style={{ color }}>
                                     {got.toFixed(1)} / {target} {micro.unit}
                                   </div>
-                                  <input
-                                    type="number" min="0" step="any"
+                                  <NumInput
+                                     min="0" step="any"
                                     value={manualVal}
                                     placeholder="+add"
                                     onChange={e => { const cid = clientForMicros?.id ?? -1; setMicroOverrides(prev => ({ ...prev, [cid]: { ...(prev[cid] || {}), [micro.key]: +e.target.value || 0 } })); }}
