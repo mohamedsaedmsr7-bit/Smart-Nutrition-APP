@@ -256,6 +256,12 @@ const FOOD_DATABASE: FoodEntry[] = [
   { id: 9779, name: "Split Peas, Green (boiled) - بسلة مجففة مسلوقة", category: "Carbs", state: "per 100g cooked", carbs: 21.1, protein: 8.3, fat: 0.4, calories: 118, micros: { fiber: 8.3, iron: 1.3, vitB9: 65, potassium: 362 } },
   { id: 9780, name: "Mung Beans (boiled) - فاصوليا المونج مسلوقة", category: "Carbs", state: "per 100g cooked", carbs: 19.2, protein: 7, fat: 0.4, calories: 105, micros: { fiber: 7.6, iron: 1.4, vitB9: 159, potassium: 266 } },
   { id: 9781, name: "Soybeans (boiled) - فول صويا مسلوق", category: "Carbs", state: "per 100g cooked", carbs: 9.9, protein: 16.6, fat: 9, calories: 173, micros: { fiber: 6, iron: 5.1, vitB9: 54, potassium: 515 } },
+  { id: 9771, name: "Fat-Free Red Meat (raw) - لحمة حمراء بدون دهون", category: "Protein", state: "per 100g raw", carbs: 0, protein: 22, fat: 3, calories: 120 },
+  { id: 9772, name: "Fat-Free Red Meat (cooked) - لحمة حمراء بدون دهون مستوية", category: "Protein", state: "per 100g cooked", carbs: 0, protein: 29, fat: 4.5, calories: 165 },
+  { id: 9773, name: "Red Meat Cubes (raw) - مكعبات لحمة حمراء", category: "Protein", state: "per 100g raw", carbs: 0, protein: 21, fat: 6, calories: 143 },
+  { id: 9774, name: "Red Meat Cubes (cooked) - مكعبات لحمة حمراء مستوية", category: "Protein", state: "per 100g cooked", carbs: 0, protein: 29, fat: 10, calories: 210 },
+  { id: 9775, name: "Beef Burger 90% Lean / 10% Fat (cooked) - برجر لحم بقري 90% مستوي", category: "Protein", state: "per 100g cooked", carbs: 0, protein: 26, fat: 11.8, calories: 217 },
+  { id: 9776, name: "Ground Beef 95% Lean / 5% Fat (cooked) - لحم مفروم 95% مستوي", category: "Protein", state: "per 100g cooked", carbs: 0, protein: 26.8, fat: 6.3, calories: 171 },
   // ── ADDED FOODS ─────────────────────────────────────────────────────
   { id: 9601, name: "Pecans - بيكان", category: "Fats", state: "per 100g", carbs: 13.9, protein: 9.2, fat: 72, calories: 691, micros: { fiber: 9.6, saturatedFat: 6.2, omega3: 1.0, omega6: 20.6, magnesium: 121, zinc: 4.5, manganese: 4.5 } },
   { id: 9602, name: "Pistachios - فستق", category: "Fats", state: "per 100g", carbs: 27.2, protein: 20.2, fat: 45.3, calories: 560, micros: { fiber: 10.6, saturatedFat: 5.9, omega3: 0.25, omega6: 13.7, potassium: 1025, vitB6: 1.7, magnesium: 121 } },
